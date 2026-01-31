@@ -1,0 +1,306 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ABDM-inspired Government Portal Design System
+   Employee Transfer Management Portal
+   All colors in HSL format */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Primary: Turquoise Blue - Trust, professionalism */
+    --primary: 191 100% 34%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 191 85% 45%;
+    --primary-dark: 191 100% 28%;
+
+    /* Secondary: Turquoise Green - Growth, progress */
+    --secondary: 174 100% 32%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-light: 174 75% 42%;
+
+    /* Accent: Yellow - Attention, highlights */
+    --accent: 45 100% 51%;
+    --accent-foreground: 0 0% 10%;
+
+    /* Danger: Red - Errors, warnings */
+    --danger: 354 70% 54%;
+    --danger-foreground: 0 0% 100%;
+    --danger-light: 354 70% 95%;
+
+    /* Banner: Bluish Grey - Header, professional */
+    --banner: 215 19% 35%;
+    --banner-foreground: 0 0% 100%;
+    --banner-light: 215 15% 45%;
+
+    /* Background & Surface */
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+    --surface: 0 0% 100%;
+    --surface-elevated: 0 0% 100%;
+
+    /* Card */
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    /* Muted */
+    --muted: 210 15% 95%;
+    --muted-foreground: 215 15% 45%;
+
+    /* Border & Input */
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 191 100% 34%;
+
+    /* Success */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 142 76% 95%;
+
+    /* Destructive */
+    --destructive: 354 70% 54%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Radius */
+    --radius: 0.5rem;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(215 25% 15% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(215 25% 15% / 0.1), 0 2px 4px -2px hsl(215 25% 15% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(215 25% 15% / 0.1), 0 4px 6px -4px hsl(215 25% 15% / 0.1);
+    --shadow-xl: 0 20px 25px -5px hsl(215 25% 15% / 0.1), 0 8px 10px -6px hsl(215 25% 15% / 0.1);
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 191 100% 34%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 15% 95%;
+    --sidebar-accent-foreground: 215 25% 15%;
+    --sidebar-border: 214 20% 88%;
+    --sidebar-ring: 191 100% 34%;
+  }
+
+  .dark {
+    --primary: 191 85% 45%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 191 75% 55%;
+    --primary-dark: 191 100% 34%;
+
+    --secondary: 174 75% 42%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 45 100% 51%;
+    --accent-foreground: 0 0% 10%;
+
+    --danger: 354 70% 60%;
+    --danger-foreground: 0 0% 100%;
+    --danger-light: 354 40% 20%;
+
+    --banner: 215 25% 25%;
+    --banner-foreground: 0 0% 95%;
+
+    --background: 215 25% 10%;
+    --foreground: 210 20% 95%;
+    --surface: 215 25% 13%;
+    --surface-elevated: 215 25% 16%;
+
+    --card: 215 25% 13%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 215 25% 13%;
+    --popover-foreground: 210 20% 95%;
+
+    --muted: 215 20% 18%;
+    --muted-foreground: 215 15% 60%;
+
+    --border: 215 20% 22%;
+    --input: 215 20% 22%;
+    --ring: 191 85% 45%;
+
+    --success: 142 60% 45%;
+    --success-foreground: 0 0% 100%;
+    --success-light: 142 40% 15%;
+
+    --destructive: 354 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --sidebar-background: 215 25% 10%;
+    --sidebar-foreground: 210 20% 95%;
+    --sidebar-primary: 191 85% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 20% 18%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 215 20% 22%;
+    --sidebar-ring: 191 85% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Focus styles for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Smooth transitions for interactive elements */
+  button, a, input, select, textarea {
+    @apply transition-all duration-200;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50;
+  }
+}
+
+@layer components {
+  /* Premium button styles */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary-dark 
+           shadow-md hover:shadow-lg active:shadow-sm 
+           font-medium rounded-lg px-5 py-2.5
+           focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
+           transition-all duration-200 ease-out;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary-light
+           shadow-md hover:shadow-lg active:shadow-sm
+           font-medium rounded-lg px-5 py-2.5
+           focus:ring-2 focus:ring-secondary/50 focus:ring-offset-2
+           transition-all duration-200 ease-out;
+  }
+
+  .btn-accent {
+    @apply bg-accent text-accent-foreground hover:brightness-110
+           shadow-md hover:shadow-lg active:shadow-sm
+           font-medium rounded-lg px-5 py-2.5
+           focus:ring-2 focus:ring-accent/50 focus:ring-offset-2
+           transition-all duration-200 ease-out;
+  }
+
+  .btn-danger {
+    @apply bg-danger text-danger-foreground hover:brightness-110
+           shadow-md hover:shadow-lg active:shadow-sm
+           font-medium rounded-lg px-5 py-2.5
+           focus:ring-2 focus:ring-danger/50 focus:ring-offset-2
+           transition-all duration-200 ease-out;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary text-primary bg-transparent
+           hover:bg-primary hover:text-primary-foreground
+           shadow-sm hover:shadow-md
+           font-medium rounded-lg px-5 py-2.5
+           focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
+           transition-all duration-200 ease-out;
+  }
+
+  .btn-ghost {
+    @apply text-foreground bg-transparent
+           hover:bg-muted
+           font-medium rounded-lg px-5 py-2.5
+           focus:ring-2 focus:ring-primary/50 focus:ring-offset-2
+           transition-all duration-200 ease-out;
+  }
+
+  /* Premium input styles */
+  .input-field {
+    @apply w-full px-4 py-3 
+           bg-surface border-2 border-border rounded-lg
+           text-foreground placeholder:text-muted-foreground
+           focus:border-primary focus:ring-2 focus:ring-primary/20
+           hover:border-primary/50
+           transition-all duration-200;
+  }
+
+  .input-label {
+    @apply block text-sm font-medium text-foreground mb-2;
+  }
+
+  .input-helper {
+    @apply text-xs text-muted-foreground mt-1.5;
+  }
+
+  .input-error {
+    @apply text-xs text-danger mt-1.5 flex items-center gap-1;
+  }
+
+  /* Card styles */
+  .card-elevated {
+    @apply bg-card rounded-xl shadow-lg border border-border/50
+           hover:shadow-xl transition-shadow duration-300;
+  }
+
+  .card-interactive {
+    @apply bg-card rounded-xl shadow-md border border-border/50
+           hover:shadow-lg hover:border-primary/30 
+           transition-all duration-300 cursor-pointer;
+  }
+
+  /* Badge styles */
+  .badge-primary {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full 
+           text-xs font-medium bg-primary/10 text-primary;
+  }
+
+  .badge-secondary {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full 
+           text-xs font-medium bg-secondary/10 text-secondary;
+  }
+
+  .badge-accent {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full 
+           text-xs font-medium bg-accent/20 text-accent-foreground;
+  }
+
+  .badge-danger {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full 
+           text-xs font-medium bg-danger/10 text-danger;
+  }
+
+  /* Table styles */
+  .table-header {
+    @apply bg-muted/50 text-foreground font-semibold text-sm uppercase tracking-wide;
+  }
+
+  .table-row {
+    @apply border-b border-border hover:bg-muted/30 transition-colors duration-150;
+  }
+
+  .table-cell {
+    @apply px-4 py-3.5 text-sm text-foreground;
+  }
+
+  /* Government portal banner */
+  .govt-banner {
+    @apply bg-banner text-banner-foreground;
+  }
+}
