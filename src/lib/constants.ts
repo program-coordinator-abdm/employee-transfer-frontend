@@ -37,7 +37,7 @@ export const KARNATAKA_CITIES = [
 export type KarnatakaCity = typeof KARNATAKA_CITIES[number];
 
 // API Configuration
-export const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:4000";
 
 // Pagination defaults
 export const DEFAULT_PAGE_SIZE = 20;
