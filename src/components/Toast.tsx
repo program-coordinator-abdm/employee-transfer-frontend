@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, forwardRef } from "react";
 import { CheckCircle, XCircle, AlertCircle, X, Info } from "lucide-react";
 
 export type ToastType = "success" | "error" | "warning" | "info";
@@ -11,13 +11,13 @@ interface ToastProps {
   duration?: number;
 }
 
-const Toast: React.FC<ToastProps> = ({
+const Toast = forwardRef<HTMLDivElement, ToastProps>(({
   message,
   type,
   isVisible,
   onClose,
   duration = 4000,
-}) => {
+}, ref) => {
   useEffect(() => {
     if (isVisible && duration > 0) {
       const timer = setTimeout(onClose, duration);
@@ -42,7 +42,7 @@ const Toast: React.FC<ToastProps> = ({
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[100] animate-slide-in-right">
+    <div ref={ref} className="fixed bottom-6 right-6 z-[100] animate-slide-in-right">
       <div
         className={`flex items-center gap-3 px-5 py-4 rounded-xl shadow-floating border ${styles[type]}`}
         role="alert"
@@ -60,7 +60,9 @@ const Toast: React.FC<ToastProps> = ({
       </div>
     </div>
   );
-};
+});
+
+Toast.displayName = "Toast";
 
 export default Toast;
 

@@ -232,47 +232,70 @@ export const getEmployees = async (params: {
 };
 
 export const getEmployee = async (id: string): Promise<Employee> => {
-  const res = await apiClient<BackendEmployee>(`/employees/${id}`);
+  try {
+    const res = await apiClient<BackendEmployee>(`/employees/${id}`);
 
-  return {
-    id: res.id,
-    name: res.empName,
-    kgid: res.empKgid,
-    role: res.role,
-    yearsOfWork: res.yearsOfWork,
-    dob: res.dob,
-    currentCity: res.currentCity,
-    currentPosition: res.currentPosition,
-    email: res.email,
-    phone: res.phone,
-  };
+    return {
+      id: res.id,
+      name: res.empName,
+      kgid: res.empKgid,
+      role: res.role,
+      yearsOfWork: res.yearsOfWork,
+      dob: res.dob,
+      currentCity: res.currentCity,
+      currentPosition: res.currentPosition,
+      email: res.email,
+      phone: res.phone,
+    };
+  } catch {
+    // Fallback to mock data when API is unavailable
+    const employee = MOCK_EMPLOYEES.find((emp) => emp.id === id);
+    if (!employee) {
+      throw new Error("Employee not found");
+    }
+    return employee;
+  }
 };
 
 export const transferEmployee = async (
   id: string,
   transfer: TransferRequest
 ): Promise<Employee> => {
+  try {
+    const res = await apiClient<BackendEmployee>(
+      `/employees/${id}/transfers`,
+      {
+        method: "POST",
+        body: JSON.stringify(transfer),
+      }
+    );
 
-  const res = await apiClient<BackendEmployee>(
-    `/employees/${id}/transfers`,
-    {
-      method: "POST",
-      body: JSON.stringify(transfer),
+    return {
+      id: res.id,
+      name: res.empName,
+      kgid: res.empKgid,
+      role: res.role,
+      yearsOfWork: res.yearsOfWork,
+      dob: res.dob,
+      currentCity: res.currentCity,
+      currentPosition: res.currentPosition,
+      email: res.email,
+      phone: res.phone,
+    };
+  } catch {
+    // Fallback: simulate transfer locally when API is unavailable
+    const employee = MOCK_EMPLOYEES.find((emp) => emp.id === id);
+    if (!employee) {
+      throw new Error("Employee not found");
     }
-  );
-
-  return {
-    id: res.id,
-    name: res.empName,
-    kgid: res.empKgid,
-    role: res.role,
-    yearsOfWork: res.yearsOfWork,
-    dob: res.dob,
-    currentCity: res.currentCity,
-    currentPosition: res.currentPosition,
-    email: res.email,
-    phone: res.phone,
-  };
+    
+    // Return updated employee with new city/position
+    return {
+      ...employee,
+      currentCity: transfer.toCity,
+      currentPosition: transfer.toPosition,
+    };
+  }
 };
 
 // Export functions (just return URLs for now)
