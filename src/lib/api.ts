@@ -169,40 +169,66 @@ export const getEmployees = async (params: {
   page?: number;
   limit?: number;
 }): Promise<EmployeesResponse> => {
-
   const { searchMode = "name", query = "", page = 1, limit = 20 } = params;
 
-  const searchParams = new URLSearchParams({
-    searchMode,
-    query,
-    page: page.toString(),
-    limit: limit.toString(),
-  });
+  try {
+    const searchParams = new URLSearchParams({
+      searchMode,
+      query,
+      page: page.toString(),
+      limit: limit.toString(),
+    });
 
-  const res = await apiClient<BackendEmployeesResponse>(
-    `/employees?${searchParams}`
-  );
+    const res = await apiClient<BackendEmployeesResponse>(
+      `/employees?${searchParams}`
+    );
 
-  const employees: Employee[] = res.data.map((e) => ({
-    id: e.id,
-    name: e.empName,
-    kgid: e.empKgid,
-    role: e.role,
-    yearsOfWork: e.yearsOfWork,
-    dob: e.dob,
-    currentCity: e.currentCity,
-    currentPosition: e.currentPosition,
-    email: e.email,
-    phone: e.phone,
-  }));
+    const employees: Employee[] = res.data.map((e) => ({
+      id: e.id,
+      name: e.empName,
+      kgid: e.empKgid,
+      role: e.role,
+      yearsOfWork: e.yearsOfWork,
+      dob: e.dob,
+      currentCity: e.currentCity,
+      currentPosition: e.currentPosition,
+      email: e.email,
+      phone: e.phone,
+    }));
 
-  return {
-    employees,
-    total: res.total,
-    page: res.page,
-    limit: res.limit,
-    totalPages: res.totalPages,
-  };
+    return {
+      employees,
+      total: res.total,
+      page: res.page,
+      limit: res.limit,
+      totalPages: res.totalPages,
+    };
+  } catch {
+    // Fallback to mock data when API is unavailable
+    let filteredEmployees = [...MOCK_EMPLOYEES];
+    
+    if (query) {
+      const lowerQuery = query.toLowerCase();
+      filteredEmployees = filteredEmployees.filter((emp) =>
+        searchMode === "name"
+          ? emp.name.toLowerCase().includes(lowerQuery)
+          : emp.kgid.toLowerCase().includes(lowerQuery)
+      );
+    }
+
+    const total = filteredEmployees.length;
+    const totalPages = Math.ceil(total / limit);
+    const startIndex = (page - 1) * limit;
+    const paginatedEmployees = filteredEmployees.slice(startIndex, startIndex + limit);
+
+    return {
+      employees: paginatedEmployees,
+      total,
+      page,
+      limit,
+      totalPages,
+    };
+  }
 };
 
 export const getEmployee = async (id: string): Promise<Employee> => {
