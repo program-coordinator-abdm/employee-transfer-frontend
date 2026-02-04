@@ -72,7 +72,7 @@ const Categories: React.FC = () => {
             return (
               <Card
                 key={category.key}
-                className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-primary bg-card"
+                className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-primary hover:bg-primary/10 bg-card group"
                 onClick={() => handleCategorySelect(category.key)}
               >
                 <div className="p-5 flex items-start gap-4">
