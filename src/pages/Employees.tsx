@@ -8,7 +8,8 @@ import Pagination from "@/components/Pagination";
 import ExportButtons from "@/components/ExportButtons";
 import { getEmployees } from "@/lib/api";
 import { Employee, DEFAULT_PAGE_SIZE } from "@/lib/constants";
-import { Users } from "lucide-react";
+import { Users, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Employees: React.FC = () => {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -99,6 +100,14 @@ const Employees: React.FC = () => {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => navigate("/categories")}
+              className="shrink-0"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
               <Users className="w-6 h-6 text-primary-foreground" />
             </div>
