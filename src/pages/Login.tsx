@@ -53,7 +53,7 @@ const Login: React.FC = () => {
     setIsLoading(true);
     try {
       await login(formData);
-      navigate("/employees");
+      navigate("/categories");
     } catch (error) {
       setErrors({ form: "Login failed. Please check your credentials and try again." });
     } finally {
