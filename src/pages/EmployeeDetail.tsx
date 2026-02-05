@@ -54,6 +54,7 @@ const EmployeeDetail: React.FC = () => {
   const handleTransfer = async (transfer: {
     toCity: string;
     toPosition: string;
+    toHospitalName: string;
     effectiveFrom: Date;
   }) => {
     if (!id || !employee) return;
@@ -63,6 +64,7 @@ const EmployeeDetail: React.FC = () => {
       const updatedEmployee = await transferEmployee(id, {
         toCity: transfer.toCity,
         toPosition: transfer.toPosition,
+        toHospitalName: transfer.toHospitalName,
         effectiveFrom: transfer.effectiveFrom.toISOString(),
       });
       

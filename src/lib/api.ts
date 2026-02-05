@@ -59,6 +59,7 @@ interface EmployeesResponse {
 interface TransferRequest {
   toCity: string;
   toPosition: string;
+  toHospitalName?: string;
   effectiveFrom: string;
 }
 
@@ -183,7 +184,7 @@ export const getEmployees = async (params: {
       `/employees?${searchParams}`
     );
 
-    const employees: Employee[] = res.data.map((e) => ({
+    const employees: Employee[] = res.data.map((e): Employee => ({
       id: e.id,
       name: e.empName,
       kgid: e.empKgid,
@@ -192,6 +193,9 @@ export const getEmployees = async (params: {
       dob: e.dob,
       currentCity: e.currentCity,
       currentPosition: e.currentPosition,
+      currentHospitalName: "",
+      dateOfJoining: "",
+      workHistory: [],
       email: e.email,
       phone: e.phone,
     }));
@@ -244,6 +248,9 @@ export const getEmployee = async (id: string): Promise<Employee> => {
       dob: res.dob,
       currentCity: res.currentCity,
       currentPosition: res.currentPosition,
+      currentHospitalName: "",
+      dateOfJoining: "",
+      workHistory: [],
       email: res.email,
       phone: res.phone,
     };
@@ -279,6 +286,9 @@ export const transferEmployee = async (
       dob: res.dob,
       currentCity: res.currentCity,
       currentPosition: res.currentPosition,
+      currentHospitalName: "",
+      dateOfJoining: "",
+      workHistory: [],
       email: res.email,
       phone: res.phone,
     };
@@ -289,11 +299,58 @@ export const transferEmployee = async (
       throw new Error("Employee not found");
     }
     
+    // Calculate duration for the current position (ending now)
+    const currentEntryIndex = employee.workHistory.findIndex(
+      (entry) => entry.toDate === "Present"
+    );
+    
+    const updatedWorkHistory = [...employee.workHistory];
+    
+    if (currentEntryIndex !== -1) {
+      // Update the current entry's end date
+      const currentEntry = updatedWorkHistory[currentEntryIndex];
+      const fromDate = new Date(currentEntry.fromDate);
+      const toDate = new Date(transfer.effectiveFrom);
+      const durationYears = Math.max(1, Math.round((toDate.getTime() - fromDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000)));
+      
+      updatedWorkHistory[currentEntryIndex] = {
+        ...currentEntry,
+        toDate: transfer.effectiveFrom.split("T")[0],
+        durationYears,
+      };
+    }
+    
+    // Add new entry for the transfer
+    const newEntry = {
+      city: transfer.toCity,
+      hospitalName: transfer.toHospitalName || `${transfer.toCity} District Hospital`,
+      position: transfer.toPosition,
+      fromDate: transfer.effectiveFrom.split("T")[0],
+      toDate: "Present",
+      durationYears: 0, // Will accumulate over time
+    };
+    
+    updatedWorkHistory.push(newEntry);
+    
+    // Update the mock employee data in memory
+    const employeeIndex = MOCK_EMPLOYEES.findIndex((emp) => emp.id === id);
+    if (employeeIndex !== -1) {
+      MOCK_EMPLOYEES[employeeIndex] = {
+        ...employee,
+        currentCity: transfer.toCity,
+        currentPosition: transfer.toPosition,
+        currentHospitalName: newEntry.hospitalName,
+        workHistory: updatedWorkHistory,
+      };
+    }
+    
     // Return updated employee with new city/position
     return {
       ...employee,
       currentCity: transfer.toCity,
       currentPosition: transfer.toPosition,
+      currentHospitalName: newEntry.hospitalName,
+      workHistory: updatedWorkHistory,
     };
   }
 };

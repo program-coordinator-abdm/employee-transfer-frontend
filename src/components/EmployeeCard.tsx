@@ -1,7 +1,8 @@
-import React from "react";
-import { MapPin, Briefcase, Calendar, Hash, Clock, ArrowRightLeft } from "lucide-react";
+import React, { useMemo } from "react";
+import { MapPin, Briefcase, Calendar, Hash, Clock, ArrowRightLeft, Building2, CalendarCheck } from "lucide-react";
 import { Employee } from "@/lib/constants";
 import { format } from "date-fns";
+import WorkHistoryTimeline from "./WorkHistoryTimeline";
 
 interface EmployeeCardProps {
   employee: Employee;
@@ -9,6 +10,14 @@ interface EmployeeCardProps {
 }
 
 const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onTransfer }) => {
+  // Calculate total years from work history
+  const totalYearsOfExperience = useMemo(() => {
+    if (!employee.workHistory || employee.workHistory.length === 0) {
+      return employee.yearsOfWork;
+    }
+    return employee.workHistory.reduce((total, entry) => total + entry.durationYears, 0);
+  }, [employee.workHistory, employee.yearsOfWork]);
+
   return (
     <div className="bg-surface rounded-2xl shadow-elevated border border-border/50 overflow-hidden">
       {/* Header with gradient */}
@@ -57,8 +66,8 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onTransfer }) => 
                 <Clock className="w-5 h-5 text-secondary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Years of Work</p>
-                <p className="font-medium text-foreground">{employee.yearsOfWork} years</p>
+                <p className="text-sm text-muted-foreground">Total Years of Experience</p>
+                <p className="font-medium text-foreground">{totalYearsOfExperience} years</p>
               </div>
             </div>
 
@@ -70,6 +79,20 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onTransfer }) => 
                 <p className="text-sm text-muted-foreground">Date of Birth</p>
                 <p className="font-medium text-foreground">
                   {format(new Date(employee.dob), "dd MMMM yyyy")}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-xl">
+              <div className="w-10 h-10 rounded-lg bg-success/20 flex items-center justify-center">
+                <CalendarCheck className="w-5 h-5 text-success" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">Date of Joining</p>
+                <p className="font-medium text-foreground">
+                  {employee.dateOfJoining
+                    ? format(new Date(employee.dateOfJoining), "dd MMMM yyyy")
+                    : "Not available"}
                 </p>
               </div>
             </div>
@@ -93,6 +116,18 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onTransfer }) => 
                 </div>
               </div>
 
+              <div className="flex items-start gap-3 py-4 border-t border-border/50">
+                <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
+                  <Building2 className="w-5 h-5 text-accent-foreground" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Current Hospital</p>
+                  <p className="text-xl font-semibold text-accent-foreground">
+                    {employee.currentHospitalName || "Not assigned"}
+                  </p>
+                </div>
+              </div>
+
               <div className="flex items-start gap-3 pt-4 border-t border-border/50">
                 <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
                   <Briefcase className="w-5 h-5 text-secondary-foreground" />
@@ -105,6 +140,13 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onTransfer }) => 
             </div>
           </div>
         </div>
+
+        {/* Work History Section */}
+        {employee.workHistory && employee.workHistory.length > 0 && (
+          <div className="mt-8 pt-6 border-t border-border">
+            <WorkHistoryTimeline history={employee.workHistory} />
+          </div>
+        )}
       </div>
     </div>
   );
