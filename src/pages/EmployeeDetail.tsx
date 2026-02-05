@@ -68,17 +68,12 @@ const EmployeeDetail: React.FC = () => {
         effectiveFrom: transfer.effectiveFrom.toISOString(),
       });
       
-      // Update local state
+      // Update local state with new employee data (includes updated work history & experience)
       setEmployee(updatedEmployee);
       setIsTransferOpen(false);
       
-      // Show success toast
-      showToast(`${employee.name} has been successfully transferred to ${transfer.toCity}`, "success");
-      
-      // Navigate back to employee list after a short delay
-      setTimeout(() => {
-        navigate("/employees");
-      }, 2000);
+      // Show success toast - stay on page to show updated data
+      showToast(`${employee.name} has been successfully transferred to ${transfer.toCity}. Work history and experience updated.`, "success");
     } catch (err) {
       console.error("Transfer failed:", err);
       showToast("Failed to process transfer. Please try again.", "error");
