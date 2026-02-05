@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { X, MapPin, Briefcase, Calendar, ChevronDown, Search, Check } from "lucide-react";
+import { X, MapPin, Briefcase, Calendar, ChevronDown, Search, Check, Building2 } from "lucide-react";
 import { Employee, KARNATAKA_CITIES } from "@/lib/constants";
 import { format } from "date-fns";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
@@ -13,7 +13,7 @@ interface TransferDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   employee: Employee;
-  onSave: (transfer: { toCity: string; toPosition: string; effectiveFrom: Date }) => void;
+  onSave: (transfer: { toCity: string; toPosition: string; toHospitalName: string; effectiveFrom: Date }) => void;
   isLoading: boolean;
 }
 
@@ -26,6 +26,7 @@ const TransferDrawer: React.FC<TransferDrawerProps> = ({
 }) => {
   const [toCity, setToCity] = useState(employee.currentCity);
   const [toPosition, setToPosition] = useState(employee.currentPosition);
+  const [toHospitalName, setToHospitalName] = useState(employee.currentHospitalName || "");
   const [effectiveFrom, setEffectiveFrom] = useState<Date>(new Date());
   const [citySearch, setCitySearch] = useState("");
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
@@ -34,14 +35,15 @@ const TransferDrawer: React.FC<TransferDrawerProps> = ({
   useEffect(() => {
     setToCity(employee.currentCity);
     setToPosition(employee.currentPosition);
+    setToHospitalName(employee.currentHospitalName || "");
     setEffectiveFrom(new Date());
     setCitySearch("");
   }, [employee]);
 
   // Check if there are any changes
   const hasChanges = useMemo(() => {
-    return toCity !== employee.currentCity || toPosition !== employee.currentPosition;
-  }, [toCity, toPosition, employee.currentCity, employee.currentPosition]);
+    return toCity !== employee.currentCity || toPosition !== employee.currentPosition || toHospitalName !== (employee.currentHospitalName || "");
+  }, [toCity, toPosition, toHospitalName, employee.currentCity, employee.currentPosition, employee.currentHospitalName]);
 
   // Filter cities
   const filteredCities = useMemo(() => {
@@ -53,12 +55,13 @@ const TransferDrawer: React.FC<TransferDrawerProps> = ({
 
   const handleSave = () => {
     if (!hasChanges) return;
-    onSave({ toCity, toPosition, effectiveFrom });
+    onSave({ toCity, toPosition, toHospitalName, effectiveFrom });
   };
 
   const handleCancel = () => {
     setToCity(employee.currentCity);
     setToPosition(employee.currentPosition);
+    setToHospitalName(employee.currentHospitalName || "");
     setEffectiveFrom(new Date());
     onClose();
   };
@@ -183,6 +186,23 @@ const TransferDrawer: React.FC<TransferDrawerProps> = ({
             <p className="input-helper">Select the destination city in Karnataka</p>
           </div>
 
+          {/* To Hospital */}
+          <div>
+            <label htmlFor="toHospitalName" className="input-label flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-accent-foreground" />
+              Transfer To (Hospital/Facility)
+            </label>
+            <input
+              id="toHospitalName"
+              type="text"
+              value={toHospitalName}
+              onChange={(e) => setToHospitalName(e.target.value)}
+              className="input-field"
+              placeholder="Enter hospital or facility name..."
+            />
+            <p className="input-helper">Enter the hospital or facility name at the destination</p>
+          </div>
+
           {/* To Position */}
           <div>
             <label htmlFor="toPosition" className="input-label flex items-center gap-2">
@@ -246,7 +266,7 @@ const TransferDrawer: React.FC<TransferDrawerProps> = ({
               <button
                 type="button"
                 onClick={handleSave}
-                disabled={isLoading || !toCity || !toPosition}
+                disabled={isLoading || !toCity || !toPosition || !toHospitalName}
                 className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isLoading ? (
