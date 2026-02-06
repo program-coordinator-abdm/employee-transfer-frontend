@@ -43,6 +43,19 @@ export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localho
 export const DEFAULT_PAGE_SIZE = 20;
 export const PAGE_SIZE_OPTIONS = [15, 20, 25, 50] as const;
 
+// Category to role mapping for filtering employees
+export const CATEGORY_ROLE_MAP: Record<string, string[]> = {
+  "doctors": ["Medical Officer", "Senior Medical Officer", "Specialist Doctor", "Surgeon"],
+  "nurses": ["Staff Nurse", "Senior Nurse", "Nursing Supervisor", "Head Nurse"],
+  "pharmacists": ["Pharmacist", "Senior Pharmacist", "Chief Pharmacist"],
+  "lab-technicians": ["Lab Technician", "Senior Lab Technician", "Pathologist"],
+  "radiology": ["Radiographer", "Senior Radiographer", "Radiologist"],
+  "support-staff": ["Ward Boy", "Cleaner", "Helper", "Attender", "Data Entry Operator"],
+  "it-helpdesk": ["IT Support", "System Administrator", "Programmer", "Senior Programmer"],
+  "emt": ["EMT", "Paramedic", "Ambulance Driver"],
+  "administration": ["Senior Clerk", "Chief Clerk", "Administrative Officer", "Section Officer", "Office Superintendent", "Accounts Officer", "Finance Officer", "Assistant Director", "District Officer", "Inspector", "Revenue Inspector", "Welfare Officer", "Training Officer", "Legal Assistant", "Survey Officer", "Research Officer", "Librarian", "Health Officer"],
+};
+
 // Work history entry
 export interface WorkHistoryEntry {
   city: string;
