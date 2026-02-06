@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
-import { MOCK_EMPLOYEES, CATEGORY_ROLE_MAP } from "@/lib/constants";
+import { getEmployees } from "@/lib/api";
 import { 
   Stethoscope, 
   Heart, 
@@ -36,23 +36,42 @@ const CATEGORY_CONFIGS: CategoryConfig[] = [
   { key: "administration", label: "Administration", icon: Building2, description: "Administrative & Clerical Staff" },
 ];
 
-// Helper function to count employees by category
-const getCategoryCount = (categoryKey: string): number => {
-  const roles = CATEGORY_ROLE_MAP[categoryKey] || [];
-  return MOCK_EMPLOYEES.filter(emp => roles.includes(emp.role)).length;
-};
-
 const Categories: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
+  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
+  const [countsLoading, setCountsLoading] = useState(true);
 
-  // Calculate counts dynamically from mock data
-  const categoriesWithCounts = useMemo(() => {
-    return CATEGORY_CONFIGS.map(config => ({
-      ...config,
-      count: getCategoryCount(config.key),
-    }));
-  }, []);
+  // Fetch counts from API for each category
+  useEffect(() => {
+    const fetchCounts = async () => {
+      if (!isAuthenticated) return;
+      
+      setCountsLoading(true);
+      const counts: Record<string, number> = {};
+      
+      try {
+        // Fetch counts for all categories in parallel
+        const promises = CATEGORY_CONFIGS.map(async (config) => {
+          try {
+            const response = await getEmployees({ category: config.key, limit: 1 });
+            counts[config.key] = response.total;
+          } catch {
+            counts[config.key] = 0;
+          }
+        });
+        
+        await Promise.all(promises);
+        setCategoryCounts(counts);
+      } catch (error) {
+        console.error("Failed to fetch category counts:", error);
+      } finally {
+        setCountsLoading(false);
+      }
+    };
+
+    fetchCounts();
+  }, [isAuthenticated]);
 
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -90,8 +109,9 @@ const Categories: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {categoriesWithCounts.map((category) => {
+          {CATEGORY_CONFIGS.map((category) => {
             const Icon = category.icon;
+            const count = categoryCounts[category.key] ?? 0;
             return (
               <Card
                 key={category.key}
@@ -106,8 +126,14 @@ const Categories: React.FC = () => {
                     <h3 className="text-base font-semibold text-foreground mb-0.5">{category.label}</h3>
                     <p className="text-sm text-muted-foreground mb-2">{category.description}</p>
                     <p className="text-sm">
-                      <span className="font-semibold text-primary">{category.count}</span>
-                      <span className="text-primary ml-1">{category.count === 1 ? "employee" : "employees"}</span>
+                      {countsLoading ? (
+                        <span className="text-muted-foreground">Loading...</span>
+                      ) : (
+                        <>
+                          <span className="font-semibold text-primary">{count}</span>
+                          <span className="text-primary ml-1">{count === 1 ? "employee" : "employees"}</span>
+                        </>
+                      )}
                     </p>
                   </div>
                 </div>
