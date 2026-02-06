@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import SearchBar from "@/components/SearchBar";
@@ -7,13 +7,28 @@ import EmployeeTable from "@/components/EmployeeTable";
 import Pagination from "@/components/Pagination";
 import ExportButtons from "@/components/ExportButtons";
 import { getEmployees } from "@/lib/api";
-import { Employee, DEFAULT_PAGE_SIZE } from "@/lib/constants";
+import { Employee, DEFAULT_PAGE_SIZE, CATEGORY_ROLE_MAP } from "@/lib/constants";
 import { Users, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+// Category display names
+const CATEGORY_LABELS: Record<string, string> = {
+  "doctors": "Doctors",
+  "nurses": "Nurses",
+  "pharmacists": "Pharmacists",
+  "lab-technicians": "Lab Technicians",
+  "radiology": "Radiology",
+  "support-staff": "Support Staff",
+  "it-helpdesk": "IT Help Desk",
+  "emt": "EMT",
+  "administration": "Administration",
+};
 
 const Employees: React.FC = () => {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const categoryKey = searchParams.get("category");
 
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +39,9 @@ const Employees: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchMode, setSearchMode] = useState<"name" | "kgid">("name");
 
+  // Get category label for display
+  const categoryLabel = categoryKey ? CATEGORY_LABELS[categoryKey] || categoryKey : null;
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -31,7 +49,7 @@ const Employees: React.FC = () => {
     }
   }, [authLoading, isAuthenticated, navigate]);
 
-  // Fetch employees
+  // Fetch employees with category filtering
   const fetchEmployees = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -40,6 +58,7 @@ const Employees: React.FC = () => {
         query: searchQuery,
         page: currentPage,
         limit: pageSize,
+        category: categoryKey || undefined,
       });
       setEmployees(response.employees);
       setTotalItems(response.total);
@@ -49,7 +68,7 @@ const Employees: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [searchMode, searchQuery, currentPage, pageSize]);
+  }, [searchMode, searchQuery, currentPage, pageSize, categoryKey]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -112,7 +131,9 @@ const Employees: React.FC = () => {
               <Users className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Employee Directory</h1>
+              <h1 className="text-2xl font-bold text-foreground">
+                {categoryLabel ? `${categoryLabel} Directory` : "Employee Directory"}
+              </h1>
               <p className="text-muted-foreground">
                 {totalItems > 0 ? `${totalItems} employees found` : "Manage employee transfers"}
               </p>
