@@ -34,7 +34,7 @@ interface BackendEmployeesResponse {
 }
 
 
-import { API_BASE_URL, MOCK_EMPLOYEES, Employee } from "./constants";
+import { API_BASE_URL, MOCK_EMPLOYEES, Employee, CATEGORY_ROLE_MAP } from "./constants";
 
 // API Response types
 interface LoginResponse {
@@ -169,8 +169,9 @@ export const getEmployees = async (params: {
   query?: string;
   page?: number;
   limit?: number;
+  category?: string;
 }): Promise<EmployeesResponse> => {
-  const { searchMode = "name", query = "", page = 1, limit = 20 } = params;
+  const { searchMode = "name", query = "", page = 1, limit = 20, category } = params;
 
   try {
     const searchParams = new URLSearchParams({
@@ -178,6 +179,7 @@ export const getEmployees = async (params: {
       query,
       page: page.toString(),
       limit: limit.toString(),
+      ...(category && { category }),
     });
 
     const res = await apiClient<BackendEmployeesResponse>(
@@ -211,6 +213,15 @@ export const getEmployees = async (params: {
     // Fallback to mock data when API is unavailable
     let filteredEmployees = [...MOCK_EMPLOYEES];
     
+    // Filter by category first (based on role mapping)
+    if (category) {
+      const categoryRoles = CATEGORY_ROLE_MAP[category] || [];
+      filteredEmployees = filteredEmployees.filter((emp) =>
+        categoryRoles.includes(emp.role)
+      );
+    }
+    
+    // Then apply search filter
     if (query) {
       const lowerQuery = query.toLowerCase();
       filteredEmployees = filteredEmployees.filter((emp) =>
