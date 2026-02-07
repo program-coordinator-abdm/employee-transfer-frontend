@@ -83,7 +83,7 @@ const Employees: React.FC = () => {
   };
 
   const handleEmployeeSelect = (employee: Employee) => {
-    navigate(`/employees/${employee.id}`);
+    navigate(`/employees/${employee.id}${categoryKey ? `?category=${categoryKey}` : ''}`);
   };
 
   const handlePageChange = (page: number) => {
@@ -142,7 +142,7 @@ const Employees: React.FC = () => {
         </div>
 
         {/* Search Bar */}
-        <SearchBar onSearch={handleSearch} onEmployeeSelect={handleEmployeeSelect} />
+        <SearchBar onSearch={handleSearch} onEmployeeSelect={handleEmployeeSelect} category={categoryKey || undefined} />
 
         {/* Employee Table */}
         <EmployeeTable employees={employees} isLoading={isLoading} />

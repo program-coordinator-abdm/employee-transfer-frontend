@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Eye, MapPin, Briefcase, Calendar, Hash } from "lucide-react";
 import { Employee } from "@/lib/constants";
 import { format } from "date-fns";
@@ -11,6 +11,8 @@ interface EmployeeTableProps {
 
 const EmployeeTable: React.FC<EmployeeTableProps> = ({ employees, isLoading }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const categoryKey = searchParams.get("category");
 
   if (isLoading) {
     return (
@@ -81,7 +83,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({ employees, isLoading }) =
                 <td className="table-cell">{employee.currentPosition}</td>
                 <td className="table-cell text-center">
                   <button
-                    onClick={() => navigate(`/employees/${employee.id}`)}
+                    onClick={() => navigate(`/employees/${employee.id}${categoryKey ? `?category=${categoryKey}` : ''}`)}
                     className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary hover:text-primary-foreground transition-all duration-200 focus:ring-2 focus:ring-primary/50"
                   >
                     <Eye className="w-4 h-4" />
@@ -104,7 +106,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({ employees, isLoading }) =
                 <span className="badge-primary text-xs">{employee.kgid}</span>
               </div>
               <button
-                onClick={() => navigate(`/employees/${employee.id}`)}
+                onClick={() => navigate(`/employees/${employee.id}${categoryKey ? `?category=${categoryKey}` : ''}`)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary hover:text-primary-foreground transition-all duration-200"
               >
                 <Eye className="w-3.5 h-3.5" />

@@ -10,13 +10,16 @@ interface EmployeeCardProps {
 }
 
 const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onTransfer }) => {
-  // Calculate total years from work history
+  // Use totalExperienceYears from backend if available, otherwise calculate from work history
   const totalYearsOfExperience = useMemo(() => {
-    if (!employee.workHistory || employee.workHistory.length === 0) {
-      return employee.yearsOfWork;
+    if (employee.totalExperienceYears != null) {
+      return employee.totalExperienceYears;
     }
-    return employee.workHistory.reduce((total, entry) => total + entry.durationYears, 0);
-  }, [employee.workHistory, employee.yearsOfWork]);
+    if (employee.workHistory && employee.workHistory.length > 0) {
+      return employee.workHistory.reduce((total, entry) => total + entry.durationYears, 0);
+    }
+    return employee.yearsOfWork;
+  }, [employee.totalExperienceYears, employee.workHistory, employee.yearsOfWork]);
 
   return (
     <div className="bg-surface rounded-2xl shadow-elevated border border-border/50 overflow-hidden">
