@@ -106,7 +106,7 @@ const EmployeeDetail: React.FC = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
 
-      <main className="flex-1 container mx-auto px-4 py-6 space-y-6">
+      <main className="flex-1 container mx-auto px-4 py-6 space-y-6 overflow-y-auto">
         {/* Back Button */}
         <button
           onClick={() => navigate(category ? `/employees?category=${category}` : "/employees")}
