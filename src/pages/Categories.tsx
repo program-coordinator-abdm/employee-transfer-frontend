@@ -14,6 +14,8 @@ import {
   HelpCircle, 
   Ambulance, 
   Building2,
+  BarChart3,
+  TrendingUp,
   LucideIcon
 } from "lucide-react";
 
@@ -140,6 +142,42 @@ const Categories: React.FC = () => {
               </Card>
             );
           })}
+        </div>
+
+        {/* Reports & Promotions Section */}
+        <div className="mt-10 mb-2">
+          <h2 className="text-xl font-bold text-foreground mb-1">Reports & Analytics</h2>
+          <p className="text-muted-foreground text-sm">Generate reports and track promotions</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card
+            className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-primary hover:bg-primary/10 bg-card group"
+            onClick={() => navigate("/reports")}
+          >
+            <div className="p-5 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <BarChart3 className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-semibold text-foreground mb-0.5">Transfer Reports</h3>
+                <p className="text-sm text-muted-foreground">View transfer analytics, charts, and export downloadable reports</p>
+              </div>
+            </div>
+          </Card>
+          <Card
+            className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-success hover:bg-success/10 bg-card group"
+            onClick={() => navigate("/promotions")}
+          >
+            <div className="p-5 flex items-start gap-4">
+              <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-6 h-6 text-success" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-semibold text-foreground mb-0.5">Promotions</h3>
+                <p className="text-sm text-muted-foreground">Track position changes, career progressions, and promotion history</p>
+              </div>
+            </div>
+          </Card>
         </div>
       </main>
 
