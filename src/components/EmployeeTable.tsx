@@ -69,7 +69,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({ employees, isLoading }) =
                 </td>
                 <td className="table-cell">{employee.role}</td>
                 <td className="table-cell text-center">
-                  <span className="badge-secondary">{employee.yearsOfWork} yrs</span>
+                  <span className="badge-secondary">{employee.totalExperienceYears ?? employee.yearsOfWork} yrs</span>
                 </td>
                 <td className="table-cell text-muted-foreground">
                   {format(new Date(employee.dob), "dd MMM yyyy")}
@@ -121,7 +121,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({ employees, isLoading }) =
               </div>
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <Hash className="w-3.5 h-3.5" />
-                {employee.yearsOfWork} years
+                {employee.totalExperienceYears ?? employee.yearsOfWork} years
               </div>
               <div className="flex items-center gap-1.5 text-muted-foreground">
                 <Calendar className="w-3.5 h-3.5" />
