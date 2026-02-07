@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import EmployeeCard from "@/components/EmployeeCard";
@@ -12,6 +12,8 @@ import { ArrowLeft, UserX } from "lucide-react";
 const EmployeeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get("category") || undefined;
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { toast, showToast, hideToast } = useToastState();
 
@@ -28,14 +30,14 @@ const EmployeeDetail: React.FC = () => {
     }
   }, [authLoading, isAuthenticated, navigate]);
 
-  // Fetch employee details
+  // Fetch employee details (with category if available)
   const fetchEmployee = useCallback(async () => {
     if (!id) return;
 
     setIsLoading(true);
     setError(null);
     try {
-      const data = await getEmployee(id);
+      const data = await getEmployee(id, category);
       setEmployee(data);
     } catch (err) {
       console.error("Failed to fetch employee:", err);
@@ -43,7 +45,7 @@ const EmployeeDetail: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [id]);
+  }, [id, category]);
 
   useEffect(() => {
     if (isAuthenticated && id) {
@@ -61,18 +63,21 @@ const EmployeeDetail: React.FC = () => {
 
     setIsTransferLoading(true);
     try {
-      const updatedEmployee = await transferEmployee(id, {
-        toCity: transfer.toCity,
-        toPosition: transfer.toPosition,
-        toHospitalName: transfer.toHospitalName,
-        effectiveFrom: transfer.effectiveFrom.toISOString(),
-      });
+      const updatedEmployee = await transferEmployee(
+        id,
+        {
+          toCity: transfer.toCity,
+          toPosition: transfer.toPosition,
+          toHospitalName: transfer.toHospitalName,
+          effectiveFrom: transfer.effectiveFrom.toISOString(),
+        },
+        category
+      );
       
-      // Update local state with new employee data (includes updated work history & experience)
+      // Update local state with new employee data
       setEmployee(updatedEmployee);
       setIsTransferOpen(false);
       
-      // Show success toast - stay on page to show updated data
       showToast(`${employee.name} has been successfully transferred to ${transfer.toCity}. Work history and experience updated.`, "success");
     } catch (err) {
       console.error("Transfer failed:", err);
@@ -94,7 +99,7 @@ const EmployeeDetail: React.FC = () => {
   }
 
   if (!isAuthenticated) {
-    return null; // Will redirect
+    return null;
   }
 
   return (
@@ -104,7 +109,7 @@ const EmployeeDetail: React.FC = () => {
       <main className="flex-1 container mx-auto px-4 py-6 space-y-6">
         {/* Back Button */}
         <button
-          onClick={() => navigate("/employees")}
+          onClick={() => navigate(category ? `/employees?category=${category}` : "/employees")}
           className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />

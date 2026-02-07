@@ -12,15 +12,29 @@ interface BackendLoginResponse {
   user: BackendUser;
 }
 
+interface BackendAssignmentEntry {
+  role?: string;
+  city: string;
+  hospital: string;
+  position: string;
+  startedOn: string;
+  endedOn?: string | null;
+}
+
 interface BackendEmployee {
   id: string;
   empName: string;
   empKgid: string;
   role: string;
   yearsOfWork: number;
+  totalExperienceYears?: number;
   dob: string;
+  dateOfJoining?: string;
   currentCity: string;
   currentPosition: string;
+  currentHospital?: string;
+  assignmentHistory?: BackendAssignmentEntry[];
+  category?: string;
   email?: string;
   phone?: string;
 }
@@ -33,8 +47,11 @@ interface BackendEmployeesResponse {
   totalPages: number;
 }
 
+interface BackendTransferResponse {
+  employee: BackendEmployee;
+}
 
-import { API_BASE_URL, Employee } from "./constants";
+import { API_BASE_URL, Employee, WorkHistoryEntry } from "./constants";
 
 // API Response types
 interface LoginResponse {
@@ -113,11 +130,50 @@ const apiClient = async <T>(
 
     return response.json();
   } catch (error) {
-    // If API is not running, we'll fall back to mock data
     console.warn("API not available, using mock data:", error);
     throw error;
   }
 };
+
+// Helper: calculate duration in years between two dates
+function calcDurationYears(from: string, to?: string | null): number {
+  const start = new Date(from);
+  const end = to ? new Date(to) : new Date();
+  const diffMs = end.getTime() - start.getTime();
+  return Math.max(0, Math.round(diffMs / (1000 * 60 * 60 * 24 * 365.25)));
+}
+
+// Helper: map backend employee to frontend Employee
+function mapBackendEmployee(e: BackendEmployee): Employee {
+  const workHistory: WorkHistoryEntry[] = (e.assignmentHistory || []).map(
+    (a) => ({
+      role: a.role || e.role,
+      city: a.city,
+      hospitalName: a.hospital,
+      position: a.position,
+      fromDate: a.startedOn,
+      toDate: a.endedOn || "Present",
+      durationYears: calcDurationYears(a.startedOn, a.endedOn),
+    })
+  );
+
+  return {
+    id: e.id,
+    name: e.empName,
+    kgid: e.empKgid,
+    role: e.role,
+    yearsOfWork: e.yearsOfWork,
+    totalExperienceYears: e.totalExperienceYears,
+    dob: e.dob,
+    dateOfJoining: e.dateOfJoining || "",
+    currentCity: e.currentCity,
+    currentPosition: e.currentPosition,
+    currentHospitalName: e.currentHospital || "",
+    workHistory,
+    email: e.email,
+    phone: e.phone,
+  };
+}
 
 // Auth API
 export const login = async (credentials: {
@@ -185,21 +241,7 @@ export const getEmployees = async (params: {
     `/employees?${searchParams}`
   );
 
-  const employees: Employee[] = res.data.map((e): Employee => ({
-    id: e.id,
-    name: e.empName,
-    kgid: e.empKgid,
-    role: e.role,
-    yearsOfWork: e.yearsOfWork,
-    dob: e.dob,
-    currentCity: e.currentCity,
-    currentPosition: e.currentPosition,
-    currentHospitalName: "",
-    dateOfJoining: "",
-    workHistory: [],
-    email: e.email,
-    phone: e.phone,
-  }));
+  const employees: Employee[] = res.data.map(mapBackendEmployee);
 
   return {
     employees,
@@ -210,56 +252,32 @@ export const getEmployees = async (params: {
   };
 };
 
-export const getEmployee = async (id: string): Promise<Employee> => {
-  const res = await apiClient<BackendEmployee>(`/employees/${id}`);
-
-  return {
-    id: res.id,
-    name: res.empName,
-    kgid: res.empKgid,
-    role: res.role,
-    yearsOfWork: res.yearsOfWork,
-    dob: res.dob,
-    currentCity: res.currentCity,
-    currentPosition: res.currentPosition,
-    currentHospitalName: "",
-    dateOfJoining: "",
-    workHistory: [],
-    email: res.email,
-    phone: res.phone,
-  };
+// Get single employee (with optional category query param)
+export const getEmployee = async (id: string, category?: string): Promise<Employee> => {
+  const query = category ? `?category=${encodeURIComponent(category)}` : "";
+  const res = await apiClient<BackendEmployee>(`/employees/${id}${query}`);
+  return mapBackendEmployee(res);
 };
 
+// Transfer employee (with optional category query param)
 export const transferEmployee = async (
   id: string,
-  transfer: TransferRequest
+  transfer: TransferRequest,
+  category?: string
 ): Promise<Employee> => {
-  const res = await apiClient<BackendEmployee>(
-    `/employees/${id}/transfers`,
+  const query = category ? `?category=${encodeURIComponent(category)}` : "";
+  const res = await apiClient<BackendTransferResponse>(
+    `/employees/${id}/transfers${query}`,
     {
       method: "POST",
       body: JSON.stringify(transfer),
     }
   );
 
-  return {
-    id: res.id,
-    name: res.empName,
-    kgid: res.empKgid,
-    role: res.role,
-    yearsOfWork: res.yearsOfWork,
-    dob: res.dob,
-    currentCity: res.currentCity,
-    currentPosition: res.currentPosition,
-    currentHospitalName: "",
-    dateOfJoining: "",
-    workHistory: [],
-    email: res.email,
-    phone: res.phone,
-  };
+  return mapBackendEmployee(res.employee);
 };
 
-// Export functions (just return URLs for now)
+// Export functions
 const downloadFile = async (endpoint: string, filename: string): Promise<void> => {
   const token = getToken();
   if (!token) throw new Error("Not authenticated");
@@ -293,15 +311,16 @@ export const downloadEmployeesPDF = async (): Promise<void> => {
   return downloadFile("/exports/employees.pdf", "employees.pdf");
 };
 
-// Search suggestions
+// Search suggestions (with optional category)
 export const getSearchSuggestions = async (
   searchMode: "name" | "kgid",
-  query: string
+  query: string,
+  category?: string
 ): Promise<Employee[]> => {
   if (!query || query.length < 2) return [];
   
   try {
-    const response = await getEmployees({ searchMode, query, limit: 10 });
+    const response = await getEmployees({ searchMode, query, limit: 10, category });
     return response.employees;
   } catch {
     return [];

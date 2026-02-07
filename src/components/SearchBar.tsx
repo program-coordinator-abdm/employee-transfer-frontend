@@ -6,9 +6,10 @@ import { Employee } from "@/lib/constants";
 interface SearchBarProps {
   onSearch: (query: string, mode: "name" | "kgid") => void;
   onEmployeeSelect?: (employee: Employee) => void;
+  category?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onEmployeeSelect }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onEmployeeSelect, category }) => {
   const [searchMode, setSearchMode] = useState<"name" | "kgid">("name");
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Employee[]>([]);
@@ -27,7 +28,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onEmployeeSelect }) => 
 
       setIsLoading(true);
       try {
-        const results = await getSearchSuggestions(searchMode, query);
+        const results = await getSearchSuggestions(searchMode, query, category);
         setSuggestions(results);
         setShowSuggestions(true);
       } catch (error) {
@@ -39,7 +40,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, onEmployeeSelect }) => 
 
     const debounceTimer = setTimeout(fetchSuggestions, 300);
     return () => clearTimeout(debounceTimer);
-  }, [query, searchMode]);
+  }, [query, searchMode, category]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

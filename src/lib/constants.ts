@@ -64,8 +64,9 @@ export const CATEGORY_ROLE_MAP: Record<string, string[]> = {
   ],
 };
 
-// Work history entry
+// Work history entry (mapped from backend assignmentHistory)
 export interface WorkHistoryEntry {
+  role?: string;
   city: string;
   hospitalName: string;
   position: string;
@@ -74,13 +75,14 @@ export interface WorkHistoryEntry {
   durationYears: number;
 }
 
-// Mock employee data for fallback
+// Employee interface
 export interface Employee {
   id: string;
   name: string;
   kgid: string;
   role: string;
   yearsOfWork: number;
+  totalExperienceYears?: number;
   dob: string;
   dateOfJoining: string;
   currentCity: string;
