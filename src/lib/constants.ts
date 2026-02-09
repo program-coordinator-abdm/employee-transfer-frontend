@@ -73,6 +73,99 @@ export interface WorkHistoryEntry {
   fromDate: string;
   toDate: string;
   durationYears: number;
+  district?: string;
+  period?: string;
+  type?: "current" | "additional" | "past" | "rural" | "contract" | "admin";
+}
+
+// Education details
+export interface EducationEntry {
+  type: string; // "MBBS", "Post Graduation", etc.
+  degree?: string;
+  institution?: string;
+  university?: string;
+  year?: string;
+  specialization?: string;
+}
+
+// Timebound promotion entry
+export interface TimeboundPromotion {
+  label: string; // "6 Year Promotion", "13 Year Promotion", etc.
+  status: string;
+  order?: string;
+  date?: string;
+}
+
+// Appointment details
+export interface AppointmentDetails {
+  slNoInOrder?: string;
+  orderNoAndDate?: string;
+  dateOfInitialAppointment?: string;
+}
+
+// Service information
+export interface ServiceInformation {
+  deputedByGovernment?: string;
+  specialistService?: string;
+  trainingInHospitalAdmin?: string;
+  spouseInGovtService?: string;
+  spouseServiceDetails?: string;
+}
+
+// Disciplinary record
+export interface DisciplinaryRecord {
+  departmentalEnquiries?: string;
+  suspensionPeriods?: string;
+  punishmentsReceived?: string;
+  criminalProceedings?: string;
+  pendingLegalMatters?: string;
+}
+
+// Declaration
+export interface Declaration {
+  declarationDate?: string;
+  declarationPlace?: string;
+  agreedToDeclaration?: string;
+  remarks?: string;
+}
+
+// Supporting document
+export interface SupportingDocument {
+  name: string;
+  sizeKB?: number;
+  uploadedAt?: string;
+  downloadUrl?: string;
+}
+
+// Achievement entry
+export interface Achievement {
+  type: "significant" | "special";
+  description: string;
+}
+
+// Postgraduate Qualification
+export interface PostgraduateQualification {
+  degree?: string;
+  institution?: string;
+  university?: string;
+  year?: string;
+  specialization?: string;
+}
+
+// Administrative Role
+export interface AdministrativeRole {
+  role: string;
+  fromDate?: string;
+  toDate?: string;
+  details?: string;
+}
+
+// Additional Charge
+export interface AdditionalCharge {
+  designation: string;
+  place?: string;
+  fromDate?: string;
+  toDate?: string;
 }
 
 // Employee interface
@@ -88,9 +181,25 @@ export interface Employee {
   currentCity: string;
   currentPosition: string;
   currentHospitalName: string;
+  currentDesignation?: string;
   workHistory: WorkHistoryEntry[];
   email?: string;
   phone?: string;
+  postAppliedFor?: string;
+  submittedOn?: string;
+  objections?: string;
+  education?: EducationEntry[];
+  serviceInformation?: ServiceInformation;
+  appointmentDetails?: AppointmentDetails;
+  probationDetails?: string;
+  timeboundPromotions?: TimeboundPromotion[];
+  postgraduateQualifications?: PostgraduateQualification[];
+  administrativeRoles?: AdministrativeRole[];
+  additionalCharges?: AdditionalCharge[];
+  achievements?: Achievement[];
+  disciplinaryRecord?: DisciplinaryRecord;
+  declaration?: Declaration;
+  documents?: SupportingDocument[];
 }
 
 export const MOCK_EMPLOYEES: Employee[] = [

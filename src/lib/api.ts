@@ -19,6 +19,88 @@ interface BackendAssignmentEntry {
   position: string;
   startedOn: string;
   endedOn?: string | null;
+  district?: string;
+  period?: string;
+  type?: "current" | "additional" | "past" | "rural" | "contract" | "admin";
+}
+
+interface BackendEducation {
+  type: string;
+  degree?: string;
+  institution?: string;
+  university?: string;
+  year?: string;
+  specialization?: string;
+}
+
+interface BackendTimeboundPromotion {
+  label: string;
+  status: string;
+  order?: string;
+  date?: string;
+}
+
+interface BackendServiceInformation {
+  deputedByGovernment?: string;
+  specialistService?: string;
+  trainingInHospitalAdmin?: string;
+  spouseInGovtService?: string;
+  spouseServiceDetails?: string;
+}
+
+interface BackendAppointmentDetails {
+  slNoInOrder?: string;
+  orderNoAndDate?: string;
+  dateOfInitialAppointment?: string;
+}
+
+interface BackendDisciplinaryRecord {
+  departmentalEnquiries?: string;
+  suspensionPeriods?: string;
+  punishmentsReceived?: string;
+  criminalProceedings?: string;
+  pendingLegalMatters?: string;
+}
+
+interface BackendDeclaration {
+  declarationDate?: string;
+  declarationPlace?: string;
+  agreedToDeclaration?: string;
+  remarks?: string;
+}
+
+interface BackendDocument {
+  name: string;
+  sizeKB?: number;
+  uploadedAt?: string;
+  downloadUrl?: string;
+}
+
+interface BackendAchievement {
+  type: "significant" | "special";
+  description: string;
+}
+
+interface BackendPostgraduateQualification {
+  degree?: string;
+  institution?: string;
+  university?: string;
+  year?: string;
+  specialization?: string;
+}
+
+interface BackendAdministrativeRole {
+  role: string;
+  fromDate?: string;
+  toDate?: string;
+  details?: string;
+}
+
+interface BackendAdditionalCharge {
+  designation: string;
+  place?: string;
+  fromDate?: string;
+  toDate?: string;
 }
 
 interface BackendEmployee {
@@ -33,10 +115,26 @@ interface BackendEmployee {
   currentCity: string;
   currentPosition: string;
   currentHospital?: string;
+  currentDesignation?: string;
   assignmentHistory?: BackendAssignmentEntry[];
   category?: string;
   email?: string;
   phone?: string;
+  postAppliedFor?: string;
+  submittedOn?: string;
+  objections?: string;
+  education?: BackendEducation[];
+  serviceInformation?: BackendServiceInformation;
+  appointmentDetails?: BackendAppointmentDetails;
+  probationDetails?: string;
+  timeboundPromotions?: BackendTimeboundPromotion[];
+  postgraduateQualifications?: BackendPostgraduateQualification[];
+  administrativeRoles?: BackendAdministrativeRole[];
+  additionalCharges?: BackendAdditionalCharge[];
+  achievements?: BackendAchievement[];
+  disciplinaryRecord?: BackendDisciplinaryRecord;
+  declaration?: BackendDeclaration;
+  documents?: BackendDocument[];
 }
 
 interface BackendEmployeesResponse {
@@ -154,6 +252,9 @@ function mapBackendEmployee(e: BackendEmployee): Employee {
       fromDate: a.startedOn,
       toDate: a.endedOn || "Present",
       durationYears: calcDurationYears(a.startedOn, a.endedOn),
+      district: a.district,
+      period: a.period,
+      type: a.type,
     })
   );
 
@@ -169,9 +270,25 @@ function mapBackendEmployee(e: BackendEmployee): Employee {
     currentCity: e.currentCity,
     currentPosition: e.currentPosition,
     currentHospitalName: e.currentHospital || "",
+    currentDesignation: e.currentDesignation,
     workHistory,
     email: e.email,
     phone: e.phone,
+    postAppliedFor: e.postAppliedFor,
+    submittedOn: e.submittedOn,
+    objections: e.objections,
+    education: e.education,
+    serviceInformation: e.serviceInformation,
+    appointmentDetails: e.appointmentDetails,
+    probationDetails: e.probationDetails,
+    timeboundPromotions: e.timeboundPromotions,
+    postgraduateQualifications: e.postgraduateQualifications,
+    administrativeRoles: e.administrativeRoles,
+    additionalCharges: e.additionalCharges,
+    achievements: e.achievements,
+    disciplinaryRecord: e.disciplinaryRecord,
+    declaration: e.declaration,
+    documents: e.documents,
   };
 }
 
