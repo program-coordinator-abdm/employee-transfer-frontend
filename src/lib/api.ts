@@ -26,6 +26,7 @@ interface BackendAssignmentEntry {
 
 interface BackendEducation {
   type: string;
+  qualification?: string;
   degree?: string;
   institution?: string;
   university?: string;
@@ -82,6 +83,7 @@ interface BackendAchievement {
 }
 
 interface BackendPostgraduateQualification {
+  qualification?: string;
   degree?: string;
   institution?: string;
   university?: string;

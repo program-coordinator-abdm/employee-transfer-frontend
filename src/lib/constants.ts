@@ -81,6 +81,7 @@ export interface WorkHistoryEntry {
 // Education details
 export interface EducationEntry {
   type: string; // "MBBS", "Post Graduation", etc.
+  qualification?: string;
   degree?: string;
   institution?: string;
   university?: string;
@@ -145,6 +146,7 @@ export interface Achievement {
 
 // Postgraduate Qualification
 export interface PostgraduateQualification {
+  qualification?: string;
   degree?: string;
   institution?: string;
   university?: string;
