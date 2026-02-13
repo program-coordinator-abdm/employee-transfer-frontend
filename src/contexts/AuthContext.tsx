@@ -1,6 +1,7 @@
-// AuthContext - Employee Transfer Management System
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { getToken, getUser, setToken, setUser, removeToken, removeUser, login as apiLogin } from "@/lib/api";
+
+export type UserRole = "ADMIN" | "DATA_OFFICER";
 
 interface User {
   id: string;
@@ -8,16 +9,15 @@ interface User {
   email: string;
   name: string;
   avatar?: string;
+  role: UserRole;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: {
-    email: string;
-    password: string;
-  }) => Promise<void>;
+  login: (credentials: { email?: string; username?: string; password: string }) => Promise<void>;
+  loginDataOfficer: (credentials: { username: string; password: string }) => Promise<void>;
   logout: () => void;
 }
 
@@ -28,24 +28,38 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session on mount
     const token = getToken();
     const storedUser = getUser();
-    
     if (token && storedUser) {
-      setUserState(storedUser);
+      setUserState(storedUser as User);
     }
     setIsLoading(false);
   }, []);
 
-  const login = async (credentials: {
-    email: string;
-    password: string;
-  }) => {
+  const login = async (credentials: { email?: string; username?: string; password: string }) => {
     const response = await apiLogin(credentials);
+    const userWithRole: User = { ...response.user, role: "ADMIN" as UserRole };
     setToken(response.token);
-    setUser(response.user);
-    setUserState(response.user);
+    setUser(userWithRole);
+    setUserState(userWithRole);
+  };
+
+  const loginDataOfficer = async (credentials: { username: string; password: string }) => {
+    if (credentials.username === "dataofficer" && credentials.password === "Data@1234") {
+      const token = "mock-do-token-" + Date.now();
+      const doUser: User = {
+        id: "do-1",
+        username: "dataofficer",
+        email: "dataofficer@karnataka.gov.in",
+        name: "Data Officer",
+        role: "DATA_OFFICER",
+      };
+      setToken(token);
+      setUser(doUser);
+      setUserState(doUser);
+    } else {
+      throw new Error("Invalid credentials");
+    }
   };
 
   const logout = () => {
@@ -55,15 +69,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isAuthenticated: !!user,
-        isLoading,
-        login,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, loginDataOfficer, logout }}>
       {children}
     </AuthContext.Provider>
   );
