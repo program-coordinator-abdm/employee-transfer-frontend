@@ -67,8 +67,8 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({ employee, onTransfer }) => 
       {/* Objections */}
       <ObjectionsSection objections={employee.objections} />
 
-      {/* Education Details */}
-      <EducationSection education={employee.education} />
+      {/* Education Details & Postgraduate Qualifications */}
+      <EducationSection education={employee.education} postgraduateQualifications={employee.postgraduateQualifications} />
 
       {/* Service Information */}
       <ServiceInfoSection serviceInfo={employee.serviceInformation} />
