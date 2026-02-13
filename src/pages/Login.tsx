@@ -1,63 +1,63 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Eye, EyeOff, Mail, Lock, LogIn } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, LogIn, User, Shield, Database } from "lucide-react";
 import karnatakaEmblem from "@/assets/karnataka-emblem.png";
 import abdmLogo from "@/assets/abdm-logo.png";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
-  
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { login, loginDataOfficer } = useAuth();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    // Clear error on change
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
-  };
+  // Admin state
+  const [adminData, setAdminData] = useState({ email: "", password: "" });
+  const [adminShowPw, setAdminShowPw] = useState(false);
+  const [adminLoading, setAdminLoading] = useState(false);
+  const [adminErrors, setAdminErrors] = useState<Record<string, string>>({});
 
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
+  // Data Officer state
+  const [doData, setDoData] = useState({ username: "", password: "" });
+  const [doShowPw, setDoShowPw] = useState(false);
+  const [doLoading, setDoLoading] = useState(false);
+  const [doErrors, setDoErrors] = useState<Record<string, string>>({});
 
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleAdminSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
+    const errs: Record<string, string> = {};
+    if (!adminData.email.trim()) errs.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminData.email)) errs.email = "Enter a valid email";
+    if (!adminData.password) errs.password = "Password is required";
+    else if (adminData.password.length < 6) errs.password = "Min 6 characters";
+    setAdminErrors(errs);
+    if (Object.keys(errs).length) return;
 
-    setIsLoading(true);
+    setAdminLoading(true);
     try {
-      await login(formData);
+      await login({ email: adminData.email, password: adminData.password });
       navigate("/categories");
-    } catch (error) {
-      setErrors({ form: "Login failed. Please check your credentials and try again." });
+    } catch {
+      setAdminErrors({ form: "Login failed. Check your credentials." });
     } finally {
-      setIsLoading(false);
+      setAdminLoading(false);
+    }
+  };
+
+  const handleDoSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const errs: Record<string, string> = {};
+    if (!doData.username.trim()) errs.username = "Username is required";
+    if (!doData.password) errs.password = "Password is required";
+    setDoErrors(errs);
+    if (Object.keys(errs).length) return;
+
+    setDoLoading(true);
+    try {
+      await loginDataOfficer({ username: doData.username, password: doData.password });
+      navigate("/data-officer");
+    } catch {
+      setDoErrors({ form: "Invalid credentials. Please try again." });
+    } finally {
+      setDoLoading(false);
     }
   };
 
@@ -68,7 +68,7 @@ const Login: React.FC = () => {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border-2 border-white/30 overflow-hidden shadow-md">
+              <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center border-2 border-border/30 overflow-hidden shadow-md">
                 <img src={karnatakaEmblem} alt="Government of Karnataka" className="w-10 h-10 object-contain" />
               </div>
               <div className="hidden sm:block">
@@ -81,115 +81,132 @@ const Login: React.FC = () => {
                 Employee Transfer Management
               </h1>
             </div>
-            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border-2 border-white/30 overflow-hidden shadow-md">
+            <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center border-2 border-border/30 overflow-hidden shadow-md">
               <img src={abdmLogo} alt="ABDM" className="w-10 h-10 object-contain" />
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Main */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-8">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Admin Login Card */}
           <div className="bg-surface rounded-2xl shadow-floating p-6 sm:p-8 border border-border/50">
-            {/* Login Header */}
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
-                <LogIn className="w-8 h-8 text-primary-foreground" />
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg">
+                <Shield className="w-7 h-7 text-primary-foreground" />
               </div>
-              <h2 className="text-2xl font-bold text-foreground">Welcome Back</h2>
-              <p className="text-muted-foreground mt-2">Sign in to access the portal</p>
+              <h2 className="text-xl font-bold text-foreground">Admin Login</h2>
+              <p className="text-muted-foreground text-sm mt-1">Transfer management administrator</p>
             </div>
 
-            {/* Form Error */}
-            {errors.form && (
-              <div className="mb-6 p-4 bg-danger-light rounded-xl border border-danger/20">
-                <p className="text-sm text-danger font-medium">{errors.form}</p>
+            {adminErrors.form && (
+              <div className="mb-4 p-3 bg-danger-light rounded-xl border border-danger/20">
+                <p className="text-sm text-danger font-medium">{adminErrors.form}</p>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Email */}
+            <form onSubmit={handleAdminSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className="input-label">
-                  Email Address
-                </label>
+                <label htmlFor="admin-email" className="input-label">Email Address</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
-                    id="email"
-                    name="email"
+                    id="admin-email"
                     type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className={`input-field pl-12 ${errors.email ? "border-danger focus:border-danger focus:ring-danger/20" : ""}`}
+                    value={adminData.email}
+                    onChange={(e) => { setAdminData(p => ({ ...p, email: e.target.value })); setAdminErrors(p => ({ ...p, email: "" })); }}
+                    className={`input-field pl-12 ${adminErrors.email ? "border-danger" : ""}`}
                     placeholder="Enter your email"
                   />
                 </div>
-                {errors.email && <p className="input-error">{errors.email}</p>}
+                {adminErrors.email && <p className="input-error">{adminErrors.email}</p>}
               </div>
-
-              {/* Password */}
               <div>
-                <label htmlFor="password" className="input-label">
-                  Password
-                </label>
+                <label htmlFor="admin-password" className="input-label">Password</label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className={`input-field pl-12 pr-12 ${errors.password ? "border-danger focus:border-danger focus:ring-danger/20" : ""}`}
+                    id="admin-password"
+                    type={adminShowPw ? "text" : "password"}
+                    value={adminData.password}
+                    onChange={(e) => { setAdminData(p => ({ ...p, password: e.target.value })); setAdminErrors(p => ({ ...p, password: "" })); }}
+                    className={`input-field pl-12 pr-12 ${adminErrors.password ? "border-danger" : ""}`}
                     placeholder="Enter your password"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted transition-colors"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5 text-muted-foreground" />
-                    ) : (
-                      <Eye className="w-5 h-5 text-muted-foreground" />
-                    )}
+                  <button type="button" onClick={() => setAdminShowPw(!adminShowPw)} className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted transition-colors" aria-label={adminShowPw ? "Hide" : "Show"}>
+                    {adminShowPw ? <EyeOff className="w-5 h-5 text-muted-foreground" /> : <Eye className="w-5 h-5 text-muted-foreground" />}
                   </button>
                 </div>
-                {errors.password && <p className="input-error">{errors.password}</p>}
+                {adminErrors.password && <p className="input-error">{adminErrors.password}</p>}
               </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="btn-primary w-full flex items-center justify-center gap-2 py-3 text-base disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                    Signing in...
-                  </>
-                ) : (
-                  <>
-                    <LogIn className="w-5 h-5" />
-                    Sign In
-                  </>
-                )}
+              <button type="submit" disabled={adminLoading} className="btn-primary w-full flex items-center justify-center gap-2 py-3 disabled:opacity-70 disabled:cursor-not-allowed">
+                {adminLoading ? <div className="w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> : <LogIn className="w-5 h-5" />}
+                {adminLoading ? "Signing in..." : "Sign In"}
               </button>
             </form>
+          </div>
 
-            {/* Footer */}
-            <p className="text-center text-sm text-muted-foreground mt-6">
-              Karnataka State Government Employee Portal
-            </p>
+          {/* Data Officer Login Card */}
+          <div className="bg-surface rounded-2xl shadow-floating p-6 sm:p-8 border border-border/50">
+            <div className="text-center mb-6">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-secondary to-secondary-light flex items-center justify-center shadow-lg">
+                <Database className="w-7 h-7 text-secondary-foreground" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">Employee / Data Officer Login</h2>
+              <p className="text-muted-foreground text-sm mt-1">For DH/TH employee data entry (HR Data Admin)</p>
+            </div>
+
+            {doErrors.form && (
+              <div className="mb-4 p-3 bg-danger-light rounded-xl border border-danger/20">
+                <p className="text-sm text-danger font-medium">{doErrors.form}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleDoSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="do-username" className="input-label">Username</label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <input
+                    id="do-username"
+                    type="text"
+                    value={doData.username}
+                    onChange={(e) => { setDoData(p => ({ ...p, username: e.target.value })); setDoErrors(p => ({ ...p, username: "" })); }}
+                    className={`input-field pl-12 ${doErrors.username ? "border-danger" : ""}`}
+                    placeholder="Enter your username"
+                  />
+                </div>
+                {doErrors.username && <p className="input-error">{doErrors.username}</p>}
+              </div>
+              <div>
+                <label htmlFor="do-password" className="input-label">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <input
+                    id="do-password"
+                    type={doShowPw ? "text" : "password"}
+                    value={doData.password}
+                    onChange={(e) => { setDoData(p => ({ ...p, password: e.target.value })); setDoErrors(p => ({ ...p, password: "" })); }}
+                    className={`input-field pl-12 pr-12 ${doErrors.password ? "border-danger" : ""}`}
+                    placeholder="Enter your password"
+                  />
+                  <button type="button" onClick={() => setDoShowPw(!doShowPw)} className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted transition-colors" aria-label={doShowPw ? "Hide" : "Show"}>
+                    {doShowPw ? <EyeOff className="w-5 h-5 text-muted-foreground" /> : <Eye className="w-5 h-5 text-muted-foreground" />}
+                  </button>
+                </div>
+                {doErrors.password && <p className="input-error">{doErrors.password}</p>}
+              </div>
+              <button type="submit" disabled={doLoading} className="btn-secondary w-full flex items-center justify-center gap-2 py-3 disabled:opacity-70 disabled:cursor-not-allowed">
+                {doLoading ? <div className="w-5 h-5 border-2 border-secondary-foreground border-t-transparent rounded-full animate-spin" /> : <LogIn className="w-5 h-5" />}
+                {doLoading ? "Signing in..." : "Sign In"}
+              </button>
+            </form>
           </div>
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="py-4 text-center text-sm text-muted-foreground border-t border-border">
         © 2024 Government of Karnataka. All rights reserved.
       </footer>
