@@ -1,79 +1,92 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
-import { getEmployees } from "@/lib/api";
-import { 
-  Stethoscope, 
-  Heart, 
-  Pill, 
-  FlaskConical, 
-  MonitorSpeaker, 
-  Users, 
-  HelpCircle, 
-  Ambulance, 
-  Building2,
-  BarChart3,
-  TrendingUp,
-  LucideIcon
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { BarChart3, TrendingUp, ChevronsUpDown, Check, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-interface CategoryConfig {
+interface DropdownGroupConfig {
   key: string;
   label: string;
-  icon: LucideIcon;
-  description: string;
+  options: string[];
+  allowAddNew?: boolean;
 }
 
-const CATEGORY_CONFIGS: CategoryConfig[] = [
-  { key: "doctors", label: "Doctors", icon: Stethoscope, description: "Medical Officers & Specialists" },
-  { key: "nurses", label: "Nurses", icon: Heart, description: "Staff Nurses & Nursing Supervisors" },
-  { key: "pharmacists", label: "Pharmacists", icon: Pill, description: "Pharmacy Staff" },
-  { key: "lab-technicians", label: "Lab Technicians", icon: FlaskConical, description: "Laboratory & Pathology Staff" },
-  { key: "radiology", label: "Radiology", icon: MonitorSpeaker, description: "X-Ray & Imaging Technicians" },
-  { key: "support-staff", label: "Support Staff", icon: Users, description: "Ward Boys, Cleaners & Helpers" },
-  { key: "it-helpdesk", label: "IT Help Desk", icon: HelpCircle, description: "Technical Support Staff" },
-  { key: "emt", label: "EMT", icon: Ambulance, description: "Emergency Medical Technicians" },
-  { key: "administration", label: "Administration", icon: Building2, description: "Administrative & Clerical Staff" },
+const GROUP_CONFIGS: DropdownGroupConfig[] = [
+  { key: "groupA", label: "Group A", options: ["Option A1", "Option A2", "Option A3"] },
+  { key: "groupB", label: "Group B", options: ["Option B1", "Option B2", "Option B3"] },
+  { key: "groupC", label: "Group C", options: ["Option C1", "Option C2", "Option C3"] },
+  { key: "groupD", label: "Group D", options: ["Option D1", "Option D2", "Option D3"], allowAddNew: true },
 ];
+
+const SearchableDropdown: React.FC<{
+  config: DropdownGroupConfig;
+  value: string;
+  onChange: (val: string) => void;
+}> = ({ config, value, onChange }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-full justify-between h-12 text-sm bg-card border-border"
+        >
+          {value || `Select ${config.label}...`}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-50 bg-popover border border-border shadow-lg">
+        <Command>
+          <CommandInput placeholder={`Search ${config.label}...`} />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup>
+              {config.options.map((option) => (
+                <CommandItem
+                  key={option}
+                  value={option}
+                  onSelect={() => {
+                    onChange(option === value ? "" : option);
+                    setOpen(false);
+                  }}
+                >
+                  <Check className={cn("mr-2 h-4 w-4", value === option ? "opacity-100" : "opacity-0")} />
+                  {option}
+                </CommandItem>
+              ))}
+              {config.allowAddNew && (
+                <CommandItem
+                  value="__add_new__"
+                  onSelect={() => {
+                    onChange("__add_new__");
+                    setOpen(false);
+                  }}
+                  className="text-primary font-medium"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add new
+                </CommandItem>
+              )}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 const Categories: React.FC = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
-  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
-  const [countsLoading, setCountsLoading] = useState(true);
-
-  // Fetch counts from API for each category
-  useEffect(() => {
-    const fetchCounts = async () => {
-      if (!isAuthenticated) return;
-      
-      setCountsLoading(true);
-      const counts: Record<string, number> = {};
-      
-      try {
-        // Fetch counts for all categories in parallel
-        const promises = CATEGORY_CONFIGS.map(async (config) => {
-          try {
-            const response = await getEmployees({ category: config.key, limit: 1 });
-            counts[config.key] = response.total;
-          } catch {
-            counts[config.key] = 0;
-          }
-        });
-        
-        await Promise.all(promises);
-        setCategoryCounts(counts);
-      } catch (error) {
-        console.error("Failed to fetch category counts:", error);
-      } finally {
-        setCountsLoading(false);
-      }
-    };
-
-    fetchCounts();
-  }, [isAuthenticated]);
+  const [selections, setSelections] = useState<Record<string, string>>({});
 
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -81,8 +94,8 @@ const Categories: React.FC = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  const handleCategorySelect = (categoryKey: string) => {
-    navigate(`/employees?category=${categoryKey}`);
+  const handleSelectionChange = (groupKey: string, value: string) => {
+    setSelections((prev) => ({ ...prev, [groupKey]: value }));
   };
 
   if (isLoading) {
@@ -110,38 +123,17 @@ const Categories: React.FC = () => {
           <p className="text-muted-foreground">Select a category to view and manage employee transfers</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {CATEGORY_CONFIGS.map((category) => {
-            const Icon = category.icon;
-            const count = categoryCounts[category.key] ?? 0;
-            return (
-              <Card
-                key={category.key}
-                className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-primary hover:bg-primary/10 bg-card group"
-                onClick={() => handleCategorySelect(category.key)}
-              >
-                <div className="p-5 flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-foreground mb-0.5">{category.label}</h3>
-                    <p className="text-sm text-muted-foreground mb-2">{category.description}</p>
-                    <p className="text-sm">
-                      {countsLoading ? (
-                        <span className="text-muted-foreground">Loading...</span>
-                      ) : (
-                        <>
-                          <span className="font-semibold text-primary">{count}</span>
-                          <span className="text-primary ml-1">{count === 1 ? "employee" : "employees"}</span>
-                        </>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+          {GROUP_CONFIGS.map((group) => (
+            <div key={group.key} className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-foreground">{group.label}</label>
+              <SearchableDropdown
+                config={group}
+                value={selections[group.key] || ""}
+                onChange={(val) => handleSelectionChange(group.key, val)}
+              />
+            </div>
+          ))}
         </div>
 
         {/* Reports & Promotions Section */}
@@ -165,12 +157,12 @@ const Categories: React.FC = () => {
             </div>
           </Card>
           <Card
-            className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-success hover:bg-success/10 bg-card group"
+            className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-primary hover:bg-primary/10 bg-card group"
             onClick={() => navigate("/promotions")}
           >
             <div className="p-5 flex items-start gap-4">
-              <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-6 h-6 text-success" />
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-6 h-6 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-base font-semibold text-foreground mb-0.5">Promotions</h3>
