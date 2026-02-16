@@ -682,7 +682,12 @@ const EmployeeCreate: React.FC = () => {
             </div>
           </Card>
 
-          {/* Submit */}
+          {/* 8. Declaration */}
+          <Card className="p-6">
+            <SectionTitle number="8" title="Declaration" />
+            <p className="text-sm text-muted-foreground italic">Declaration will be added here</p>
+          </Card>
+
           <div className="flex items-center justify-end gap-3 pb-8">
             <button type="button" onClick={() => navigate("/categories")} className="btn-ghost px-8 py-3">Cancel</button>
             <button type="submit" className="btn-primary flex items-center gap-2 px-8 py-3 text-base">
