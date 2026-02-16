@@ -36,7 +36,7 @@ const SearchableDropdown: React.FC<{
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between h-12 text-sm bg-card border-border rounded-lg shadow-sm hover:shadow-md hover:border-primary transition-all outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary focus:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0"
+          className="w-full justify-between h-12 text-sm bg-card border-border rounded-lg shadow-sm hover:shadow-md hover:border-primary hover:bg-primary/5 hover:text-foreground transition-all outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary focus:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0"
         >
           <span className={cn("truncate", !value && "text-muted-foreground")}>
             {value || `Select ${config.label}...`}
