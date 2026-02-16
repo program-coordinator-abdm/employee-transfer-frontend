@@ -227,7 +227,7 @@ const EmployeeCreate: React.FC = () => {
               </div>
               <div>
                 <label className="input-label">Employee Name <span className="text-destructive">*</span></label>
-                <input value={name} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z\s.]/g, ""); setName(v); clearError("name"); }} className={`input-field ${errors.name ? "border-destructive" : ""}`} placeholder="Full name (alphabetic only)" />
+                <input value={name} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z\s.]/g, "").toUpperCase(); setName(v); clearError("name"); }} className={`input-field ${errors.name ? "border-destructive" : ""}`} placeholder="Full name (alphabetic only)" />
                 <FieldError error={errors.name} />
               </div>
             </div>
