@@ -126,29 +126,25 @@ const EmployeeView: React.FC = () => {
 
           {/* Special Conditions */}
           <SectionHeading title="Special Conditions" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Terminally Ill" value={
+          <div className="grid grid-cols-1 gap-4">
+            <Field label="Terminal illness / Serious ailment requiring transfer" value={
               emp.terminallyIll ? <span className="text-destructive font-medium">Yes {emp.terminallyIllDoc && `— ${emp.terminallyIllDoc}`}</span> : "No"
             } />
-            <Field label="Physically Challenged (>40%)" value={
-              emp.physicallyChallenged ? <span className="text-destructive font-medium">Yes {emp.physicallyChallengedDoc && `— ${emp.physicallyChallengedDoc}`}</span> : "No"
-            } />
-            <Field label="Widow/Widower" value={
-              emp.widow ? <span className="text-destructive font-medium">Yes {emp.widowDoc && `— ${emp.widowDoc}`}</span> : "No"
-            } />
-            <Field label="Pregnant / Child under 1 year" value={
+            <Field label="Pregnant or female staff with child less than one year" value={
               emp.pregnantOrChildUnderOne ? <span className="text-destructive font-medium">Yes {emp.pregnantOrChildUnderOneDoc && `— ${emp.pregnantOrChildUnderOneDoc}`}</span> : "No"
             } />
-            <Field label="Retiring within 2 years" value={
+            <Field label="Due to retire on superannuation within two years" value={
               emp.retiringWithinTwoYears ? <span className="text-destructive font-medium">Yes {emp.retiringWithinTwoYearsDoc && `— ${emp.retiringWithinTwoYearsDoc}`}</span> : "No"
             } />
-            <Field label="Child/Spouse with 40%+ disability" value={
+            <Field label="Staff/Spouse/Child with 40%+ disability" value={
               emp.childSpouseDisability ? <span className="text-destructive font-medium">Yes {emp.childSpouseDisabilityDoc && `— ${emp.childSpouseDisabilityDoc}`}</span> : "No"
             } />
-            <Field label="Divorcee/Widow/Widower with child ≤12" value={
+            <Field label="Widow/Widower/Divorcee with children less than 12 years" value={
               emp.divorceeWidowWithChild ? <span className="text-destructive font-medium">Yes {emp.divorceeWidowWithChildDoc && `— ${emp.divorceeWidowWithChildDoc}`}</span> : "No"
             } />
-            <Field label="Spouse a Govt Servant" value={emp.spouseGovtServant ? "Yes" : "No"} />
+            <Field label="Married to Central/State Govt or Aided Institution employee" value={
+              emp.spouseGovtServant ? <span className="text-destructive font-medium">Yes {emp.spouseGovtServantDoc && `— ${emp.spouseGovtServantDoc}`}</span> : "No"
+            } />
           </div>
         </Card>
       </main>

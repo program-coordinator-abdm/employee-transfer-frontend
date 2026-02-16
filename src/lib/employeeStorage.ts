@@ -40,11 +40,6 @@ export interface NewEmployee {
   pastServices: PastServiceEntry[];
   terminallyIll: boolean;
   terminallyIllDoc: string;
-  physicallyChallenged: boolean;
-  physicallyChallengedDoc: string;
-  widow: boolean;
-  widowDoc: string;
-  spouseGovtServant: boolean;
   pregnantOrChildUnderOne: boolean;
   pregnantOrChildUnderOneDoc: string;
   retiringWithinTwoYears: boolean;
@@ -53,6 +48,8 @@ export interface NewEmployee {
   childSpouseDisabilityDoc: string;
   divorceeWidowWithChild: boolean;
   divorceeWidowWithChildDoc: string;
+  spouseGovtServant: boolean;
+  spouseGovtServantDoc: string;
   createdAt: string;
 }
 
