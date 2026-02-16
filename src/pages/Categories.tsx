@@ -6,21 +6,20 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { BarChart3, TrendingUp, ChevronsUpDown, Check, Plus } from "lucide-react";
+import { BarChart3, TrendingUp, ChevronsUpDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface DropdownGroupConfig {
   key: string;
   label: string;
   options: string[];
-  allowAddNew?: boolean;
 }
 
 const GROUP_CONFIGS: DropdownGroupConfig[] = [
-  { key: "groupA", label: "Group A", options: ["Option A1", "Option A2", "Option A3"] },
-  { key: "groupB", label: "Group B", options: ["Option B1", "Option B2", "Option B3"] },
-  { key: "groupC", label: "Group C", options: ["Option C1", "Option C2", "Option C3"] },
-  { key: "groupD", label: "Group D", options: ["Option D1", "Option D2", "Option D3"], allowAddNew: true },
+  { key: "groupA", label: "Group A", options: ["Group A Officers (LRO)", "Group A Doctors (JRO & LRO)"] },
+  { key: "groupB", label: "Group B", options: ["Group B Officers"] },
+  { key: "groupC", label: "Group C", options: ["Group C Employees"] },
+  { key: "groupD", label: "Group D", options: ["Group D Employees"] },
 ];
 
 const SearchableDropdown: React.FC<{
@@ -37,15 +36,16 @@ const SearchableDropdown: React.FC<{
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between h-12 text-sm bg-card border-border"
+          className="w-full justify-between h-12 text-sm bg-card border-border rounded-lg shadow-sm hover:shadow-md transition-shadow"
         >
-          {value || `Select ${config.label}...`}
+          <span className={cn("truncate", !value && "text-muted-foreground")}>
+            {value || `Select ${config.label}...`}
+          </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-50 bg-popover border border-border shadow-lg">
+      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-50 bg-popover border border-border shadow-lg rounded-lg">
         <Command>
-          <CommandInput placeholder={`Search ${config.label}...`} />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
@@ -57,24 +57,12 @@ const SearchableDropdown: React.FC<{
                     onChange(option === value ? "" : option);
                     setOpen(false);
                   }}
+                  className="py-2.5 px-3 cursor-pointer"
                 >
                   <Check className={cn("mr-2 h-4 w-4", value === option ? "opacity-100" : "opacity-0")} />
                   {option}
                 </CommandItem>
               ))}
-              {config.allowAddNew && (
-                <CommandItem
-                  value="__add_new__"
-                  onSelect={() => {
-                    onChange("__add_new__");
-                    setOpen(false);
-                  }}
-                  className="text-primary font-medium"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add new
-                </CommandItem>
-              )}
             </CommandGroup>
           </CommandList>
         </Command>
