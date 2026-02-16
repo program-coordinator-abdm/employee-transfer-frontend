@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
@@ -6,9 +6,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users } from "lucide-react";
+import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getEmployees } from "@/lib/employeeStorage";
+import { getEmployees, type NewEmployee } from "@/lib/employeeStorage";
 
 interface DropdownGroupConfig {
   key: string;
@@ -207,6 +207,27 @@ const Categories: React.FC = () => {
     setSubSelections((prev) => ({ ...prev, [groupKey]: value }));
   };
 
+  // Get all employees and filter by active selection
+  const allEmployees = useMemo(() => getEmployees(), [selections, subSelections]);
+
+  const activeFilter = useMemo(() => {
+    // Find which group has an active sub-selection (specific position) or main selection
+    for (const group of GROUP_CONFIGS) {
+      const sub = subSelections[group.key];
+      if (sub) return { groupKey: group.key, position: sub, category: selections[group.key] || "" };
+      const sel = selections[group.key];
+      if (sel && !SUB_OPTIONS[sel]) return { groupKey: group.key, position: sel, category: sel };
+    }
+    return null;
+  }, [selections, subSelections]);
+
+  const filteredEmployees = useMemo(() => {
+    if (!activeFilter) return [];
+    return allEmployees.filter((emp) => {
+      // Match by designation or current post
+      return emp.designation === activeFilter.position || emp.currentPostHeld === activeFilter.position;
+    });
+  }, [allEmployees, activeFilter]);
 
   if (isLoading) {
     return (
@@ -323,6 +344,64 @@ const Categories: React.FC = () => {
             </div>
           );
         })}
+
+        {/* Filtered Employee List */}
+        {activeFilter && (
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <Users className="w-5 h-5 text-primary" />
+                  Employees — {activeFilter.position}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {filteredEmployees.length} employee{filteredEmployees.length !== 1 ? "s" : ""} found
+                </p>
+              </div>
+            </div>
+
+            {filteredEmployees.length === 0 ? (
+              <Card className="p-8 text-center border-dashed border-2 border-border">
+                <UserCircle className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
+                <p className="text-muted-foreground font-medium">No employees registered under this position yet.</p>
+                <Button variant="outline" className="mt-4 gap-2 text-primary border-primary/30 hover:bg-primary/10" onClick={() => navigate("/employee/new")}>
+                  <UserPlus className="w-4 h-4" /> Add Employee
+                </Button>
+              </Card>
+            ) : (
+              <div className="space-y-3">
+                {filteredEmployees.map((emp) => (
+                  <Card key={emp.id} className="p-4 hover:shadow-md hover:border-primary/30 transition-all">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
+                          {emp.name.charAt(0)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-foreground truncate">{emp.name}</p>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <span className="font-mono">KGID: {emp.kgid}</span>
+                            <span>•</span>
+                            <span>{emp.designation}</span>
+                            <span className="text-primary font-medium">({emp.designationGroup})</span>
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/employee/view/${emp.id}`)}
+                        className="gap-1.5 text-primary border-primary/30 hover:bg-primary/10 flex-shrink-0"
+                      >
+                        <Eye className="w-4 h-4" /> View
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Reports & Promotions Section */}
         <div className="mt-10 mb-2">
