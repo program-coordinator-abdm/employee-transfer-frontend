@@ -516,10 +516,10 @@ const EmployeeCreate: React.FC = () => {
                 )}
               </div>
 
-              {/* Widow */}
+              {/* Widow/Widower */}
               <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
                 <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Widow</Label>
+                  <Label className="text-sm font-medium">Widow/Widower</Label>
                   <div className="flex items-center gap-2">
                     <Switch checked={widow} onCheckedChange={setWidow} />
                     <span className="text-sm text-muted-foreground w-8">{widow ? "Yes" : "No"}</span>
@@ -538,6 +538,32 @@ const EmployeeCreate: React.FC = () => {
                       </div>
                     </label>
                     <FieldError error={errors.widowDoc} />
+                  </div>
+                )}
+              </div>
+
+              {/* Divorcee/Widow/Widower with child ≤12 */}
+              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Divorcee / Widow / Widower with child 12 or less years of age</Label>
+                  <div className="flex items-center gap-2">
+                    <Switch checked={divorceeWidowWithChild} onCheckedChange={setDivorceeWidowWithChild} />
+                    <span className="text-sm text-muted-foreground w-8">{divorceeWidowWithChild ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+                {divorceeWidowWithChild && (
+                  <div>
+                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
+                    <label className="flex-1 cursor-pointer">
+                      <input type="file" accept=".pdf" className="hidden" onChange={(e) => { setDivorceeWidowWithChildDoc(e.target.files?.[0]?.name || ""); clearError("divorceeWidowWithChildDoc"); }} />
+                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.divorceeWidowWithChildDoc && "border-destructive")}>
+                        <Upload className="w-4 h-4 text-muted-foreground" />
+                        <span className={cn("text-sm", divorceeWidowWithChildDoc ? "text-foreground" : "text-muted-foreground")}>
+                          {divorceeWidowWithChildDoc || "Choose PDF file..."}
+                        </span>
+                      </div>
+                    </label>
+                    <FieldError error={errors.divorceeWidowWithChildDoc} />
                   </div>
                 )}
               </div>
@@ -616,32 +642,6 @@ const EmployeeCreate: React.FC = () => {
                       </div>
                     </label>
                     <FieldError error={errors.childSpouseDisabilityDoc} />
-                  </div>
-                )}
-              </div>
-
-              {/* Divorcee/Widow/Widower with child ≤12 */}
-              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Divorcee / Widow / Widower with child 12 or less years of age</Label>
-                  <div className="flex items-center gap-2">
-                    <Switch checked={divorceeWidowWithChild} onCheckedChange={setDivorceeWidowWithChild} />
-                    <span className="text-sm text-muted-foreground w-8">{divorceeWidowWithChild ? "Yes" : "No"}</span>
-                  </div>
-                </div>
-                {divorceeWidowWithChild && (
-                  <div>
-                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
-                    <label className="flex-1 cursor-pointer">
-                      <input type="file" accept=".pdf" className="hidden" onChange={(e) => { setDivorceeWidowWithChildDoc(e.target.files?.[0]?.name || ""); clearError("divorceeWidowWithChildDoc"); }} />
-                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.divorceeWidowWithChildDoc && "border-destructive")}>
-                        <Upload className="w-4 h-4 text-muted-foreground" />
-                        <span className={cn("text-sm", divorceeWidowWithChildDoc ? "text-foreground" : "text-muted-foreground")}>
-                          {divorceeWidowWithChildDoc || "Choose PDF file..."}
-                        </span>
-                      </div>
-                    </label>
-                    <FieldError error={errors.divorceeWidowWithChildDoc} />
                   </div>
                 )}
               </div>
