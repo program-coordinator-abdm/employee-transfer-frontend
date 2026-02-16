@@ -70,6 +70,14 @@ const EmployeeCreate: React.FC = () => {
   const [widow, setWidow] = useState(false);
   const [widowDoc, setWidowDoc] = useState("");
   const [spouseGovtServant, setSpouseGovtServant] = useState(false);
+  const [pregnantOrChildUnderOne, setPregnantOrChildUnderOne] = useState(false);
+  const [pregnantOrChildUnderOneDoc, setPregnantOrChildUnderOneDoc] = useState("");
+  const [retiringWithinTwoYears, setRetiringWithinTwoYears] = useState(false);
+  const [retiringWithinTwoYearsDoc, setRetiringWithinTwoYearsDoc] = useState("");
+  const [childSpouseDisability, setChildSpouseDisability] = useState(false);
+  const [childSpouseDisabilityDoc, setChildSpouseDisabilityDoc] = useState("");
+  const [divorceeWidowWithChild, setDivorceeWidowWithChild] = useState(false);
+  const [divorceeWidowWithChildDoc, setDivorceeWidowWithChildDoc] = useState("");
 
   const clearError = (field: string) => {
     if (errors[field]) setErrors((p) => { const n = { ...p }; delete n[field]; return n; });
@@ -137,6 +145,10 @@ const EmployeeCreate: React.FC = () => {
     if (terminallyIll && !terminallyIllDoc) errs.terminallyIllDoc = "Certificate is required";
     if (physicallyChallenged && !physicallyChallengedDoc) errs.physicallyChallengedDoc = "Certificate is required";
     if (widow && !widowDoc) errs.widowDoc = "Documentary proof is required";
+    if (pregnantOrChildUnderOne && !pregnantOrChildUnderOneDoc) errs.pregnantOrChildUnderOneDoc = "Documentary proof is required";
+    if (retiringWithinTwoYears && !retiringWithinTwoYearsDoc) errs.retiringWithinTwoYearsDoc = "Documentary proof is required";
+    if (childSpouseDisability && !childSpouseDisabilityDoc) errs.childSpouseDisabilityDoc = "Certificate is required";
+    if (divorceeWidowWithChild && !divorceeWidowWithChildDoc) errs.divorceeWidowWithChildDoc = "Documentary proof is required";
 
     pastServices.forEach((s, i) => {
       if (!s.postHeld) errs[`past_${i}_postHeld`] = "Post is required";
@@ -170,6 +182,10 @@ const EmployeeCreate: React.FC = () => {
       pastServices, terminallyIll, terminallyIllDoc,
       physicallyChallenged, physicallyChallengedDoc,
       widow, widowDoc, spouseGovtServant,
+      pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
+      retiringWithinTwoYears, retiringWithinTwoYearsDoc,
+      childSpouseDisability, childSpouseDisabilityDoc,
+      divorceeWidowWithChild, divorceeWidowWithChildDoc,
       createdAt: new Date().toISOString(),
     };
     saveEmployee(emp);
@@ -522,6 +538,110 @@ const EmployeeCreate: React.FC = () => {
                       </div>
                     </label>
                     <FieldError error={errors.widowDoc} />
+                  </div>
+                )}
+              </div>
+
+              {/* Pregnant / Child under 1 */}
+              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Pregnant woman / Staff with child less than one year of age</Label>
+                  <div className="flex items-center gap-2">
+                    <Switch checked={pregnantOrChildUnderOne} onCheckedChange={setPregnantOrChildUnderOne} />
+                    <span className="text-sm text-muted-foreground w-8">{pregnantOrChildUnderOne ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+                {pregnantOrChildUnderOne && (
+                  <div>
+                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
+                    <label className="flex-1 cursor-pointer">
+                      <input type="file" accept=".pdf" className="hidden" onChange={(e) => { setPregnantOrChildUnderOneDoc(e.target.files?.[0]?.name || ""); clearError("pregnantOrChildUnderOneDoc"); }} />
+                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.pregnantOrChildUnderOneDoc && "border-destructive")}>
+                        <Upload className="w-4 h-4 text-muted-foreground" />
+                        <span className={cn("text-sm", pregnantOrChildUnderOneDoc ? "text-foreground" : "text-muted-foreground")}>
+                          {pregnantOrChildUnderOneDoc || "Choose PDF file..."}
+                        </span>
+                      </div>
+                    </label>
+                    <FieldError error={errors.pregnantOrChildUnderOneDoc} />
+                  </div>
+                )}
+              </div>
+
+              {/* Retiring within 2 years */}
+              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Medical officer / Staff due to retire on superannuation within two years</Label>
+                  <div className="flex items-center gap-2">
+                    <Switch checked={retiringWithinTwoYears} onCheckedChange={setRetiringWithinTwoYears} />
+                    <span className="text-sm text-muted-foreground w-8">{retiringWithinTwoYears ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+                {retiringWithinTwoYears && (
+                  <div>
+                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
+                    <label className="flex-1 cursor-pointer">
+                      <input type="file" accept=".pdf" className="hidden" onChange={(e) => { setRetiringWithinTwoYearsDoc(e.target.files?.[0]?.name || ""); clearError("retiringWithinTwoYearsDoc"); }} />
+                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.retiringWithinTwoYearsDoc && "border-destructive")}>
+                        <Upload className="w-4 h-4 text-muted-foreground" />
+                        <span className={cn("text-sm", retiringWithinTwoYearsDoc ? "text-foreground" : "text-muted-foreground")}>
+                          {retiringWithinTwoYearsDoc || "Choose PDF file..."}
+                        </span>
+                      </div>
+                    </label>
+                    <FieldError error={errors.retiringWithinTwoYearsDoc} />
+                  </div>
+                )}
+              </div>
+
+              {/* Child/Spouse with 40%+ disability */}
+              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Staff with child / spouse with 40% or more disability</Label>
+                  <div className="flex items-center gap-2">
+                    <Switch checked={childSpouseDisability} onCheckedChange={setChildSpouseDisability} />
+                    <span className="text-sm text-muted-foreground w-8">{childSpouseDisability ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+                {childSpouseDisability && (
+                  <div>
+                    <label className="input-label text-xs">Attach Certificate issued by District Medical Board <span className="text-destructive">*</span></label>
+                    <label className="flex-1 cursor-pointer">
+                      <input type="file" accept=".pdf" className="hidden" onChange={(e) => { setChildSpouseDisabilityDoc(e.target.files?.[0]?.name || ""); clearError("childSpouseDisabilityDoc"); }} />
+                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.childSpouseDisabilityDoc && "border-destructive")}>
+                        <Upload className="w-4 h-4 text-muted-foreground" />
+                        <span className={cn("text-sm", childSpouseDisabilityDoc ? "text-foreground" : "text-muted-foreground")}>
+                          {childSpouseDisabilityDoc || "Choose PDF file..."}
+                        </span>
+                      </div>
+                    </label>
+                    <FieldError error={errors.childSpouseDisabilityDoc} />
+                  </div>
+                )}
+              </div>
+
+              {/* Divorcee/Widow/Widower with child ≤12 */}
+              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">Divorcee / Widow / Widower with child 12 or less years of age</Label>
+                  <div className="flex items-center gap-2">
+                    <Switch checked={divorceeWidowWithChild} onCheckedChange={setDivorceeWidowWithChild} />
+                    <span className="text-sm text-muted-foreground w-8">{divorceeWidowWithChild ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+                {divorceeWidowWithChild && (
+                  <div>
+                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
+                    <label className="flex-1 cursor-pointer">
+                      <input type="file" accept=".pdf" className="hidden" onChange={(e) => { setDivorceeWidowWithChildDoc(e.target.files?.[0]?.name || ""); clearError("divorceeWidowWithChildDoc"); }} />
+                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.divorceeWidowWithChildDoc && "border-destructive")}>
+                        <Upload className="w-4 h-4 text-muted-foreground" />
+                        <span className={cn("text-sm", divorceeWidowWithChildDoc ? "text-foreground" : "text-muted-foreground")}>
+                          {divorceeWidowWithChildDoc || "Choose PDF file..."}
+                        </span>
+                      </div>
+                    </label>
+                    <FieldError error={errors.divorceeWidowWithChildDoc} />
                   </div>
                 )}
               </div>
