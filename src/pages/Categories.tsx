@@ -46,9 +46,41 @@ const JRO_LRO_POSITIONS: string[] = [
   "Cardiologist / Neurosurgeon / Plastic Surgeon / General Duty Medical Officers / SMO / DCMO / CMO / Dental Health Officers",
 ];
 
+const GROUP_B_POSITIONS: string[] = [
+  "Health Equipment Officer",
+  "Store Officer (Stores) & (IEC)",
+  "Cold Chain Officer",
+  "Clinical Instructor",
+  "Senior Entomologist",
+  "Entomologist",
+  "Assistant Entomologist",
+  "Microbiologist",
+  "Clinical Psychologist",
+  "Psychologist (Psychiatric Social Worker)",
+  "Service Engineers",
+  "Junior Chemical Engineer / Regional Assistant Chemical Analysts",
+  "Food Analysts",
+  "Senior Food Analysts",
+  "Transport Officer",
+  "Transport Manager",
+  "Technical Officer (Goiter Cell / IDD) & (CMD)",
+  "Graduate Pharmacist (Deputy Chief Pharmacy Officer)",
+  "Assistant Administrative Officer",
+  "Scientific Officer",
+  "Medical Records Officer",
+  "Assistant Leprosy Officer",
+  "Assistant Malaria Officer",
+  "Principal (Training Centre) ANMTC & GNM",
+  "District Health Education Officer (Social Science Instructors)",
+  "Superintendent of Nursing Grade-1",
+  "District Nursing Officer",
+  "Deputy District Health Education Officer",
+];
+
 const SUB_OPTIONS: Record<string, string[]> = {
   "Group A Officers (LRO)": LRO_POSITIONS,
   "Group A Doctors (JRO & LRO)": JRO_LRO_POSITIONS,
+  "Group B Officers": GROUP_B_POSITIONS,
 };
 
 const GROUP_CONFIGS: DropdownGroupConfig[] = [
@@ -167,49 +199,53 @@ const Categories: React.FC = () => {
           ))}
         </div>
 
-        {/* Sub-options dropdown for Group A selections */}
-        {selections.groupA && SUB_OPTIONS[selections.groupA] && (
-          <div className="mb-10 max-w-md">
-            <label className="text-sm font-semibold text-foreground mb-2 block">
-              Select Position — {selections.groupA}
-            </label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  className="w-full justify-between h-12 text-sm bg-card border-border rounded-lg shadow-sm hover:shadow-md hover:border-primary hover:bg-primary/5 hover:text-foreground transition-all outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary focus:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0"
-                >
-                  <span className={cn("truncate", !subSelections.groupA && "text-muted-foreground")}>
-                    {subSelections.groupA || "Search and select a position..."}
-                  </span>
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-50 bg-popover border border-border shadow-lg rounded-lg">
-                <Command>
-                  <CommandInput placeholder="Search positions..." />
-                  <CommandList>
-                    <CommandEmpty>No positions found.</CommandEmpty>
-                    <CommandGroup>
-                      {SUB_OPTIONS[selections.groupA].map((pos) => (
-                        <CommandItem
-                          key={pos}
-                          value={pos}
-                          onSelect={() => handleSubSelectionChange("groupA", pos === subSelections.groupA ? "" : pos)}
-                          className="py-2.5 px-3 cursor-pointer font-medium tracking-wide data-[selected='true']:bg-primary/10 data-[selected='true']:text-primary"
-                        >
-                          <Check className={cn("mr-2 h-4 w-4 shrink-0", subSelections.groupA === pos ? "opacity-100" : "opacity-0")} />
-                          <span className="text-sm">{pos}</span>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
-        )}
+        {/* Sub-options dropdown for any group with sub-options */}
+        {GROUP_CONFIGS.map((group) => {
+          const selectedVal = selections[group.key];
+          if (!selectedVal || !SUB_OPTIONS[selectedVal]) return null;
+          return (
+            <div key={`sub-${group.key}`} className="mb-10 max-w-md">
+              <label className="text-sm font-semibold text-foreground mb-2 block">
+                Select Position — {selectedVal}
+              </label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className="w-full justify-between h-12 text-sm bg-card border-border rounded-lg shadow-sm hover:shadow-md hover:border-primary hover:bg-primary/5 hover:text-foreground transition-all outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary focus:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0"
+                  >
+                    <span className={cn("truncate", !subSelections[group.key] && "text-muted-foreground")}>
+                      {subSelections[group.key] || "Search and select a position..."}
+                    </span>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-50 bg-popover border border-border shadow-lg rounded-lg">
+                  <Command>
+                    <CommandInput placeholder="Search positions..." />
+                    <CommandList>
+                      <CommandEmpty>No positions found.</CommandEmpty>
+                      <CommandGroup>
+                        {SUB_OPTIONS[selectedVal].map((pos) => (
+                          <CommandItem
+                            key={pos}
+                            value={pos}
+                            onSelect={() => handleSubSelectionChange(group.key, pos === subSelections[group.key] ? "" : pos)}
+                            className="py-2.5 px-3 cursor-pointer font-medium tracking-wide data-[selected='true']:bg-primary/10 data-[selected='true']:text-primary"
+                          >
+                            <Check className={cn("mr-2 h-4 w-4 shrink-0", subSelections[group.key] === pos ? "opacity-100" : "opacity-0")} />
+                            <span className="text-sm">{pos}</span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+          );
+        })}
 
         {/* Reports & Promotions Section */}
         <div className="mt-10 mb-2">
