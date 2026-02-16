@@ -1,10 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, UserPlus } from "lucide-react";
+import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet } from "lucide-react";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getEmployees } from "@/lib/employeeStorage";
+import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
 
 const EmployeeList: React.FC = () => {
   const navigate = useNavigate();
@@ -25,9 +26,21 @@ const EmployeeList: React.FC = () => {
               <p className="text-sm text-muted-foreground">{employees.length} employee{employees.length !== 1 ? "s" : ""} registered</p>
             </div>
           </div>
-          <Button onClick={() => navigate("/employee/new")} className="btn-primary flex items-center gap-2">
-            <UserPlus className="w-4 h-4" /> Add Employee
-          </Button>
+          <div className="flex items-center gap-2 flex-wrap">
+            {employees.length > 0 && (
+              <>
+                <Button variant="outline" size="sm" onClick={() => exportEmployeesToPDF(employees, "Employee_List")} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
+                  <FileDown className="w-4 h-4" /> PDF
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => exportEmployeesToExcel(employees, "Employee_List")} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
+                  <FileSpreadsheet className="w-4 h-4" /> Excel
+                </Button>
+              </>
+            )}
+            <Button onClick={() => navigate("/employee/new")} className="btn-primary flex items-center gap-2">
+              <UserPlus className="w-4 h-4" /> Add Employee
+            </Button>
+          </div>
         </div>
 
         {employees.length === 0 ? (

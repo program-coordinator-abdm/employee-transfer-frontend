@@ -6,9 +6,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle } from "lucide-react";
+import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getEmployees, type NewEmployee } from "@/lib/employeeStorage";
+import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
 
 interface DropdownGroupConfig {
   key: string;
@@ -358,6 +359,16 @@ const Categories: React.FC = () => {
                   {filteredEmployees.length} employee{filteredEmployees.length !== 1 ? "s" : ""} found
                 </p>
               </div>
+              {filteredEmployees.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => exportEmployeesToPDF(filteredEmployees, activeFilter.position)} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
+                    <FileDown className="w-4 h-4" /> PDF
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => exportEmployeesToExcel(filteredEmployees, activeFilter.position)} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
+                    <FileSpreadsheet className="w-4 h-4" /> Excel
+                  </Button>
+                </div>
+              )}
             </div>
 
             {filteredEmployees.length === 0 ? (
