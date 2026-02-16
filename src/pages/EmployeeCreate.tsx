@@ -38,6 +38,7 @@ const EmployeeCreate: React.FC = () => {
   const [dateOfEntry, setDateOfEntry] = useState<Date>();
   const [gender, setGender] = useState("");
   const [probationaryPeriod, setProbationaryPeriod] = useState(false);
+  const [probationaryPeriodDoc, setProbationaryPeriodDoc] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
 
   // Address
@@ -145,6 +146,7 @@ const EmployeeCreate: React.FC = () => {
     if (childSpouseDisability && !childSpouseDisabilityDoc) errs.childSpouseDisabilityDoc = "Documentary proof is required";
     if (divorceeWidowWithChild && !divorceeWidowWithChildDoc) errs.divorceeWidowWithChildDoc = "Documentary proof is required";
     if (spouseGovtServant && !spouseGovtServantDoc) errs.spouseGovtServantDoc = "Documentary proof is required";
+    if (probationaryPeriod && !probationaryPeriodDoc) errs.probationaryPeriodDoc = "Documentary proof is required";
 
     pastServices.forEach((s, i) => {
       if (!s.postHeld) errs[`past_${i}_postHeld`] = "Post is required";
@@ -169,7 +171,7 @@ const EmployeeCreate: React.FC = () => {
       id: Date.now().toString(),
       kgid, name, designation, designationGroup, designationSubGroup,
       dateOfEntry: dateOfEntry!.toISOString(),
-      gender, probationaryPeriod,
+      gender, probationaryPeriod, probationaryPeriodDoc,
       dateOfBirth: dateOfBirth!.toISOString(),
       address, pinCode, email, phoneNumber, telephoneNumber,
       currentPostHeld, currentPostGroup, currentPostSubGroup,
@@ -271,7 +273,7 @@ const EmployeeCreate: React.FC = () => {
               <div>
                 <label className="input-label">Gender <span className="text-destructive">*</span></label>
                 <div className="flex gap-2 mt-1">
-                  {["Male", "Female", "Others"].map((g) => (
+                  {["Male", "Female"].map((g) => (
                     <button key={g} type="button"
                       onClick={() => { setGender(g); clearError("gender"); }}
                       className={cn(
@@ -285,10 +287,27 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 <FieldError error={errors.gender} />
               </div>
-              <div className="flex items-center gap-4 pt-6">
-                <Label htmlFor="probation" className="text-sm font-medium">Probationary Period</Label>
-                <Switch id="probation" checked={probationaryPeriod} onCheckedChange={setProbationaryPeriod} />
-                <span className="text-sm text-muted-foreground">{probationaryPeriod ? "Yes" : "No"}</span>
+              <div className="flex flex-col gap-3 pt-4">
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="probation" className="text-sm font-medium">Probationary Period</Label>
+                  <Switch id="probation" checked={probationaryPeriod} onCheckedChange={setProbationaryPeriod} />
+                  <span className="text-sm text-muted-foreground">{probationaryPeriod ? "Yes" : "No"}</span>
+                </div>
+                {probationaryPeriod && (
+                  <div>
+                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
+                    <label className="flex-1 cursor-pointer">
+                      <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg" className="hidden" onChange={(e) => { setProbationaryPeriodDoc(e.target.files?.[0]?.name || ""); clearError("probationaryPeriodDoc"); }} />
+                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.probationaryPeriodDoc && "border-destructive")}>
+                        <Upload className="w-4 h-4 text-muted-foreground" />
+                        <span className={cn("text-sm", probationaryPeriodDoc ? "text-foreground" : "text-muted-foreground")}>
+                          {probationaryPeriodDoc || "Choose file (PDF, DOC, DOCX, JPG, JPEG)..."}
+                        </span>
+                      </div>
+                    </label>
+                    <FieldError error={errors.probationaryPeriodDoc} />
+                  </div>
+                )}
               </div>
             </div>
           </Card>
