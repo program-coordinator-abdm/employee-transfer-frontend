@@ -126,7 +126,7 @@ const EmployeeView: React.FC = () => {
 
           {/* Special Conditions */}
           <SectionHeading title="Special Conditions" />
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Terminally Ill" value={
               emp.terminallyIll ? <span className="text-destructive font-medium">Yes {emp.terminallyIllDoc && `— ${emp.terminallyIllDoc}`}</span> : "No"
             } />
@@ -135,6 +135,18 @@ const EmployeeView: React.FC = () => {
             } />
             <Field label="Widow" value={
               emp.widow ? <span className="text-destructive font-medium">Yes {emp.widowDoc && `— ${emp.widowDoc}`}</span> : "No"
+            } />
+            <Field label="Pregnant / Child under 1 year" value={
+              emp.pregnantOrChildUnderOne ? <span className="text-destructive font-medium">Yes {emp.pregnantOrChildUnderOneDoc && `— ${emp.pregnantOrChildUnderOneDoc}`}</span> : "No"
+            } />
+            <Field label="Retiring within 2 years" value={
+              emp.retiringWithinTwoYears ? <span className="text-destructive font-medium">Yes {emp.retiringWithinTwoYearsDoc && `— ${emp.retiringWithinTwoYearsDoc}`}</span> : "No"
+            } />
+            <Field label="Child/Spouse with 40%+ disability" value={
+              emp.childSpouseDisability ? <span className="text-destructive font-medium">Yes {emp.childSpouseDisabilityDoc && `— ${emp.childSpouseDisabilityDoc}`}</span> : "No"
+            } />
+            <Field label="Divorcee/Widow/Widower with child ≤12" value={
+              emp.divorceeWidowWithChild ? <span className="text-destructive font-medium">Yes {emp.divorceeWidowWithChildDoc && `— ${emp.divorceeWidowWithChildDoc}`}</span> : "No"
             } />
             <Field label="Spouse a Govt Servant" value={emp.spouseGovtServant ? "Yes" : "No"} />
           </div>

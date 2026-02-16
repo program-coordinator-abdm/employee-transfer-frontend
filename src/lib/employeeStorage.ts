@@ -45,6 +45,14 @@ export interface NewEmployee {
   widow: boolean;
   widowDoc: string;
   spouseGovtServant: boolean;
+  pregnantOrChildUnderOne: boolean;
+  pregnantOrChildUnderOneDoc: string;
+  retiringWithinTwoYears: boolean;
+  retiringWithinTwoYearsDoc: string;
+  childSpouseDisability: boolean;
+  childSpouseDisabilityDoc: string;
+  divorceeWidowWithChild: boolean;
+  divorceeWidowWithChildDoc: string;
   createdAt: string;
 }
 
