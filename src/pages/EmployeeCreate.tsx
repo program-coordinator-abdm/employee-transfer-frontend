@@ -41,12 +41,19 @@ const EmployeeCreate: React.FC = () => {
   const [probationaryPeriodDoc, setProbationaryPeriodDoc] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
 
-  // Address
+  // Personal Address
   const [address, setAddress] = useState("");
   const [pinCode, setPinCode] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [telephoneNumber, setTelephoneNumber] = useState("");
+
+  // Office Address
+  const [officeAddress, setOfficeAddress] = useState("");
+  const [officePinCode, setOfficePinCode] = useState("");
+  const [officeEmail, setOfficeEmail] = useState("");
+  const [officePhoneNumber, setOfficePhoneNumber] = useState("");
+  const [officeTelephoneNumber, setOfficeTelephoneNumber] = useState("");
 
   // Current working
   const [currentPostHeld, setCurrentPostHeld] = useState("");
@@ -134,6 +141,10 @@ const EmployeeCreate: React.FC = () => {
     if (!pinCode.trim()) errs.pinCode = "Pin code is required";
     if (!email.trim()) errs.email = "Email is required";
     if (!phoneNumber.trim()) errs.phoneNumber = "Phone number is required";
+    if (!officeAddress.trim()) errs.officeAddress = "Office address is required";
+    if (!officePinCode.trim()) errs.officePinCode = "Office pin code is required";
+    if (!officeEmail.trim()) errs.officeEmail = "Office email is required";
+    if (!officePhoneNumber.trim()) errs.officePhoneNumber = "Office phone number is required";
     if (!currentPostHeld) errs.currentPostHeld = "Current post is required";
     if (!currentInstitution.trim()) errs.currentInstitution = "Institution is required";
     if (!currentDistrict) errs.currentDistrict = "District is required";
@@ -174,6 +185,7 @@ const EmployeeCreate: React.FC = () => {
       gender, probationaryPeriod, probationaryPeriodDoc,
       dateOfBirth: dateOfBirth!.toISOString(),
       address, pinCode, email, phoneNumber, telephoneNumber,
+      officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
       currentPostHeld, currentPostGroup, currentPostSubGroup,
       currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: currentWorkingSince!.toISOString(),
@@ -315,10 +327,13 @@ const EmployeeCreate: React.FC = () => {
           {/* 4. Communication Address */}
           <Card className="p-6">
             <SectionTitle number="4" title="Communication Address" />
-            <div className="space-y-4">
+
+            {/* Personal Address */}
+            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Personal Address</h4>
+            <div className="space-y-4 mb-6">
               <div>
                 <label className="input-label">Address <span className="text-destructive">*</span></label>
-                <textarea value={address} onChange={(e) => { setAddress(e.target.value); clearError("address"); }} className={`input-field min-h-[80px] resize-y ${errors.address ? "border-destructive" : ""}`} placeholder="Full address for communication" />
+                <textarea value={address} onChange={(e) => { setAddress(e.target.value); clearError("address"); }} className={`input-field min-h-[80px] resize-y ${errors.address ? "border-destructive" : ""}`} placeholder="Full personal address" />
                 <FieldError error={errors.address} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -340,6 +355,39 @@ const EmployeeCreate: React.FC = () => {
                 <div>
                   <label className="input-label">Telephone Number</label>
                   <input value={telephoneNumber} onChange={(e) => setTelephoneNumber(e.target.value.replace(/\D/g, "").slice(0, 12))} className="input-field" placeholder="With STD code" maxLength={12} />
+                </div>
+              </div>
+            </div>
+
+            <Separator className="my-5" />
+
+            {/* Office Address */}
+            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Office Address</h4>
+            <div className="space-y-4">
+              <div>
+                <label className="input-label">Address <span className="text-destructive">*</span></label>
+                <textarea value={officeAddress} onChange={(e) => { setOfficeAddress(e.target.value); clearError("officeAddress"); }} className={`input-field min-h-[80px] resize-y ${errors.officeAddress ? "border-destructive" : ""}`} placeholder="Full office address" />
+                <FieldError error={errors.officeAddress} />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <label className="input-label">Pin Code <span className="text-destructive">*</span></label>
+                  <input value={officePinCode} onChange={(e) => { setOfficePinCode(e.target.value.replace(/\D/g, "").slice(0, 6)); clearError("officePinCode"); }} className={`input-field ${errors.officePinCode ? "border-destructive" : ""}`} placeholder="6-digit" maxLength={6} />
+                  <FieldError error={errors.officePinCode} />
+                </div>
+                <div>
+                  <label className="input-label">Email ID <span className="text-destructive">*</span></label>
+                  <input type="email" value={officeEmail} onChange={(e) => { setOfficeEmail(e.target.value); clearError("officeEmail"); }} className={`input-field ${errors.officeEmail ? "border-destructive" : ""}`} placeholder="office@example.com" />
+                  <FieldError error={errors.officeEmail} />
+                </div>
+                <div>
+                  <label className="input-label">Phone Number <span className="text-destructive">*</span></label>
+                  <input value={officePhoneNumber} onChange={(e) => { setOfficePhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10)); clearError("officePhoneNumber"); }} className={`input-field ${errors.officePhoneNumber ? "border-destructive" : ""}`} placeholder="10-digit mobile" maxLength={10} />
+                  <FieldError error={errors.officePhoneNumber} />
+                </div>
+                <div>
+                  <label className="input-label">Telephone Number</label>
+                  <input value={officeTelephoneNumber} onChange={(e) => setOfficeTelephoneNumber(e.target.value.replace(/\D/g, "").slice(0, 12))} className="input-field" placeholder="With STD code" maxLength={12} />
                 </div>
               </div>
             </div>

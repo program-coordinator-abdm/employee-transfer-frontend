@@ -79,14 +79,24 @@ const EmployeeView: React.FC = () => {
             } />
           </div>
 
-          {/* Communication Address */}
-          <SectionHeading title="Communication Address" />
+          {/* Personal Address */}
+          <SectionHeading title="Personal Address" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Address" value={emp.address} />
             <Field label="Pin Code" value={emp.pinCode} />
             <Field label="Email" value={emp.email} />
             <Field label="Phone Number" value={emp.phoneNumber} />
             {emp.telephoneNumber && <Field label="Telephone" value={emp.telephoneNumber} />}
+          </div>
+
+          {/* Office Address */}
+          <SectionHeading title="Office Address" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Address" value={emp.officeAddress} />
+            <Field label="Pin Code" value={emp.officePinCode} />
+            <Field label="Email" value={emp.officeEmail} />
+            <Field label="Phone Number" value={emp.officePhoneNumber} />
+            {emp.officeTelephoneNumber && <Field label="Telephone" value={emp.officeTelephoneNumber} />}
           </div>
 
           {/* Current Working Details */}
