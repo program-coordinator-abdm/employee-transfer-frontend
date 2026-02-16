@@ -57,7 +57,7 @@ const SearchableDropdown: React.FC<{
                     onChange(option === value ? "" : option);
                     setOpen(false);
                   }}
-                  className="py-2.5 px-3 cursor-pointer"
+                  className="py-2.5 px-3 cursor-pointer font-medium tracking-wide data-[selected='true']:bg-teal-50 data-[selected='true']:text-teal-700"
                 >
                   <Check className={cn("mr-2 h-4 w-4", value === option ? "opacity-100" : "opacity-0")} />
                   {option}
