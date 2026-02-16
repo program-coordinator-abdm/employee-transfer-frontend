@@ -101,21 +101,18 @@ const EmployeeCreate: React.FC = () => {
     const newDates = [...pastFromDates];
     newDates[idx] = date;
     setPastFromDates(newDates);
-    updatePastService(idx, "fromDate", date ? date.toISOString() : "");
-    // Auto-calc tenure
-    if (date && pastToDates[idx]) {
-      updatePastService(idx, "tenure", calculateTenure(date, pastToDates[idx]!));
-    }
+    const dateStr = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}` : "";
+    const tenure = (date && pastToDates[idx]) ? calculateTenure(date, pastToDates[idx]!) : "";
+    setPastServices(prev => prev.map((s, i) => i === idx ? { ...s, fromDate: dateStr, tenure } : s));
   };
 
   const updatePastToDate = (idx: number, date: Date | undefined) => {
     const newDates = [...pastToDates];
     newDates[idx] = date;
     setPastToDates(newDates);
-    updatePastService(idx, "toDate", date ? date.toISOString() : "");
-    if (pastFromDates[idx] && date) {
-      updatePastService(idx, "tenure", calculateTenure(pastFromDates[idx]!, date));
-    }
+    const dateStr = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}` : "";
+    const tenure = (pastFromDates[idx] && date) ? calculateTenure(pastFromDates[idx]!, date) : "";
+    setPastServices(prev => prev.map((s, i) => i === idx ? { ...s, toDate: dateStr, tenure } : s));
   };
 
   const validate = (): boolean => {
