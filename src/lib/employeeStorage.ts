@@ -30,6 +30,11 @@ export interface NewEmployee {
   email: string;
   phoneNumber: string;
   telephoneNumber: string;
+  officeAddress: string;
+  officePinCode: string;
+  officeEmail: string;
+  officePhoneNumber: string;
+  officeTelephoneNumber: string;
   currentPostHeld: string;
   currentPostGroup: string;
   currentPostSubGroup: string;
