@@ -23,6 +23,7 @@ export interface NewEmployee {
   dateOfEntry: string;
   gender: string;
   probationaryPeriod: boolean;
+  probationaryPeriodDoc: string;
   dateOfBirth: string;
   address: string;
   pinCode: string;

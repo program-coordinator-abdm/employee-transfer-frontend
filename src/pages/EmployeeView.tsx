@@ -74,7 +74,9 @@ const EmployeeView: React.FC = () => {
             <Field label="Date of Entry into Service" value={fmt(emp.dateOfEntry)} />
             <Field label="Date of Birth" value={fmt(emp.dateOfBirth)} />
             <Field label="Gender" value={emp.gender} />
-            <Field label="Probationary Period" value={emp.probationaryPeriod ? "Yes" : "No"} />
+            <Field label="Probationary Period" value={
+              emp.probationaryPeriod ? <span className="font-medium">Yes {emp.probationaryPeriodDoc && `— ${emp.probationaryPeriodDoc}`}</span> : "No"
+            } />
           </div>
 
           {/* Communication Address */}
