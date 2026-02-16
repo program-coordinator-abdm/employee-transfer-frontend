@@ -133,7 +133,7 @@ const EmployeeView: React.FC = () => {
             <Field label="Physically Challenged (>40%)" value={
               emp.physicallyChallenged ? <span className="text-destructive font-medium">Yes {emp.physicallyChallengedDoc && `— ${emp.physicallyChallengedDoc}`}</span> : "No"
             } />
-            <Field label="Widow" value={
+            <Field label="Widow/Widower" value={
               emp.widow ? <span className="text-destructive font-medium">Yes {emp.widowDoc && `— ${emp.widowDoc}`}</span> : "No"
             } />
             <Field label="Pregnant / Child under 1 year" value={
