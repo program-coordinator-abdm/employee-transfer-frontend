@@ -77,17 +77,63 @@ const GROUP_B_POSITIONS: string[] = [
   "Deputy District Health Education Officer",
 ];
 
+const GROUP_C_POSITIONS: string[] = [
+  "Office Superintendents",
+  "First Division Assistant",
+  "Second Division Assistant",
+  "Vehicle Driver",
+  "Nursing Superintendents Grade-2 (Group-C)",
+  "Primary Health Care Officer (PHCO)",
+  "Health Inspecting Officer (Jr HIO)",
+  "Senior Health Inspecting Officer (Sr HIO)",
+  "Health Supervisor",
+  "Senior Primary Health Care Officer (Sr PHCO / LHV)",
+  "Block Health Education Officer",
+  "Junior Lab Technical Officer",
+  "Senior Lab Technical Officer",
+  "Junior Radiology Imaging Officer (X-ray Technician)",
+  "Senior Radiology Imaging Officer (Radiographer)",
+  "Ophthalmic Officer",
+  "Senior Ophthalmic Officer",
+  "Chief Ophthalmic Officer",
+  "Assistant Documentation Technician (Assistant Medical Record Technician)",
+  "Physiotherapist (General)",
+  "Electrical Technician",
+  "Social Worker",
+  "Dietitian",
+  "Dental Technician",
+  "Dental Hygienist",
+  "ECG Technician",
+  "Dialysis Technician",
+  "ECHO Technician",
+  "Audiometrician",
+  "Refrigerator Mechanic",
+  "Librarian",
+  "CT Scanning Technician",
+  "T A T Technician",
+  "Ultrasound Technician",
+  "Equipment Technician",
+  "Autoclave Mechanic",
+  "Occupational Therapist",
+  "OT Technicians",
+  "Pharmacy Officers",
+  "Senior Pharmacy Officers",
+  "Junior Pharmacists",
+  "Senior Pharmacists",
+];
+
 const SUB_OPTIONS: Record<string, string[]> = {
   "Group A Officers (LRO)": LRO_POSITIONS,
   "Group A Doctors (JRO & LRO)": JRO_LRO_POSITIONS,
   "Group B Officers": GROUP_B_POSITIONS,
+  "Group C Employees": GROUP_C_POSITIONS,
 };
 
 const GROUP_CONFIGS: DropdownGroupConfig[] = [
   { key: "groupA", label: "Group A", options: ["Group A Officers (LRO)", "Group A Doctors (JRO & LRO)"] },
   { key: "groupB", label: "Group B", options: ["Group B Officers"] },
   { key: "groupC", label: "Group C", options: ["Group C Employees"] },
-  { key: "groupD", label: "Group D", options: ["Group D Employees"] },
+  { key: "groupD", label: "Group D", options: ["Add new"] },
 ];
 
 const SearchableDropdown: React.FC<{
