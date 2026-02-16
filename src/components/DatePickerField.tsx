@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { format, differenceInMonths, differenceInYears } from "date-fns";
+import { format, differenceInMonths, differenceInYears, setMonth, setYear } from "date-fns";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 
@@ -13,6 +14,11 @@ interface DatePickerFieldProps {
   disabled?: (date: Date) => boolean;
 }
 
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
 const DatePickerField: React.FC<DatePickerFieldProps> = ({
   value,
   onChange,
@@ -20,6 +26,17 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
   disabled,
 }) => {
   const [open, setOpen] = useState(false);
+  const [viewDate, setViewDate] = useState<Date>(value || new Date());
+
+  const years = Array.from({ length: 2030 - 1950 + 1 }, (_, i) => 1950 + i);
+
+  const handleMonthChange = (month: string) => {
+    setViewDate(setMonth(viewDate, parseInt(month)));
+  };
+
+  const handleYearChange = (year: string) => {
+    setViewDate(setYear(viewDate, parseInt(year)));
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -36,15 +53,36 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0 z-50 bg-popover border border-border shadow-lg rounded-lg" align="start">
+        <div className="p-3 pb-0 flex items-center gap-2">
+          <Select value={viewDate.getMonth().toString()} onValueChange={handleMonthChange}>
+            <SelectTrigger className="h-9 flex-1 text-sm font-medium">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="max-h-60">
+              {MONTHS.map((m, i) => (
+                <SelectItem key={i} value={i.toString()}>{m}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={viewDate.getFullYear().toString()} onValueChange={handleYearChange}>
+            <SelectTrigger className="h-9 w-24 text-sm font-medium">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="max-h-60">
+              {years.map((y) => (
+                <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <Calendar
           mode="single"
+          month={viewDate}
+          onMonthChange={setViewDate}
           selected={value}
           onSelect={(d) => { onChange(d); setOpen(false); }}
           disabled={disabled}
           initialFocus
-          captionLayout="dropdown-buttons"
-          fromYear={1950}
-          toYear={2030}
           className={cn("p-3 pointer-events-auto")}
         />
       </PopoverContent>
