@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet } from "lucide-react";
+import KGIDSearch from "@/components/KGIDSearch";
 import { cn } from "@/lib/utils";
 import { getEmployees, type NewEmployee } from "@/lib/employeeStorage";
 import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
@@ -271,12 +272,15 @@ const Categories: React.FC = () => {
           </div>
         </Card>
 
-        {/* View Employees link */}
+        {/* View Employees link + KGID Search */}
         {getEmployees().length > 0 && (
-          <div className="mb-6">
+          <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <Button variant="outline" onClick={() => navigate("/employee-list")} className="gap-2 border-primary/30 text-primary hover:bg-primary/10">
               <Users className="w-4 h-4" /> View All Employees ({getEmployees().length})
             </Button>
+            <div className="w-full sm:w-72">
+              <KGIDSearch onSelect={(emp) => navigate(`/employee/view/${emp.id}`)} placeholder="Quick search by KGID..." />
+            </div>
           </div>
         )}
 
@@ -370,6 +374,16 @@ const Categories: React.FC = () => {
                 </div>
               )}
             </div>
+
+            {filteredEmployees.length > 0 && (
+              <div className="mb-4 max-w-sm">
+                <KGIDSearch
+                  onSelect={(emp) => navigate(`/employee/view/${emp.id}`)}
+                  employees={filteredEmployees}
+                  placeholder="Search within results by KGID..."
+                />
+              </div>
+            )}
 
             {filteredEmployees.length === 0 ? (
               <Card className="p-8 text-center border-dashed border-2 border-border">
