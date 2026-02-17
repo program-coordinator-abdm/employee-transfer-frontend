@@ -56,6 +56,12 @@ export interface NewEmployee {
   divorceeWidowWithChildDoc: string;
   spouseGovtServant: boolean;
   spouseGovtServantDoc: string;
+  empDeclAgreed: boolean;
+  empDeclName: string;
+  empDeclDate: string;
+  officerDeclAgreed: boolean;
+  officerDeclName: string;
+  officerDeclDate: string;
   createdAt: string;
 }
 

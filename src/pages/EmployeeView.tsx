@@ -158,6 +158,37 @@ const EmployeeView: React.FC = () => {
               emp.spouseGovtServant ? <span className="text-destructive font-medium">Yes {emp.spouseGovtServantDoc && `— ${emp.spouseGovtServantDoc}`}</span> : "No"
             } />
           </div>
+
+          {/* Declarations */}
+          {emp.empDeclAgreed && (
+            <>
+              <SectionHeading title="Employee Declaration" />
+              <div className="bg-muted/30 rounded-lg p-4 border border-border mb-3">
+                <p className="text-sm text-foreground leading-relaxed">
+                  I hereby declare that the details provided in this form are true and correct to the best of my knowledge. If false information is provided, I shall be liable for disciplinary action attracting major penalty as per the provisions of the <span className="font-semibold">Karnataka Civil Services (Classification, Control and Appeal) Rules, 1957</span>.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Signed By" value={emp.empDeclName} />
+                <Field label="Date" value={fmt(emp.empDeclDate)} />
+              </div>
+            </>
+          )}
+
+          {emp.officerDeclAgreed && (
+            <>
+              <SectionHeading title="Declaration by Reporting Officer" />
+              <div className="bg-muted/30 rounded-lg p-4 border border-border mb-3">
+                <p className="text-sm text-foreground leading-relaxed">
+                  I have verified the details filled up by the employee with the service records available in this office and have found that the details are true and correct to the best of my knowledge and belief.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Signed By" value={emp.officerDeclName} />
+                <Field label="Date" value={fmt(emp.officerDeclDate)} />
+              </div>
+            </>
+          )}
         </Card>
       </main>
 
