@@ -34,10 +34,10 @@ const App = () => {
               {/* Admin routes */}
               <Route path="/categories" element={<ProtectedRoute allowedRoles={["ADMIN"]}><Categories /></ProtectedRoute>} />
               <Route path="/staff" element={<Navigate to="/categories" replace />} />
-              <Route path="/employees" element={<ProtectedRoute allowedRoles={["ADMIN"]}><Employees /></ProtectedRoute>} />
-              <Route path="/employees/:id" element={<ProtectedRoute allowedRoles={["ADMIN"]}><EmployeeDetail /></ProtectedRoute>} />
-              <Route path="/employee-list" element={<ProtectedRoute allowedRoles={["ADMIN"]}><EmployeeList /></ProtectedRoute>} />
-              <Route path="/employee-view/:id" element={<ProtectedRoute allowedRoles={["ADMIN"]}><EmployeeView /></ProtectedRoute>} />
+              <Route path="/employees" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><Employees /></ProtectedRoute>} />
+              <Route path="/employees/:id" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><EmployeeDetail /></ProtectedRoute>} />
+              <Route path="/employee-list" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><EmployeeList /></ProtectedRoute>} />
+              <Route path="/employee-view/:id" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><EmployeeView /></ProtectedRoute>} />
               <Route path="/employee/new" element={<ProtectedRoute allowedRoles={["DATA_OFFICER"]}><EmployeeCreate /></ProtectedRoute>} />
               <Route path="/employee/edit/:id" element={<ProtectedRoute allowedRoles={["ADMIN"]}><EmployeeCreate /></ProtectedRoute>} />
               <Route path="/reports" element={<ProtectedRoute allowedRoles={["ADMIN"]}><Reports /></ProtectedRoute>} />
