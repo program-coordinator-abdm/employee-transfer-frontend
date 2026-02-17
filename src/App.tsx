@@ -32,7 +32,7 @@ const App = () => {
               <Route path="/login" element={<Login />} />
 
               {/* Admin routes */}
-              <Route path="/categories" element={<ProtectedRoute allowedRoles={["ADMIN"]}><Categories /></ProtectedRoute>} />
+              <Route path="/categories" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><Categories /></ProtectedRoute>} />
               <Route path="/staff" element={<Navigate to="/categories" replace />} />
               <Route path="/employees" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><Employees /></ProtectedRoute>} />
               <Route path="/employees/:id" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><EmployeeDetail /></ProtectedRoute>} />
@@ -40,8 +40,8 @@ const App = () => {
               <Route path="/employee-view/:id" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><EmployeeView /></ProtectedRoute>} />
               <Route path="/employee/new" element={<ProtectedRoute allowedRoles={["DATA_OFFICER"]}><EmployeeCreate /></ProtectedRoute>} />
               <Route path="/employee/edit/:id" element={<ProtectedRoute allowedRoles={["ADMIN"]}><EmployeeCreate /></ProtectedRoute>} />
-              <Route path="/reports" element={<ProtectedRoute allowedRoles={["ADMIN"]}><Reports /></ProtectedRoute>} />
-              <Route path="/promotions" element={<ProtectedRoute allowedRoles={["ADMIN"]}><Promotions /></ProtectedRoute>} />
+              <Route path="/reports" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><Reports /></ProtectedRoute>} />
+              <Route path="/promotions" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><Promotions /></ProtectedRoute>} />
 
               {/* Data Officer routes */}
               <Route path="/data-officer" element={<ProtectedRoute allowedRoles={["DATA_OFFICER"]}><DataOfficerDashboard /></ProtectedRoute>} />

@@ -53,7 +53,7 @@ const Login: React.FC = () => {
     setDoLoading(true);
     try {
       await loginDataOfficer({ username: doData.username, password: doData.password });
-      navigate("/data-officer");
+      navigate("/categories");
     } catch {
       setDoErrors({ form: "Invalid credentials. Please try again." });
     } finally {
