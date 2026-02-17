@@ -1,12 +1,14 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import { format } from "date-fns";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { getEmployeeById } from "@/lib/employeeStorage";
+import { useAuth } from "@/contexts/AuthContext";
 
 const fmt = (iso: string) => {
   try { return format(new Date(iso), "dd MMM yyyy"); } catch { return iso; }
@@ -29,6 +31,8 @@ const SectionHeading: React.FC<{ title: string }> = ({ title }) => (
 const EmployeeView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
   const emp = getEmployeeById(id || "");
 
   if (!emp) {
@@ -63,7 +67,14 @@ const EmployeeView: React.FC = () => {
               <h1 className="text-2xl font-bold text-foreground">{emp.name}</h1>
               <p className="text-sm text-muted-foreground font-mono">KGID: {emp.kgid}</p>
             </div>
-            <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">{emp.designationGroup}</Badge>
+            <div className="flex items-center gap-2">
+              {isAdmin && (
+                <Button variant="outline" size="sm" onClick={() => navigate(`/employee/edit/${emp.id}`)} className="flex items-center gap-2">
+                  <Pencil className="w-4 h-4" /> Edit Details
+                </Button>
+              )}
+              <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">{emp.designationGroup}</Badge>
+            </div>
           </div>
 
           {/* Basic Info */}

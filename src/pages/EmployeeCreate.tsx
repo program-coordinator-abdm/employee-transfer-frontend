@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2, Upload } from "lucide-react";
 import FormPreview, { type FormPreviewData } from "@/components/FormPreview";
 import Header from "@/components/Header";
@@ -12,7 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { KARNATAKA_DISTRICTS, type PositionInfo } from "@/lib/positions";
-import { saveEmployee, type NewEmployee, type PastServiceEntry } from "@/lib/employeeStorage";
+import { saveEmployee, updateEmployee, getEmployeeById, type NewEmployee, type PastServiceEntry } from "@/lib/employeeStorage";
 import Toast, { useToastState } from "@/components/Toast";
 
 interface FormErrors {
@@ -27,6 +27,8 @@ const EMPTY_PAST_SERVICE: () => PastServiceEntry = () => ({
 
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
+  const { id: editId } = useParams<{ id: string }>();
+  const isEditMode = !!editId;
   const { toast, showToast, hideToast } = useToastState();
   const [errors, setErrors] = useState<FormErrors>({});
   // formStep: "fill" → "preview" → "declare"
@@ -95,6 +97,41 @@ const EmployeeCreate: React.FC = () => {
   const [officerDeclAgreed, setOfficerDeclAgreed] = useState(false);
   const [officerDeclName, setOfficerDeclName] = useState("");
   const [officerDeclDate, setOfficerDeclDate] = useState<Date>();
+
+  // Load existing employee data in edit mode
+  useEffect(() => {
+    if (!editId) return;
+    const existing = getEmployeeById(editId);
+    if (!existing) return;
+    setKgid(existing.kgid); setName(existing.name);
+    setDesignation(existing.designation); setDesignationGroup(existing.designationGroup); setDesignationSubGroup(existing.designationSubGroup);
+    setDateOfEntry(new Date(existing.dateOfEntry)); setGender(existing.gender);
+    setProbationaryPeriod(existing.probationaryPeriod); setProbationaryPeriodDoc(existing.probationaryPeriodDoc);
+    setDateOfBirth(new Date(existing.dateOfBirth));
+    setAddress(existing.address); setPinCode(existing.pinCode); setEmail(existing.email);
+    setPhoneNumber(existing.phoneNumber); setTelephoneNumber(existing.telephoneNumber);
+    setOfficeAddress(existing.officeAddress); setOfficePinCode(existing.officePinCode);
+    setOfficeEmail(existing.officeEmail); setOfficePhoneNumber(existing.officePhoneNumber);
+    setOfficeTelephoneNumber(existing.officeTelephoneNumber);
+    setCurrentPostHeld(existing.currentPostHeld); setCurrentPostGroup(existing.currentPostGroup);
+    setCurrentPostSubGroup(existing.currentPostSubGroup); setCurrentInstitution(existing.currentInstitution);
+    setCurrentDistrict(existing.currentDistrict); setCurrentTaluk(existing.currentTaluk);
+    setCurrentCityTownVillage(existing.currentCityTownVillage);
+    setCurrentWorkingSince(new Date(existing.currentWorkingSince));
+    setPastServices(existing.pastServices);
+    setPastFromDates(existing.pastServices.map(s => s.fromDate ? new Date(s.fromDate) : undefined));
+    setPastToDates(existing.pastServices.map(s => s.toDate ? new Date(s.toDate) : undefined));
+    setTerminallyIll(existing.terminallyIll); setTerminallyIllDoc(existing.terminallyIllDoc);
+    setPregnantOrChildUnderOne(existing.pregnantOrChildUnderOne); setPregnantOrChildUnderOneDoc(existing.pregnantOrChildUnderOneDoc);
+    setRetiringWithinTwoYears(existing.retiringWithinTwoYears); setRetiringWithinTwoYearsDoc(existing.retiringWithinTwoYearsDoc);
+    setChildSpouseDisability(existing.childSpouseDisability); setChildSpouseDisabilityDoc(existing.childSpouseDisabilityDoc);
+    setDivorceeWidowWithChild(existing.divorceeWidowWithChild); setDivorceeWidowWithChildDoc(existing.divorceeWidowWithChildDoc);
+    setSpouseGovtServant(existing.spouseGovtServant); setSpouseGovtServantDoc(existing.spouseGovtServantDoc);
+    setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
+    if (existing.empDeclDate) setEmpDeclDate(new Date(existing.empDeclDate));
+    setOfficerDeclAgreed(existing.officerDeclAgreed); setOfficerDeclName(existing.officerDeclName);
+    if (existing.officerDeclDate) setOfficerDeclDate(new Date(existing.officerDeclDate));
+  }, [editId]);
 
   const clearError = (field: string) => {
     if (errors[field]) setErrors((p) => { const n = { ...p }; delete n[field]; return n; });
@@ -246,7 +283,7 @@ const EmployeeCreate: React.FC = () => {
     }
 
     const emp: NewEmployee = {
-      id: Date.now().toString(),
+      id: isEditMode ? editId : Date.now().toString(),
       kgid, name, designation, designationGroup, designationSubGroup,
       dateOfEntry: dateOfEntry!.toISOString(),
       gender, probationaryPeriod, probationaryPeriodDoc,
@@ -264,10 +301,15 @@ const EmployeeCreate: React.FC = () => {
       spouseGovtServant, spouseGovtServantDoc,
       empDeclAgreed, empDeclName, empDeclDate: empDeclDate?.toISOString() || "",
       officerDeclAgreed, officerDeclName, officerDeclDate: officerDeclDate?.toISOString() || "",
-      createdAt: new Date().toISOString(),
+      createdAt: isEditMode ? (getEmployeeById(editId)?.createdAt || new Date().toISOString()) : new Date().toISOString(),
     };
-    saveEmployee(emp);
-    showToast("Employee created successfully!", "success");
+    if (isEditMode) {
+      updateEmployee(emp);
+      showToast("Employee updated successfully!", "success");
+    } else {
+      saveEmployee(emp);
+      showToast("Employee created successfully!", "success");
+    }
     setTimeout(() => navigate("/employee-list"), 1200);
   };
 
@@ -297,14 +339,14 @@ const EmployeeCreate: React.FC = () => {
               setFormStep("preview");
               window.scrollTo({ top: 0, behavior: "smooth" });
             } else {
-              navigate("/categories");
+              navigate(isEditMode ? "/employee-list" : "/data-officer");
             }
           }} className="btn-ghost flex items-center gap-2 text-sm px-3 py-2">
             <ArrowLeft className="w-4 h-4" /> {formStep === "fill" && editingSection !== null ? "Back to Preview" : formStep === "declare" ? "Back to Preview" : "Back"}
           </button>
           <div>
             <h1 className="text-2xl font-bold text-foreground">
-              {formStep === "preview" ? "Preview Details" : formStep === "declare" ? "Declaration & Submit" : editingSection !== null ? `Edit Section ${editingSection}` : "Add New Employee"}
+              {formStep === "preview" ? "Preview Details" : formStep === "declare" ? "Declaration & Submit" : editingSection !== null ? `Edit Section ${editingSection}` : isEditMode ? "Edit Employee" : "Add New Employee"}
             </h1>
             <p className="text-sm text-muted-foreground">
               {formStep === "preview" ? "Review all details before proceeding to declaration" : formStep === "declare" ? "Sign declarations and submit" : "Fill in all required details to register an employee"}
