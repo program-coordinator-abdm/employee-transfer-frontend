@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2, Upload } from "lucide-react";
+import FormPreview, { type FormPreviewData } from "@/components/FormPreview";
 import Header from "@/components/Header";
 import PositionDropdown from "@/components/PositionDropdown";
 import DatePickerField, { calculateTenure } from "@/components/DatePickerField";
@@ -28,7 +29,10 @@ const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToastState();
   const [errors, setErrors] = useState<FormErrors>({});
-
+  // formStep: "fill" → "preview" → "declare"
+  const [formStep, setFormStep] = useState<"fill" | "preview" | "declare">("fill");
+  const [editingSection, setEditingSection] = useState<number | null>(null);
+  const sectionRefs = useRef<Record<number, HTMLDivElement | null>>({});
   // Basic fields
   const [kgid, setKgid] = useState("");
   const [name, setName] = useState("");
@@ -136,7 +140,7 @@ const EmployeeCreate: React.FC = () => {
     setPastServices(prev => prev.map((s, i) => i === idx ? { ...s, toDate: dateStr, tenure } : s));
   };
 
-  const validate = (): boolean => {
+  const validateSections1to7 = (): boolean => {
     const errs: FormErrors = {};
     if (!kgid.trim()) errs.kgid = "KGID Number is required";
     if (!name.trim()) errs.name = "Employee Name is required";
@@ -166,12 +170,6 @@ const EmployeeCreate: React.FC = () => {
     if (divorceeWidowWithChild && !divorceeWidowWithChildDoc) errs.divorceeWidowWithChildDoc = "Documentary proof is required";
     if (spouseGovtServant && !spouseGovtServantDoc) errs.spouseGovtServantDoc = "Documentary proof is required";
     if (probationaryPeriod && !probationaryPeriodDoc) errs.probationaryPeriodDoc = "Documentary proof is required";
-    if (!empDeclAgreed) errs.empDeclAgreed = "Employee declaration must be accepted";
-    if (empDeclAgreed && !empDeclName.trim()) errs.empDeclName = "Employee signature name is required";
-    if (empDeclAgreed && !empDeclDate) errs.empDeclDate = "Employee signature date is required";
-    if (!officerDeclAgreed) errs.officerDeclAgreed = "Reporting officer declaration must be accepted";
-    if (officerDeclAgreed && !officerDeclName.trim()) errs.officerDeclName = "Officer signature name is required";
-    if (officerDeclAgreed && !officerDeclDate) errs.officerDeclDate = "Officer signature date is required";
 
     pastServices.forEach((s, i) => {
       if (!s.postHeld) errs[`past_${i}_postHeld`] = "Post is required";
@@ -184,6 +182,61 @@ const EmployeeCreate: React.FC = () => {
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
+
+  const validate = (): boolean => {
+    const errs: FormErrors = {};
+    if (!empDeclAgreed) errs.empDeclAgreed = "Employee declaration must be accepted";
+    if (empDeclAgreed && !empDeclName.trim()) errs.empDeclName = "Employee signature name is required";
+    if (empDeclAgreed && !empDeclDate) errs.empDeclDate = "Employee signature date is required";
+    if (!officerDeclAgreed) errs.officerDeclAgreed = "Reporting officer declaration must be accepted";
+    if (officerDeclAgreed && !officerDeclName.trim()) errs.officerDeclName = "Officer signature name is required";
+    if (officerDeclAgreed && !officerDeclDate) errs.officerDeclDate = "Officer signature date is required";
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  const handlePreview = () => {
+    if (!validateSections1to7()) {
+      showToast("Please fill all required fields before preview", "error");
+      return;
+    }
+    setFormStep("preview");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleEditSection = (section: number) => {
+    setEditingSection(section);
+    setFormStep("fill");
+    setTimeout(() => {
+      sectionRefs.current[section]?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  };
+
+  const handleBackToPreview = () => {
+    if (!validateSections1to7()) {
+      showToast("Please fix errors before returning to preview", "error");
+      return;
+    }
+    setEditingSection(null);
+    setFormStep("preview");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const getPreviewData = (): FormPreviewData => ({
+    kgid, name, designation, designationGroup, designationSubGroup,
+    dateOfEntry, gender, probationaryPeriod, probationaryPeriodDoc, dateOfBirth,
+    address, pinCode, email, phoneNumber, telephoneNumber,
+    officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
+    currentPostHeld, currentPostGroup, currentPostSubGroup,
+    currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
+    currentWorkingSince, pastServices,
+    terminallyIll, terminallyIllDoc,
+    pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
+    retiringWithinTwoYears, retiringWithinTwoYearsDoc,
+    childSpouseDisability, childSpouseDisabilityDoc,
+    divorceeWidowWithChild, divorceeWidowWithChildDoc,
+    spouseGovtServant, spouseGovtServantDoc,
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -228,23 +281,49 @@ const EmployeeCreate: React.FC = () => {
   const FieldError: React.FC<{ error?: string }> = ({ error }) =>
     error ? <p className="input-error mt-1">{error}</p> : null;
 
+  const shouldShowSection = (n: number) =>
+    formStep === "fill" && (editingSection === null || editingSection === n);
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
 
       <main className="flex-1 container mx-auto px-4 py-6 max-w-4xl">
         <div className="flex items-center gap-3 mb-6">
-          <button onClick={() => navigate("/categories")} className="btn-ghost flex items-center gap-2 text-sm px-3 py-2">
-            <ArrowLeft className="w-4 h-4" /> Back
+          <button onClick={() => {
+            if (formStep === "fill" && editingSection !== null) {
+              handleBackToPreview();
+            } else if (formStep === "declare") {
+              setFormStep("preview");
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            } else {
+              navigate("/categories");
+            }
+          }} className="btn-ghost flex items-center gap-2 text-sm px-3 py-2">
+            <ArrowLeft className="w-4 h-4" /> {formStep === "fill" && editingSection !== null ? "Back to Preview" : formStep === "declare" ? "Back to Preview" : "Back"}
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Add New Employee</h1>
-            <p className="text-sm text-muted-foreground">Fill in all required details to register an employee</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {formStep === "preview" ? "Preview Details" : formStep === "declare" ? "Declaration & Submit" : editingSection !== null ? `Edit Section ${editingSection}` : "Add New Employee"}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {formStep === "preview" ? "Review all details before proceeding to declaration" : formStep === "declare" ? "Sign declarations and submit" : "Fill in all required details to register an employee"}
+            </p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {/* PREVIEW MODE */}
+        {formStep === "preview" && (
+          <FormPreview
+            data={getPreviewData()}
+            onEdit={handleEditSection}
+            onProceed={() => { setFormStep("declare"); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+          />
+        )}
+
+        <form onSubmit={handleSubmit} className={cn("space-y-6", formStep === "preview" && "hidden")}>
           {/* 1. KGID & Name */}
+          <div className={cn(!shouldShowSection(1) && "hidden")} ref={el => { sectionRefs.current[1] = el; }}>
           <Card className="p-6">
             <SectionTitle number="1" title="Basic Information" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -260,8 +339,10 @@ const EmployeeCreate: React.FC = () => {
               </div>
             </div>
           </Card>
+          </div>
 
           {/* 2. Designation */}
+          <div className={cn(!shouldShowSection(2) && "hidden")} ref={el => { sectionRefs.current[2] = el; }}>
           <Card className="p-6">
             <SectionTitle number="2" title="Designation" />
             <div>
@@ -283,8 +364,10 @@ const EmployeeCreate: React.FC = () => {
               <FieldError error={errors.designation} />
             </div>
           </Card>
+          </div>
 
           {/* 3. Service & Personal */}
+          <div className={cn(!shouldShowSection(3) && "hidden")} ref={el => { sectionRefs.current[3] = el; }}>
           <Card className="p-6">
             <SectionTitle number="3" title="Service & Personal Details" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -339,8 +422,10 @@ const EmployeeCreate: React.FC = () => {
               </div>
             </div>
           </Card>
+          </div>
 
           {/* 4. Communication Address */}
+          <div className={cn(!shouldShowSection(4) && "hidden")} ref={el => { sectionRefs.current[4] = el; }}>
           <Card className="p-6">
             <SectionTitle number="4" title="Communication Address" />
 
@@ -408,8 +493,10 @@ const EmployeeCreate: React.FC = () => {
               </div>
             </div>
           </Card>
+          </div>
 
           {/* 5. Current Working Details */}
+          <div className={cn(!shouldShowSection(5) && "hidden")} ref={el => { sectionRefs.current[5] = el; }}>
           <Card className="p-6">
             <SectionTitle number="5" title="Current Working Details" />
             <div className="space-y-4">
@@ -460,8 +547,10 @@ const EmployeeCreate: React.FC = () => {
               </div>
             </div>
           </Card>
+          </div>
 
           {/* 6. Past Service Details */}
+          <div className={cn(!shouldShowSection(6) && "hidden")} ref={el => { sectionRefs.current[6] = el; }}>
           <Card className="p-6">
             <SectionTitle number="6" title="Past Service Details" />
             <div className="space-y-6">
@@ -535,8 +624,10 @@ const EmployeeCreate: React.FC = () => {
               </Button>
             </div>
           </Card>
+          </div>
 
           {/* 7. Special Conditions */}
+          <div className={cn(!shouldShowSection(7) && "hidden")} ref={el => { sectionRefs.current[7] = el; }}>
           <Card className="p-6">
             <SectionTitle number="7" title="Special Conditions" />
             <div className="space-y-5">
@@ -697,8 +788,29 @@ const EmployeeCreate: React.FC = () => {
               </div>
             </div>
           </Card>
+          </div>
 
-          {/* 8. Declaration */}
+          {/* Preview & Print button — shown when filling, not editing a single section */}
+          {formStep === "fill" && editingSection === null && (
+            <div className="flex items-center justify-end gap-3 pb-8">
+              <button type="button" onClick={() => navigate("/categories")} className="btn-ghost px-8 py-3">Cancel</button>
+              <button type="button" onClick={handlePreview} className="btn-primary flex items-center gap-2 px-8 py-3 text-base">
+                Preview & Print
+              </button>
+            </div>
+          )}
+
+          {/* Back to Preview button — shown when editing a single section */}
+          {formStep === "fill" && editingSection !== null && (
+            <div className="flex items-center justify-end gap-3 pb-8">
+              <button type="button" onClick={handleBackToPreview} className="btn-primary flex items-center gap-2 px-8 py-3 text-base">
+                Save & Back to Preview
+              </button>
+            </div>
+          )}
+
+          {/* 8. Declaration — only shown in declare step */}
+          <div className={cn(formStep !== "declare" && "hidden")}>
           <Card className="p-6">
             <SectionTitle number="8" title="Declaration" />
 
@@ -764,10 +876,11 @@ const EmployeeCreate: React.FC = () => {
           </Card>
 
           <div className="flex items-center justify-end gap-3 pb-8">
-            <button type="button" onClick={() => navigate("/categories")} className="btn-ghost px-8 py-3">Cancel</button>
+            <button type="button" onClick={() => { setFormStep("preview"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="btn-ghost px-8 py-3">Back to Preview</button>
             <button type="submit" className="btn-primary flex items-center gap-2 px-8 py-3 text-base">
               <Save className="w-5 h-5" /> Submit Employee Details
             </button>
+          </div>
           </div>
         </form>
       </main>
