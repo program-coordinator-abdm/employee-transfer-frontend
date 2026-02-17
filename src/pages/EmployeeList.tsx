@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet } from "lucide-react";
 import Header from "@/components/Header";
+import KGIDSearch from "@/components/KGIDSearch";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getEmployees } from "@/lib/employeeStorage";
@@ -42,6 +43,12 @@ const EmployeeList: React.FC = () => {
             </Button>
           </div>
         </div>
+
+        {employees.length > 0 && (
+          <div className="mb-4 max-w-sm">
+            <KGIDSearch onSelect={(emp) => navigate(`/employee-view/${emp.id}`)} placeholder="Search by KGID number..." />
+          </div>
+        )}
 
         {employees.length === 0 ? (
           <Card className="p-12 text-center">
