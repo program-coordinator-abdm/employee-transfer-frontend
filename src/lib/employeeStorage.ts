@@ -84,3 +84,8 @@ export function saveEmployee(emp: NewEmployee): void {
 export function getEmployeeById(id: string): NewEmployee | undefined {
   return getEmployees().find((e) => e.id === id);
 }
+
+export function updateEmployee(emp: NewEmployee): void {
+  const list = getEmployees().map((e) => (e.id === emp.id ? emp : e));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
