@@ -31,9 +31,9 @@ const DataOfficerDashboard: React.FC = () => {
     },
     {
       title: "View / Search Employees",
-      description: "Coming soon",
+      description: "Browse and search employee records",
       icon: <Search className="w-8 h-8" />,
-      disabled: true,
+      onClick: () => navigate("/employee-list"),
     },
     {
       title: "Reports / Exports",
