@@ -84,6 +84,14 @@ const EmployeeCreate: React.FC = () => {
   const [spouseGovtServant, setSpouseGovtServant] = useState(false);
   const [spouseGovtServantDoc, setSpouseGovtServantDoc] = useState("");
 
+  // Declaration
+  const [empDeclAgreed, setEmpDeclAgreed] = useState(false);
+  const [empDeclName, setEmpDeclName] = useState("");
+  const [empDeclDate, setEmpDeclDate] = useState<Date>();
+  const [officerDeclAgreed, setOfficerDeclAgreed] = useState(false);
+  const [officerDeclName, setOfficerDeclName] = useState("");
+  const [officerDeclDate, setOfficerDeclDate] = useState<Date>();
+
   const clearError = (field: string) => {
     if (errors[field]) setErrors((p) => { const n = { ...p }; delete n[field]; return n; });
   };
@@ -158,6 +166,12 @@ const EmployeeCreate: React.FC = () => {
     if (divorceeWidowWithChild && !divorceeWidowWithChildDoc) errs.divorceeWidowWithChildDoc = "Documentary proof is required";
     if (spouseGovtServant && !spouseGovtServantDoc) errs.spouseGovtServantDoc = "Documentary proof is required";
     if (probationaryPeriod && !probationaryPeriodDoc) errs.probationaryPeriodDoc = "Documentary proof is required";
+    if (!empDeclAgreed) errs.empDeclAgreed = "Employee declaration must be accepted";
+    if (empDeclAgreed && !empDeclName.trim()) errs.empDeclName = "Employee signature name is required";
+    if (empDeclAgreed && !empDeclDate) errs.empDeclDate = "Employee signature date is required";
+    if (!officerDeclAgreed) errs.officerDeclAgreed = "Reporting officer declaration must be accepted";
+    if (officerDeclAgreed && !officerDeclName.trim()) errs.officerDeclName = "Officer signature name is required";
+    if (officerDeclAgreed && !officerDeclDate) errs.officerDeclDate = "Officer signature date is required";
 
     pastServices.forEach((s, i) => {
       if (!s.postHeld) errs[`past_${i}_postHeld`] = "Post is required";
@@ -195,6 +209,8 @@ const EmployeeCreate: React.FC = () => {
       childSpouseDisability, childSpouseDisabilityDoc,
       divorceeWidowWithChild, divorceeWidowWithChildDoc,
       spouseGovtServant, spouseGovtServantDoc,
+      empDeclAgreed, empDeclName, empDeclDate: empDeclDate?.toISOString() || "",
+      officerDeclAgreed, officerDeclName, officerDeclDate: officerDeclDate?.toISOString() || "",
       createdAt: new Date().toISOString(),
     };
     saveEmployee(emp);
@@ -685,7 +701,66 @@ const EmployeeCreate: React.FC = () => {
           {/* 8. Declaration */}
           <Card className="p-6">
             <SectionTitle number="8" title="Declaration" />
-            <p className="text-sm text-muted-foreground italic">Declaration will be added here</p>
+
+            {/* Employee Declaration */}
+            <div className="mb-8">
+              <h4 className="text-sm font-bold text-foreground mb-3">Employee Declaration</h4>
+              <div className="bg-muted/30 border border-border rounded-lg p-4 mb-4">
+                <p className="text-sm text-foreground leading-relaxed">
+                  I hereby declare that the details provided in this form are true and correct to the best of my knowledge. If false information is provided, I shall be liable for disciplinary action attracting major penalty as per the provisions of the <span className="font-semibold">Karnataka Civil Services (Classification, Control and Appeal) Rules, 1957</span>.
+                </p>
+              </div>
+              <div className="flex items-center gap-3 mb-4">
+                <Switch checked={empDeclAgreed} onCheckedChange={setEmpDeclAgreed} id="empDeclAgreed" />
+                <Label htmlFor="empDeclAgreed" className="text-sm font-medium cursor-pointer">I agree to the above declaration</Label>
+              </div>
+              {errors.empDeclAgreed && <p className="text-sm text-destructive mb-3">{errors.empDeclAgreed}</p>}
+              {empDeclAgreed && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-1 border-l-2 border-primary/30 ml-2">
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground mb-1.5 block">Signature (Full Name) <span className="text-destructive">*</span></Label>
+                    <input value={empDeclName} onChange={e => { setEmpDeclName(e.target.value.toUpperCase()); clearError("empDeclName"); }} placeholder="Enter full name" className={cn("w-full h-12 px-4 text-sm bg-card border rounded-lg shadow-sm transition-all focus:ring-2 focus:ring-primary/40 focus:border-primary hover:shadow-md hover:border-primary hover:bg-primary/5", errors.empDeclName ? "border-destructive" : "border-border")} />
+                    {errors.empDeclName && <p className="text-sm text-destructive mt-1">{errors.empDeclName}</p>}
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground mb-1.5 block">Date <span className="text-destructive">*</span></Label>
+                    <DatePickerField value={empDeclDate} onChange={d => { setEmpDeclDate(d); clearError("empDeclDate"); }} placeholder="Select date" />
+                    {errors.empDeclDate && <p className="text-sm text-destructive mt-1">{errors.empDeclDate}</p>}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Separator className="my-6" />
+
+            {/* Reporting Officer Declaration */}
+            <div>
+              <h4 className="text-sm font-bold text-foreground mb-3">Declaration by Reporting Officer</h4>
+              <div className="bg-muted/30 border border-border rounded-lg p-4 mb-4">
+                <p className="text-sm text-foreground leading-relaxed">
+                  I have verified the details filled up by the employee with the service records available in this office and have found that the details are true and correct to the best of my knowledge and belief. I am aware that if false declaration is made or false information is provided, I shall be liable for disciplinary action attracting major penalty as per the provisions of the <span className="font-semibold">Karnataka Civil Services (Classification, Control and Appeal) Rules, 1957</span>.
+                </p>
+              </div>
+              <div className="flex items-center gap-3 mb-4">
+                <Switch checked={officerDeclAgreed} onCheckedChange={setOfficerDeclAgreed} id="officerDeclAgreed" />
+                <Label htmlFor="officerDeclAgreed" className="text-sm font-medium cursor-pointer">I agree to the above declaration</Label>
+              </div>
+              {errors.officerDeclAgreed && <p className="text-sm text-destructive mb-3">{errors.officerDeclAgreed}</p>}
+              {officerDeclAgreed && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-1 border-l-2 border-primary/30 ml-2">
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground mb-1.5 block">Signature (Full Name) <span className="text-destructive">*</span></Label>
+                    <input value={officerDeclName} onChange={e => { setOfficerDeclName(e.target.value.toUpperCase()); clearError("officerDeclName"); }} placeholder="Enter full name" className={cn("w-full h-12 px-4 text-sm bg-card border rounded-lg shadow-sm transition-all focus:ring-2 focus:ring-primary/40 focus:border-primary hover:shadow-md hover:border-primary hover:bg-primary/5", errors.officerDeclName ? "border-destructive" : "border-border")} />
+                    {errors.officerDeclName && <p className="text-sm text-destructive mt-1">{errors.officerDeclName}</p>}
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground mb-1.5 block">Date <span className="text-destructive">*</span></Label>
+                    <DatePickerField value={officerDeclDate} onChange={d => { setOfficerDeclDate(d); clearError("officerDeclDate"); }} placeholder="Select date" />
+                    {errors.officerDeclDate && <p className="text-sm text-destructive mt-1">{errors.officerDeclDate}</p>}
+                  </div>
+                </div>
+              )}
+            </div>
           </Card>
 
           <div className="flex items-center justify-end gap-3 pb-8">
