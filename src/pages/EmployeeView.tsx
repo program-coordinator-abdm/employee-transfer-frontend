@@ -1,7 +1,9 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil, Download, Printer } from "lucide-react";
 import { format } from "date-fns";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -50,6 +52,100 @@ const EmployeeView: React.FC = () => {
     );
   }
 
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    let y = 15;
+    const lm = 14;
+    const fmtPdf = (d?: string) => d ? fmt(d) : "—";
+
+    doc.setFontSize(16);
+    doc.text("Employee Service Record", lm, y);
+    y += 8;
+    doc.setFontSize(9);
+    doc.text(`Generated: ${new Date().toLocaleDateString("en-IN")}`, lm, y);
+    y += 10;
+
+    const addSection = (title: string, rows: [string, string][]) => {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text(title, lm, y);
+      y += 2;
+      autoTable(doc, {
+        startY: y,
+        body: rows,
+        theme: "plain",
+        styles: { fontSize: 9, cellPadding: 2 },
+        columnStyles: { 0: { fontStyle: "bold", cellWidth: 60 } },
+        didDrawPage: (d) => { y = d.cursor?.y || y; },
+      });
+      y += 6;
+    };
+
+    addSection("1. Basic Information", [
+      ["KGID", emp.kgid], ["Name", emp.name],
+      ["Designation", emp.designation],
+      ["Group", `${emp.designationGroup} — ${emp.designationSubGroup}`],
+      ["Date of Entry", fmtPdf(emp.dateOfEntry)],
+      ["Date of Birth", fmtPdf(emp.dateOfBirth)],
+      ["Gender", emp.gender],
+      ["Probationary Period Completion document", emp.probationaryPeriod ? `Yes — ${emp.probationaryPeriodDoc}` : "No"],
+    ]);
+    addSection("2. Personal Address", [
+      ["Address", emp.address], ["Pin Code", emp.pinCode],
+      ["Email", emp.email], ["Phone", emp.phoneNumber],
+      ["Telephone", emp.telephoneNumber || "—"],
+    ]);
+    addSection("3. Office Address", [
+      ["Address", emp.officeAddress], ["Pin Code", emp.officePinCode],
+      ["Email", emp.officeEmail], ["Phone", emp.officePhoneNumber],
+      ["Telephone", emp.officeTelephoneNumber || "—"],
+    ]);
+    addSection("4. Current Working Details", [
+      ["Post Held", emp.currentPostHeld],
+      ["Group", `${emp.currentPostGroup} — ${emp.currentPostSubGroup}`],
+      ["Institution", emp.currentInstitution],
+      ["District", emp.currentDistrict],
+      ["Taluk", emp.currentTaluk],
+      ["City/Town/Village", emp.currentCityTownVillage],
+      ["Working Since", fmtPdf(emp.currentWorkingSince)],
+    ]);
+    if (emp.pastServices.length > 0) {
+      const rows: [string, string][] = [];
+      emp.pastServices.forEach((ps, i) => {
+        rows.push([`#${i + 1} Post`, ps.postHeld]);
+        rows.push([`#${i + 1} Institution`, ps.institution]);
+        rows.push([`#${i + 1} District`, ps.district]);
+        rows.push([`#${i + 1} From – To`, `${fmtPdf(ps.fromDate)} — ${fmtPdf(ps.toDate)}`]);
+        rows.push([`#${i + 1} Tenure`, ps.tenure]);
+      });
+      addSection("5. Past Service Details", rows);
+    }
+    addSection("6. Special Conditions", [
+      ["Terminal Illness", emp.terminallyIll ? `Yes — ${emp.terminallyIllDoc}` : "No"],
+      ["Pregnant / Child < 1 year", emp.pregnantOrChildUnderOne ? `Yes — ${emp.pregnantOrChildUnderOneDoc}` : "No"],
+      ["Retiring within 2 years", emp.retiringWithinTwoYears ? `Yes — ${emp.retiringWithinTwoYearsDoc}` : "No"],
+      ["Disability 40%+", emp.childSpouseDisability ? `Yes — ${emp.childSpouseDisabilityDoc}` : "No"],
+      ["Widow/Divorcee with child < 12", emp.divorceeWidowWithChild ? `Yes — ${emp.divorceeWidowWithChildDoc}` : "No"],
+      ["Spouse Govt Servant", emp.spouseGovtServant ? `Yes — ${emp.spouseGovtServantDoc}` : "No"],
+    ]);
+    if (emp.empDeclAgreed || emp.officerDeclAgreed) {
+      const declRows: [string, string][] = [];
+      if (emp.empDeclAgreed) {
+        declRows.push(["Employee Declaration", "Agreed"]);
+        declRows.push(["Signed By", emp.empDeclName]);
+        declRows.push(["Date", fmtPdf(emp.empDeclDate)]);
+      }
+      if (emp.officerDeclAgreed) {
+        declRows.push(["Officer Declaration", "Agreed"]);
+        declRows.push(["Signed By", emp.officerDeclName]);
+        declRows.push(["Date", fmtPdf(emp.officerDeclDate)]);
+      }
+      addSection("7. Declarations", declRows);
+    }
+
+    doc.save(`Employee_${emp.kgid || emp.name}.pdf`);
+  };
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
@@ -68,6 +164,12 @@ const EmployeeView: React.FC = () => {
               <p className="text-sm text-muted-foreground font-mono">KGID: {emp.kgid}</p>
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={handleDownloadPDF} className="flex items-center gap-2">
+                <Download className="w-4 h-4" /> Download PDF
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleDownloadPDF} className="flex items-center gap-2">
+                <Printer className="w-4 h-4" /> Print
+              </Button>
               {isAdmin && (
                 <Button variant="outline" size="sm" onClick={() => navigate(`/employee/edit/${emp.id}`)} className="flex items-center gap-2">
                   <Pencil className="w-4 h-4" /> Edit Details
