@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { KARNATAKA_DISTRICTS, type PositionInfo } from "@/lib/positions";
+import { getTaluks, getCities } from "@/lib/karnatakaGeo";
 import { saveEmployee, updateEmployee, getEmployeeById, type NewEmployee, type PastServiceEntry } from "@/lib/employeeStorage";
 import Toast, { useToastState } from "@/components/Toast";
 
@@ -565,7 +566,7 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 <div>
                   <label className="input-label">District <span className="text-destructive">*</span></label>
-                  <select value={currentDistrict} onChange={(e) => { setCurrentDistrict(e.target.value); clearError("currentDistrict"); }} className={`input-field ${errors.currentDistrict ? "border-destructive" : ""}`}>
+                  <select value={currentDistrict} onChange={(e) => { setCurrentDistrict(e.target.value); setCurrentTaluk(""); setCurrentCityTownVillage(""); clearError("currentDistrict"); }} className={`input-field ${errors.currentDistrict ? "border-destructive" : ""}`}>
                     <option value="">Select District</option>
                     {KARNATAKA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
                   </select>
@@ -573,12 +574,18 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 <div>
                   <label className="input-label">Taluk <span className="text-destructive">*</span></label>
-                  <input value={currentTaluk} onChange={(e) => { setCurrentTaluk(e.target.value); clearError("currentTaluk"); }} className={`input-field ${errors.currentTaluk ? "border-destructive" : ""}`} placeholder="Taluk name" />
+                  <select value={currentTaluk} onChange={(e) => { setCurrentTaluk(e.target.value); setCurrentCityTownVillage(""); clearError("currentTaluk"); }} className={`input-field ${errors.currentTaluk ? "border-destructive" : ""}`} disabled={!currentDistrict}>
+                    <option value="">{currentDistrict ? "Select Taluk" : "Select District first"}</option>
+                    {getTaluks(currentDistrict).map((t) => <option key={t} value={t}>{t}</option>)}
+                  </select>
                   <FieldError error={errors.currentTaluk} />
                 </div>
                 <div>
                   <label className="input-label">City / Town / Village <span className="text-destructive">*</span></label>
-                  <input value={currentCityTownVillage} onChange={(e) => { setCurrentCityTownVillage(e.target.value); clearError("currentCityTownVillage"); }} className={`input-field ${errors.currentCityTownVillage ? "border-destructive" : ""}`} placeholder="City/Town/Village" />
+                  <select value={currentCityTownVillage} onChange={(e) => { setCurrentCityTownVillage(e.target.value); clearError("currentCityTownVillage"); }} className={`input-field ${errors.currentCityTownVillage ? "border-destructive" : ""}`} disabled={!currentTaluk}>
+                    <option value="">{currentTaluk ? "Select City/Town/Village" : "Select Taluk first"}</option>
+                    {getCities(currentDistrict, currentTaluk).map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
                   <FieldError error={errors.currentCityTownVillage} />
                 </div>
               </div>
@@ -625,7 +632,7 @@ const EmployeeCreate: React.FC = () => {
                       </div>
                       <div>
                         <label className="input-label">District <span className="text-destructive">*</span></label>
-                        <select value={service.district} onChange={(e) => updatePastService(idx, "district", e.target.value)} className={`input-field ${errors[`past_${idx}_district`] ? "border-destructive" : ""}`}>
+                        <select value={service.district} onChange={(e) => { updatePastService(idx, "district", e.target.value); updatePastService(idx, "taluk", ""); updatePastService(idx, "cityTownVillage", ""); }} className={`input-field ${errors[`past_${idx}_district`] ? "border-destructive" : ""}`}>
                           <option value="">Select District</option>
                           {KARNATAKA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
                         </select>
@@ -633,11 +640,17 @@ const EmployeeCreate: React.FC = () => {
                       </div>
                       <div>
                         <label className="input-label">Taluk</label>
-                        <input value={service.taluk} onChange={(e) => updatePastService(idx, "taluk", e.target.value)} className="input-field" placeholder="Taluk name" />
+                        <select value={service.taluk} onChange={(e) => { updatePastService(idx, "taluk", e.target.value); updatePastService(idx, "cityTownVillage", ""); }} className="input-field" disabled={!service.district}>
+                          <option value="">{service.district ? "Select Taluk" : "Select District first"}</option>
+                          {getTaluks(service.district).map((t) => <option key={t} value={t}>{t}</option>)}
+                        </select>
                       </div>
                       <div>
                         <label className="input-label">City / Town / Village</label>
-                        <input value={service.cityTownVillage} onChange={(e) => updatePastService(idx, "cityTownVillage", e.target.value)} className="input-field" placeholder="City/Town/Village" />
+                        <select value={service.cityTownVillage} onChange={(e) => updatePastService(idx, "cityTownVillage", e.target.value)} className="input-field" disabled={!service.taluk}>
+                          <option value="">{service.taluk ? "Select City/Town/Village" : "Select Taluk first"}</option>
+                          {getCities(service.district, service.taluk).map((c) => <option key={c} value={c}>{c}</option>)}
+                        </select>
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
