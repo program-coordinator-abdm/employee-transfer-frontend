@@ -74,11 +74,13 @@ const EmployeeCreate: React.FC = () => {
   const [currentTaluk, setCurrentTaluk] = useState("");
   const [currentCityTownVillage, setCurrentCityTownVillage] = useState("");
   const [currentWorkingSince, setCurrentWorkingSince] = useState<Date>();
+  const [currentZone, setCurrentZone] = useState("");
 
   // Past services
   const [pastServices, setPastServices] = useState<PastServiceEntry[]>([EMPTY_PAST_SERVICE()]);
   const [pastFromDates, setPastFromDates] = useState<(Date | undefined)[]>([undefined]);
   const [pastToDates, setPastToDates] = useState<(Date | undefined)[]>([undefined]);
+  const [pastZones, setPastZones] = useState<string[]>([""]);
 
   // Conditional fields
   const [terminallyIll, setTerminallyIll] = useState(false);
