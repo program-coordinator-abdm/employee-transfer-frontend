@@ -487,6 +487,8 @@ export interface NewEmployee {
   divorceeWidowWithChildDoc: string;
   spouseGovtServant: boolean;
   spouseGovtServantDoc: string;
+  ngoBenefits: boolean;
+  ngoBenefitsDoc: string;
   empDeclAgreed: boolean;
   empDeclName: string;
   empDeclDate: string;
@@ -540,6 +542,8 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     divorceeWidowWithChildDoc: payload.divorceeWidowWithChildDoc,
     spouseGovtServant: payload.spouseGovtServant,
     spouseGovtServantDoc: payload.spouseGovtServantDoc,
+    ngoBenefits: payload.ngoBenefits,
+    ngoBenefitsDoc: payload.ngoBenefitsDoc,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
     empDeclDate: payload.empDeclDate,
@@ -598,6 +602,8 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     divorceeWidowWithChildDoc: payload.divorceeWidowWithChildDoc,
     spouseGovtServant: payload.spouseGovtServant,
     spouseGovtServantDoc: payload.spouseGovtServantDoc,
+    ngoBenefits: payload.ngoBenefits,
+    ngoBenefitsDoc: payload.ngoBenefitsDoc,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
     empDeclDate: payload.empDeclDate,

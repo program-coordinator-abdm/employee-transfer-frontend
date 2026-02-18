@@ -90,6 +90,8 @@ export interface FormPreviewData {
   divorceeWidowWithChildDoc: string;
   spouseGovtServant: boolean;
   spouseGovtServantDoc: string;
+  ngoBenefits: boolean;
+  ngoBenefitsDoc: string;
 }
 
 interface FormPreviewProps {
@@ -189,6 +191,10 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Spouse Govt Servant", data.spouseGovtServant ? `Yes — ${data.spouseGovtServantDoc}` : "No"],
     ];
     addSection("7. Special Conditions", conditions);
+
+    addSection("8. NGO Benefits for Elected Members", [
+      ["NGO Benefits", data.ngoBenefits ? `Yes — ${data.ngoBenefitsDoc}` : "No"],
+    ]);
 
     doc.save(`Employee_Preview_${data.kgid || "draft"}.pdf`);
   };
@@ -306,6 +312,12 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           <Field label="Widow/Divorcee with child < 12" value={boolLabel(data.divorceeWidowWithChild, data.divorceeWidowWithChildDoc)} />
           <Field label="Spouse Govt Servant" value={boolLabel(data.spouseGovtServant, data.spouseGovtServantDoc)} />
         </div>
+      </PreviewSection>
+
+      {/* Section 8 */}
+      <PreviewSection title="NGO Benefits for Elected Members" number="8" onEdit={() => onEdit(8)}>
+        <p className="text-sm text-muted-foreground mb-3">Benefits related to NGO elected membership will be added here</p>
+        <Field label="NGO Benefits" value={boolLabel(data.ngoBenefits, data.ngoBenefitsDoc)} />
       </PreviewSection>
 
       {/* Proceed */}
