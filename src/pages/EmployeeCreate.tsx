@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save, Plus, Trash2, Upload } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, Upload, Download, Printer, CheckCircle2 } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import FormPreview, { type FormPreviewData } from "@/components/FormPreview";
 import Header from "@/components/Header";
 import PositionDropdown from "@/components/PositionDropdown";
@@ -33,7 +35,8 @@ const EmployeeCreate: React.FC = () => {
   const { toast, showToast, hideToast } = useToastState();
   const [errors, setErrors] = useState<FormErrors>({});
   // formStep: "fill" → "preview" → "declare"
-  const [formStep, setFormStep] = useState<"fill" | "preview" | "declare">("fill");
+  const [formStep, setFormStep] = useState<"fill" | "preview" | "declare" | "submitted">("fill");
+  const [submittedEmp, setSubmittedEmp] = useState<NewEmployee | null>(null);
   const [editingSection, setEditingSection] = useState<number | null>(null);
   const sectionRefs = useRef<Record<number, HTMLDivElement | null>>({});
   // Basic fields
@@ -307,11 +310,109 @@ const EmployeeCreate: React.FC = () => {
     if (isEditMode) {
       updateEmployee(emp);
       showToast("Employee updated successfully!", "success");
+      setTimeout(() => navigate("/employee-list"), 1200);
     } else {
       saveEmployee(emp);
-      showToast("Employee created successfully!", "success");
+      setSubmittedEmp(emp);
+      setFormStep("submitted");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    setTimeout(() => navigate("/employee-list"), 1200);
+  };
+
+  const handleDownloadPDF = () => {
+    if (!submittedEmp) return;
+    const emp = submittedEmp;
+    const doc = new jsPDF();
+    let y = 15;
+    const lm = 14;
+    const fmt = (d?: string) => d ? new Date(d).toLocaleDateString("en-IN") : "—";
+
+    doc.setFontSize(16);
+    doc.text("Employee Service Record", lm, y);
+    y += 8;
+    doc.setFontSize(9);
+    doc.text(`Generated: ${new Date().toLocaleDateString("en-IN")}`, lm, y);
+    y += 10;
+
+    const addSection = (title: string, rows: [string, string][]) => {
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "bold");
+      doc.text(title, lm, y);
+      y += 2;
+      autoTable(doc, {
+        startY: y,
+        body: rows,
+        theme: "plain",
+        styles: { fontSize: 9, cellPadding: 2 },
+        columnStyles: { 0: { fontStyle: "bold", cellWidth: 60 } },
+        didDrawPage: (d) => { y = d.cursor?.y || y; },
+      });
+      y += 6;
+    };
+
+    addSection("1. Basic Information", [
+      ["KGID", emp.kgid], ["Name", emp.name],
+    ]);
+    addSection("2. Designation", [
+      ["Designation", emp.designation],
+      ["Group", `${emp.designationGroup} — ${emp.designationSubGroup}`],
+    ]);
+    addSection("3. Service & Personal Details", [
+      ["Date of Entry", fmt(emp.dateOfEntry)],
+      ["Date of Birth", fmt(emp.dateOfBirth)],
+      ["Gender", emp.gender],
+      ["Probationary Period Completion document", emp.probationaryPeriod ? `Yes — ${emp.probationaryPeriodDoc}` : "No"],
+    ]);
+    addSection("4. Communication Address", [
+      ["Personal Address", emp.address], ["Pin Code", emp.pinCode],
+      ["Email", emp.email], ["Phone", emp.phoneNumber],
+      ["Telephone", emp.telephoneNumber || "—"],
+      ["Office Address", emp.officeAddress], ["Office Pin Code", emp.officePinCode],
+      ["Office Email", emp.officeEmail], ["Office Phone", emp.officePhoneNumber],
+      ["Office Telephone", emp.officeTelephoneNumber || "—"],
+    ]);
+    addSection("5. Current Working Details", [
+      ["Post Held", emp.currentPostHeld],
+      ["Group", `${emp.currentPostGroup} — ${emp.currentPostSubGroup}`],
+      ["Institution", emp.currentInstitution],
+      ["District", emp.currentDistrict],
+      ["Taluk", emp.currentTaluk],
+      ["City/Town/Village", emp.currentCityTownVillage],
+      ["Working Since", fmt(emp.currentWorkingSince)],
+    ]);
+    if (emp.pastServices.length > 0) {
+      const rows: [string, string][] = [];
+      emp.pastServices.forEach((ps, i) => {
+        rows.push([`#${i + 1} Post`, ps.postHeld]);
+        rows.push([`#${i + 1} Institution`, ps.institution]);
+        rows.push([`#${i + 1} District`, ps.district]);
+        rows.push([`#${i + 1} From – To`, `${fmt(ps.fromDate)} — ${fmt(ps.toDate)}`]);
+        rows.push([`#${i + 1} Tenure`, ps.tenure]);
+      });
+      addSection("6. Past Service Details", rows);
+    }
+    addSection("7. Special Conditions", [
+      ["Terminal Illness", emp.terminallyIll ? `Yes — ${emp.terminallyIllDoc}` : "No"],
+      ["Pregnant / Child < 1 year", emp.pregnantOrChildUnderOne ? `Yes — ${emp.pregnantOrChildUnderOneDoc}` : "No"],
+      ["Retiring within 2 years", emp.retiringWithinTwoYears ? `Yes — ${emp.retiringWithinTwoYearsDoc}` : "No"],
+      ["Disability 40%+", emp.childSpouseDisability ? `Yes — ${emp.childSpouseDisabilityDoc}` : "No"],
+      ["Widow/Divorcee with child < 12", emp.divorceeWidowWithChild ? `Yes — ${emp.divorceeWidowWithChildDoc}` : "No"],
+      ["Spouse Govt Servant", emp.spouseGovtServant ? `Yes — ${emp.spouseGovtServantDoc}` : "No"],
+    ]);
+    addSection("8. Declarations", [
+      ["Employee Declaration", emp.empDeclAgreed ? "Agreed" : "Not Agreed"],
+      ["Employee Name", emp.empDeclName],
+      ["Employee Date", fmt(emp.empDeclDate)],
+      ["Officer Declaration", emp.officerDeclAgreed ? "Agreed" : "Not Agreed"],
+      ["Officer Name", emp.officerDeclName],
+      ["Officer Date", fmt(emp.officerDeclDate)],
+    ]);
+
+    doc.save(`Employee_${emp.kgid || emp.name}.pdf`);
+  };
+
+  const handlePrintPDF = () => {
+    handleDownloadPDF();
   };
 
   const SectionTitle: React.FC<{ number: string; title: string }> = ({ number, title }) => (
@@ -332,6 +433,29 @@ const EmployeeCreate: React.FC = () => {
       <Header />
 
       <main className="flex-1 container mx-auto px-4 py-6 max-w-4xl">
+        {formStep === "submitted" ? (
+          <div className="flex flex-col items-center justify-center py-16 space-y-6">
+            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
+              <CheckCircle2 className="w-12 h-12 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground">Employee Created Successfully!</h1>
+            <p className="text-muted-foreground text-center max-w-md">
+              The record for <strong>{submittedEmp?.name}</strong> (KGID: {submittedEmp?.kgid}) has been saved. You can download or print the details below.
+            </p>
+            <div className="flex items-center gap-4">
+              <Button onClick={handleDownloadPDF} className="gap-2">
+                <Download className="w-4 h-4" /> Download PDF
+              </Button>
+              <Button variant="outline" onClick={handlePrintPDF} className="gap-2">
+                <Printer className="w-4 h-4" /> Print PDF
+              </Button>
+            </div>
+            <Button variant="ghost" onClick={() => navigate("/categories")} className="mt-4">
+              ← Back to Categories
+            </Button>
+          </div>
+        ) : (
+        <>
         <div className="flex items-center gap-3 mb-6">
           <button onClick={() => {
             if (formStep === "fill" && editingSection !== null) {
@@ -938,6 +1062,8 @@ const EmployeeCreate: React.FC = () => {
           </div>
           </div>
         </form>
+        </>
+        )}
       </main>
 
       <Toast message={toast.message} type={toast.type} isVisible={toast.isVisible} onClose={hideToast} />
