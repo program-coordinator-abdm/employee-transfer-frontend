@@ -94,6 +94,10 @@ const EmployeeCreate: React.FC = () => {
   const [spouseGovtServant, setSpouseGovtServant] = useState(false);
   const [spouseGovtServantDoc, setSpouseGovtServantDoc] = useState("");
 
+  // NGO Benefits
+  const [ngoBenefits, setNgoBenefits] = useState(false);
+  const [ngoBenefitsDoc, setNgoBenefitsDoc] = useState("");
+
   // Declaration
   const [empDeclAgreed, setEmpDeclAgreed] = useState(false);
   const [empDeclName, setEmpDeclName] = useState("");
@@ -130,6 +134,8 @@ const EmployeeCreate: React.FC = () => {
       setChildSpouseDisability(existing.childSpouseDisability); setChildSpouseDisabilityDoc(existing.childSpouseDisabilityDoc);
       setDivorceeWidowWithChild(existing.divorceeWidowWithChild); setDivorceeWidowWithChildDoc(existing.divorceeWidowWithChildDoc);
       setSpouseGovtServant(existing.spouseGovtServant); setSpouseGovtServantDoc(existing.spouseGovtServantDoc);
+      if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
+      if (existing.ngoBenefitsDoc !== undefined) setNgoBenefitsDoc(existing.ngoBenefitsDoc);
       setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
       if (existing.empDeclDate) setEmpDeclDate(new Date(existing.empDeclDate));
       setOfficerDeclAgreed(existing.officerDeclAgreed); setOfficerDeclName(existing.officerDeclName);
@@ -217,6 +223,7 @@ const EmployeeCreate: React.FC = () => {
     if (divorceeWidowWithChild && !divorceeWidowWithChildDoc) errs.divorceeWidowWithChildDoc = "Documentary proof is required";
     if (spouseGovtServant && !spouseGovtServantDoc) errs.spouseGovtServantDoc = "Documentary proof is required";
     if (probationaryPeriod && !probationaryPeriodDoc) errs.probationaryPeriodDoc = "Documentary proof is required";
+    if (ngoBenefits && !ngoBenefitsDoc) errs.ngoBenefitsDoc = "Documentary proof is required";
 
     pastServices.forEach((s, i) => {
       if (!s.postHeld) errs[`past_${i}_postHeld`] = "Post is required";
@@ -283,6 +290,7 @@ const EmployeeCreate: React.FC = () => {
     childSpouseDisability, childSpouseDisabilityDoc,
     divorceeWidowWithChild, divorceeWidowWithChildDoc,
     spouseGovtServant, spouseGovtServantDoc,
+    ngoBenefits, ngoBenefitsDoc,
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -310,6 +318,7 @@ const EmployeeCreate: React.FC = () => {
       childSpouseDisability, childSpouseDisabilityDoc,
       divorceeWidowWithChild, divorceeWidowWithChildDoc,
       spouseGovtServant, spouseGovtServantDoc,
+      ngoBenefits, ngoBenefitsDoc,
       empDeclAgreed, empDeclName, empDeclDate: empDeclDate?.toISOString() || "",
       officerDeclAgreed, officerDeclName, officerDeclDate: officerDeclDate?.toISOString() || "",
     };
@@ -413,7 +422,10 @@ const EmployeeCreate: React.FC = () => {
       ["Widow/Divorcee with child < 12", emp.divorceeWidowWithChild ? `Yes — ${emp.divorceeWidowWithChildDoc}` : "No"],
       ["Spouse Govt Servant", emp.spouseGovtServant ? `Yes — ${emp.spouseGovtServantDoc}` : "No"],
     ]);
-    addSection("8. Declarations", [
+    addSection("8. NGO Benefits for Elected Members", [
+      ["NGO Benefits", emp.ngoBenefits ? `Yes — ${emp.ngoBenefitsDoc}` : "No"],
+    ]);
+    addSection("9. Declarations", [
       ["Employee Declaration", emp.empDeclAgreed ? "Agreed" : "Not Agreed"],
       ["Employee Name", emp.empDeclName],
       ["Employee Date", fmt(emp.empDeclDate)],
@@ -983,6 +995,38 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
+          {/* 8. NGO Benefits for Elected Members */}
+          <div className={cn(!shouldShowSection(8) && "hidden")} ref={el => { sectionRefs.current[8] = el; }}>
+          <Card className="p-6">
+            <SectionTitle number="8" title="NGO Benefits for Elected Members" />
+            <p className="text-sm text-muted-foreground mb-5">Benefits related to NGO elected membership will be added here</p>
+            <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+              <div className="flex items-center justify-between gap-4">
+                <Label className="text-sm font-medium leading-snug">Do you have NGO benefits for elected members?</Label>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Switch checked={ngoBenefits} onCheckedChange={setNgoBenefits} />
+                  <span className="text-sm text-muted-foreground w-8">{ngoBenefits ? "Yes" : "No"}</span>
+                </div>
+              </div>
+              {ngoBenefits && (
+                <div>
+                  <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
+                  <label className="flex-1 cursor-pointer">
+                    <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls,.csv" className="hidden" onChange={(e) => { setNgoBenefitsDoc(e.target.files?.[0]?.name || ""); clearError("ngoBenefitsDoc"); }} />
+                    <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.ngoBenefitsDoc && "border-destructive")}>
+                      <Upload className="w-4 h-4 text-muted-foreground" />
+                      <span className={cn("text-sm", ngoBenefitsDoc ? "text-foreground" : "text-muted-foreground")}>
+                        {ngoBenefitsDoc || "Choose file (PDF, DOC, DOCX, JPG, JPEG, PNG, XLSX, CSV)..."}
+                      </span>
+                    </div>
+                  </label>
+                  <FieldError error={errors.ngoBenefitsDoc} />
+                </div>
+              )}
+            </div>
+          </Card>
+          </div>
+
           {/* Preview & Print button — shown when filling, not editing a single section */}
           {formStep === "fill" && editingSection === null && (
             <div className="flex items-center justify-end gap-3 pb-8">
@@ -1002,10 +1046,10 @@ const EmployeeCreate: React.FC = () => {
             </div>
           )}
 
-          {/* 8. Declaration — only shown in declare step */}
+          {/* 9. Declaration — only shown in declare step */}
           <div className={cn(formStep !== "declare" && "hidden")}>
           <Card className="p-6">
-            <SectionTitle number="8" title="Declaration" />
+            <SectionTitle number="9" title="Declaration" />
 
             {/* Employee Declaration */}
             <div className="mb-8">
