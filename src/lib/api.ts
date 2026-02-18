@@ -320,6 +320,7 @@ export const login = async (credentials: {
   } catch {
     // Fallback to mock login when API is unavailable
     const email = credentials.email || "";
+    const username = credentials.username || "";
     const password = credentials.password;
     
     if (email === "admin@karnataka.gov.in" && password === "Admin@123") {
@@ -330,6 +331,18 @@ export const login = async (credentials: {
           username: "admin",
           email: email,
           name: "Administrator",
+        },
+      };
+    }
+
+    if (username === "dataofficer" && password === "Data@1234") {
+      return {
+        token: "mock-jwt-token-" + Date.now(),
+        user: {
+          id: "2",
+          username: username,
+          email: "dataofficer@karnataka.gov.in",
+          name: "Data Officer",
         },
       };
     }
