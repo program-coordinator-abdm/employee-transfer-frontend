@@ -154,7 +154,11 @@ const EmployeeCreate: React.FC = () => {
   };
 
   const updatePastService = (idx: number, field: keyof PastServiceEntry, value: string) => {
-    setPastServices(pastServices.map((s, i) => i === idx ? { ...s, [field]: value } : s));
+    setPastServices(prev => prev.map((s, i) => i === idx ? { ...s, [field]: value } : s));
+  };
+
+  const updatePastServiceMulti = (idx: number, updates: Partial<PastServiceEntry>) => {
+    setPastServices(prev => prev.map((s, i) => i === idx ? { ...s, ...updates } : s));
   };
 
   const updatePastServicePosition = (idx: number, pos: PositionInfo | null) => {
@@ -756,7 +760,7 @@ const EmployeeCreate: React.FC = () => {
                       </div>
                       <div>
                         <label className="input-label">District <span className="text-destructive">*</span></label>
-                        <select value={service.district} onChange={(e) => { updatePastService(idx, "district", e.target.value); updatePastService(idx, "taluk", ""); updatePastService(idx, "cityTownVillage", ""); }} className={`input-field ${errors[`past_${idx}_district`] ? "border-destructive" : ""}`}>
+                        <select value={service.district} onChange={(e) => updatePastServiceMulti(idx, { district: e.target.value, taluk: "", cityTownVillage: "" })} className={`input-field ${errors[`past_${idx}_district`] ? "border-destructive" : ""}`}>
                           <option value="">Select District</option>
                           {KARNATAKA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
                         </select>
@@ -764,7 +768,7 @@ const EmployeeCreate: React.FC = () => {
                       </div>
                       <div>
                         <label className="input-label">Taluk</label>
-                        <select value={service.taluk} onChange={(e) => { updatePastService(idx, "taluk", e.target.value); updatePastService(idx, "cityTownVillage", ""); }} className="input-field" disabled={!service.district}>
+                        <select value={service.taluk} onChange={(e) => updatePastServiceMulti(idx, { taluk: e.target.value, cityTownVillage: "" })} className="input-field" disabled={!service.district}>
                           <option value="">{service.district ? "Select Taluk" : "Select District first"}</option>
                           {getTaluks(service.district).map((t) => <option key={t} value={t}>{t}</option>)}
                         </select>
