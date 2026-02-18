@@ -752,6 +752,7 @@ const EmployeeCreate: React.FC = () => {
           <div className={cn(!shouldShowSection(6) && "hidden")} ref={el => { sectionRefs.current[6] = el; }}>
           <Card className="p-6">
             <SectionTitle number="6" title="Past Service Details" />
+            <p className="text-sm text-muted-foreground mb-5">Add all the transfer and promotion details since the date of Appointment according to Service Record</p>
             <div className="space-y-6">
               {pastServices.map((service, idx) => (
                 <div key={idx} className="relative bg-muted/30 rounded-xl p-5 border border-border">
