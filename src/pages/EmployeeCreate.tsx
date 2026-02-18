@@ -151,16 +151,33 @@ const EmployeeCreate: React.FC = () => {
     if (errors[field]) setErrors((p) => { const n = { ...p }; delete n[field]; return n; });
   };
 
+  const ZONE_OPTIONS = [
+    { value: "GBA", label: "GBA Zone", points: 0.5 },
+    { value: "A", label: "Zone A", points: 1 },
+    { value: "B", label: "Zone B", points: 1.5 },
+    { value: "C", label: "Zone C", points: 2 },
+  ];
+
+  const getZonePoints = (zone: string) => ZONE_OPTIONS.find(z => z.value === zone)?.points || 0;
+
+  const totalZonePoints = React.useMemo(() => {
+    let total = getZonePoints(currentZone);
+    pastZones.forEach(z => { total += getZonePoints(z); });
+    return total;
+  }, [currentZone, pastZones]);
+
   const addPastService = () => {
     setPastServices([...pastServices, EMPTY_PAST_SERVICE()]);
     setPastFromDates([...pastFromDates, undefined]);
     setPastToDates([...pastToDates, undefined]);
+    setPastZones([...pastZones, ""]);
   };
 
   const removePastService = (idx: number) => {
     setPastServices(pastServices.filter((_, i) => i !== idx));
     setPastFromDates(pastFromDates.filter((_, i) => i !== idx));
     setPastToDates(pastToDates.filter((_, i) => i !== idx));
+    setPastZones(pastZones.filter((_, i) => i !== idx));
   };
 
   const updatePastService = (idx: number, field: keyof PastServiceEntry, value: string) => {
@@ -746,6 +763,18 @@ const EmployeeCreate: React.FC = () => {
                 <DatePickerField value={currentWorkingSince} onChange={(d) => { setCurrentWorkingSince(d); clearError("currentWorkingSince"); }} placeholder="Select date" disabled={(d) => d > new Date()} />
                 <FieldError error={errors.currentWorkingSince} />
               </div>
+              <div>
+                <label className="input-label">Zone <span className="text-destructive">*</span></label>
+                <div className="flex flex-wrap gap-4 mt-2">
+                  {ZONE_OPTIONS.map(zone => (
+                    <label key={zone.value} className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="currentZone" value={zone.value} checked={currentZone === zone.value} onChange={() => setCurrentZone(zone.value)} className="accent-primary w-4 h-4" />
+                      <span className="text-sm font-medium text-foreground">{zone.label}</span>
+                      <span className="text-xs text-muted-foreground">({zone.points} {zone.points === 1 ? "point" : "points"})</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </div>
           </Card>
           </div>
@@ -824,12 +853,33 @@ const EmployeeCreate: React.FC = () => {
                         </div>
                       </div>
                     </div>
+                    <div>
+                      <label className="input-label">Zone <span className="text-destructive">*</span></label>
+                      <div className="flex flex-wrap gap-4 mt-2">
+                        {ZONE_OPTIONS.map(zone => (
+                          <label key={zone.value} className="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name={`pastZone_${idx}`} value={zone.value} checked={pastZones[idx] === zone.value} onChange={() => { const nz = [...pastZones]; nz[idx] = zone.value; setPastZones(nz); }} className="accent-primary w-4 h-4" />
+                            <span className="text-sm font-medium text-foreground">{zone.label}</span>
+                            <span className="text-xs text-muted-foreground">({zone.points} {zone.points === 1 ? "point" : "points"})</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
               <Button type="button" variant="outline" onClick={addPastService} className="w-full border-dashed border-2 border-primary/40 text-primary hover:bg-primary/5">
                 <Plus className="w-4 h-4 mr-2" /> Add Another Past Service Entry
               </Button>
+            </div>
+
+            {/* Total Zone Points */}
+            <div className="mt-6 p-4 rounded-xl border-2 border-primary/30 bg-primary/5">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-foreground">Total Zone Points</span>
+                <span className="text-2xl font-bold text-primary">{totalZonePoints}</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Auto-calculated from current and past service zone selections</p>
             </div>
           </Card>
           </div>
