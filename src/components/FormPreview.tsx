@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { type PastServiceEntry } from "@/lib/employeeStorage";
+import { type PastServiceEntry } from "@/lib/api";
 
 const fmt = (iso: string | Date | undefined) => {
   if (!iso) return "—";

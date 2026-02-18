@@ -430,6 +430,206 @@ export const downloadEmployeesPDF = async (): Promise<void> => {
   return downloadFile("/exports/employees.pdf", "employees.pdf");
 };
 
+// ===== New Employee (Data Officer form) types =====
+export interface PastServiceEntry {
+  postHeld: string;
+  postGroup: string;
+  postSubGroup: string;
+  institution: string;
+  district: string;
+  taluk: string;
+  cityTownVillage: string;
+  fromDate: string;
+  toDate: string;
+  tenure: string;
+}
+
+export interface NewEmployee {
+  id?: string;
+  kgid: string;
+  name: string;
+  designation: string;
+  designationGroup: string;
+  designationSubGroup: string;
+  dateOfEntry: string;
+  gender: string;
+  probationaryPeriod: boolean;
+  probationaryPeriodDoc: string;
+  dateOfBirth: string;
+  address: string;
+  pinCode: string;
+  email: string;
+  phoneNumber: string;
+  telephoneNumber: string;
+  officeAddress: string;
+  officePinCode: string;
+  officeEmail: string;
+  officePhoneNumber: string;
+  officeTelephoneNumber: string;
+  currentPostHeld: string;
+  currentPostGroup: string;
+  currentPostSubGroup: string;
+  currentInstitution: string;
+  currentDistrict: string;
+  currentTaluk: string;
+  currentCityTownVillage: string;
+  currentWorkingSince: string;
+  pastServices: PastServiceEntry[];
+  terminallyIll: boolean;
+  terminallyIllDoc: string;
+  pregnantOrChildUnderOne: boolean;
+  pregnantOrChildUnderOneDoc: string;
+  retiringWithinTwoYears: boolean;
+  retiringWithinTwoYearsDoc: string;
+  childSpouseDisability: boolean;
+  childSpouseDisabilityDoc: string;
+  divorceeWidowWithChild: boolean;
+  divorceeWidowWithChildDoc: string;
+  spouseGovtServant: boolean;
+  spouseGovtServantDoc: string;
+  empDeclAgreed: boolean;
+  empDeclName: string;
+  empDeclDate: string;
+  officerDeclAgreed: boolean;
+  officerDeclName: string;
+  officerDeclDate: string;
+  createdAt?: string;
+}
+
+// Create employee (Data Officer)
+export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdAt">): Promise<NewEmployee> => {
+  const body = {
+    empKgid: payload.kgid,
+    empName: payload.name,
+    designation: payload.designation,
+    designationGroup: payload.designationGroup,
+    designationSubGroup: payload.designationSubGroup,
+    dateOfEntry: payload.dateOfEntry,
+    dateOfJoining: payload.dateOfEntry,
+    dob: payload.dateOfBirth,
+    gender: payload.gender,
+    address: payload.address,
+    pinCode: payload.pinCode,
+    email: payload.email,
+    phoneNumber: payload.phoneNumber,
+    telephoneNumber: payload.telephoneNumber,
+    officeAddress: payload.officeAddress,
+    officePinCode: payload.officePinCode,
+    officeEmail: payload.officeEmail,
+    officePhoneNumber: payload.officePhoneNumber,
+    officeTelephoneNumber: payload.officeTelephoneNumber,
+    currentPostHeld: payload.currentPostHeld,
+    currentPostGroup: payload.currentPostGroup,
+    currentPostSubGroup: payload.currentPostSubGroup,
+    currentInstitution: payload.currentInstitution,
+    currentDistrict: payload.currentDistrict,
+    currentTaluk: payload.currentTaluk,
+    currentCityTownVillage: payload.currentCityTownVillage,
+    currentWorkingSince: payload.currentWorkingSince,
+    probationaryPeriod: payload.probationaryPeriod,
+    probationaryPeriodDoc: payload.probationaryPeriodDoc,
+    terminallyIll: payload.terminallyIll,
+    terminallyIllDoc: payload.terminallyIllDoc,
+    pregnantOrChildUnderOne: payload.pregnantOrChildUnderOne,
+    pregnantOrChildUnderOneDoc: payload.pregnantOrChildUnderOneDoc,
+    retiringWithinTwoYears: payload.retiringWithinTwoYears,
+    retiringWithinTwoYearsDoc: payload.retiringWithinTwoYearsDoc,
+    childSpouseDisability: payload.childSpouseDisability,
+    childSpouseDisabilityDoc: payload.childSpouseDisabilityDoc,
+    divorceeWidowWithChild: payload.divorceeWidowWithChild,
+    divorceeWidowWithChildDoc: payload.divorceeWidowWithChildDoc,
+    spouseGovtServant: payload.spouseGovtServant,
+    spouseGovtServantDoc: payload.spouseGovtServantDoc,
+    empDeclAgreed: payload.empDeclAgreed,
+    empDeclName: payload.empDeclName,
+    empDeclDate: payload.empDeclDate,
+    officerDeclAgreed: payload.officerDeclAgreed,
+    officerDeclName: payload.officerDeclName,
+    officerDeclDate: payload.officerDeclDate,
+    pastServices: payload.pastServices,
+  };
+  return apiClient<NewEmployee>("/employees", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+};
+
+// Update employee (Admin)
+export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, "id" | "createdAt">): Promise<NewEmployee> => {
+  const body = {
+    empKgid: payload.kgid,
+    empName: payload.name,
+    designation: payload.designation,
+    designationGroup: payload.designationGroup,
+    designationSubGroup: payload.designationSubGroup,
+    dateOfEntry: payload.dateOfEntry,
+    dateOfJoining: payload.dateOfEntry,
+    dob: payload.dateOfBirth,
+    gender: payload.gender,
+    address: payload.address,
+    pinCode: payload.pinCode,
+    email: payload.email,
+    phoneNumber: payload.phoneNumber,
+    telephoneNumber: payload.telephoneNumber,
+    officeAddress: payload.officeAddress,
+    officePinCode: payload.officePinCode,
+    officeEmail: payload.officeEmail,
+    officePhoneNumber: payload.officePhoneNumber,
+    officeTelephoneNumber: payload.officeTelephoneNumber,
+    currentPostHeld: payload.currentPostHeld,
+    currentPostGroup: payload.currentPostGroup,
+    currentPostSubGroup: payload.currentPostSubGroup,
+    currentInstitution: payload.currentInstitution,
+    currentDistrict: payload.currentDistrict,
+    currentTaluk: payload.currentTaluk,
+    currentCityTownVillage: payload.currentCityTownVillage,
+    currentWorkingSince: payload.currentWorkingSince,
+    probationaryPeriod: payload.probationaryPeriod,
+    probationaryPeriodDoc: payload.probationaryPeriodDoc,
+    terminallyIll: payload.terminallyIll,
+    terminallyIllDoc: payload.terminallyIllDoc,
+    pregnantOrChildUnderOne: payload.pregnantOrChildUnderOne,
+    pregnantOrChildUnderOneDoc: payload.pregnantOrChildUnderOneDoc,
+    retiringWithinTwoYears: payload.retiringWithinTwoYears,
+    retiringWithinTwoYearsDoc: payload.retiringWithinTwoYearsDoc,
+    childSpouseDisability: payload.childSpouseDisability,
+    childSpouseDisabilityDoc: payload.childSpouseDisabilityDoc,
+    divorceeWidowWithChild: payload.divorceeWidowWithChild,
+    divorceeWidowWithChildDoc: payload.divorceeWidowWithChildDoc,
+    spouseGovtServant: payload.spouseGovtServant,
+    spouseGovtServantDoc: payload.spouseGovtServantDoc,
+    empDeclAgreed: payload.empDeclAgreed,
+    empDeclName: payload.empDeclName,
+    empDeclDate: payload.empDeclDate,
+    officerDeclAgreed: payload.officerDeclAgreed,
+    officerDeclName: payload.officerDeclName,
+    officerDeclDate: payload.officerDeclDate,
+    pastServices: payload.pastServices,
+  };
+  return apiClient<NewEmployee>(`/employees/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+};
+
+// Get single new-format employee by ID
+export const getNewEmployeeById = async (id: string): Promise<NewEmployee> => {
+  return apiClient<NewEmployee>(`/employees/${id}`);
+};
+
+// Get all new-format employees
+export const getNewEmployees = async (params?: {
+  category?: string;
+  query?: string;
+}): Promise<NewEmployee[]> => {
+  const searchParams = new URLSearchParams();
+  if (params?.category) searchParams.set("category", params.category);
+  if (params?.query) searchParams.set("query", params.query);
+  const qs = searchParams.toString();
+  const res = await apiClient<{ data: NewEmployee[] }>(`/employees${qs ? `?${qs}` : ""}`);
+  return res.data || (Array.isArray(res) ? res : []);
+};
+
 // Search suggestions (with optional category)
 export const getSearchSuggestions = async (
   searchMode: "name" | "kgid",

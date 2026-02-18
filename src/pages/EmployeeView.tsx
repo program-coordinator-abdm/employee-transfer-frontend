@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Pencil, Download, Printer } from "lucide-react";
+import { ArrowLeft, Pencil, Download, Printer, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { getEmployeeById } from "@/lib/employeeStorage";
+import { getNewEmployeeById, type NewEmployee } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 
 const fmt = (iso: string) => {
@@ -35,16 +35,38 @@ const EmployeeView: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isAdmin = user?.role === "ADMIN";
-  const emp = getEmployeeById(id || "");
+  const [emp, setEmp] = useState<NewEmployee | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  if (!emp) {
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    getNewEmployeeById(id)
+      .then(setEmp)
+      .catch(() => setError("Failed to load employee data"))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </main>
+      </div>
+    );
+  }
+
+  if (error || !emp) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <Card className="p-8 text-center">
             <h2 className="text-xl font-bold mb-2">Employee Not Found</h2>
-            <p className="text-muted-foreground mb-4">The requested employee record does not exist.</p>
+            <p className="text-muted-foreground mb-4">{error || "The requested employee record does not exist."}</p>
             <button onClick={() => navigate("/employee-list")} className="btn-primary">Go to Employee List</button>
           </Card>
         </main>
