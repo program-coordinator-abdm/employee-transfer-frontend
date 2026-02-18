@@ -442,7 +442,7 @@ const EmployeeCreate: React.FC = () => {
               </div>
               <div className="flex flex-col gap-3 pt-4">
                 <div className="flex items-center gap-4">
-                  <Label htmlFor="probation" className="text-sm font-medium">Probationary Period</Label>
+                  <Label htmlFor="probation" className="text-sm font-medium">Probationary Period Completion document</Label>
                   <Switch id="probation" checked={probationaryPeriod} onCheckedChange={setProbationaryPeriod} />
                   <span className="text-sm text-muted-foreground">{probationaryPeriod ? "Yes" : "No"}</span>
                 </div>

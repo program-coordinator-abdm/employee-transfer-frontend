@@ -142,7 +142,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Date of Entry", fmt(data.dateOfEntry)],
       ["Date of Birth", fmt(data.dateOfBirth)],
       ["Gender", data.gender],
-      ["Probationary Period", data.probationaryPeriod ? `Yes — ${data.probationaryPeriodDoc}` : "No"],
+      ["Probationary Period Completion document", data.probationaryPeriod ? `Yes — ${data.probationaryPeriodDoc}` : "No"],
     ]);
 
     addSection("4. Communication Address", [
@@ -232,7 +232,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           <Field label="Date of Entry" value={fmt(data.dateOfEntry)} />
           <Field label="Date of Birth" value={fmt(data.dateOfBirth)} />
           <Field label="Gender" value={data.gender} />
-          <Field label="Probationary Period" value={boolLabel(data.probationaryPeriod, data.probationaryPeriodDoc)} />
+          <Field label="Probationary Period Completion document" value={boolLabel(data.probationaryPeriod, data.probationaryPeriodDoc)} />
         </div>
       </PreviewSection>
 
