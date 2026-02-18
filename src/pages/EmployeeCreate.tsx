@@ -340,7 +340,7 @@ const EmployeeCreate: React.FC = () => {
               setFormStep("preview");
               window.scrollTo({ top: 0, behavior: "smooth" });
             } else {
-              navigate(isEditMode ? "/employee-list" : "/data-officer");
+              navigate("/categories");
             }
           }} className="btn-ghost flex items-center gap-2 text-sm px-3 py-2">
             <ArrowLeft className="w-4 h-4" /> {formStep === "fill" && editingSection !== null ? "Back to Preview" : formStep === "declare" ? "Back to Preview" : "Back"}
