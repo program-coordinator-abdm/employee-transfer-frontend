@@ -1012,6 +1012,7 @@ const EmployeeCreate: React.FC = () => {
               {ngoBenefits && (
                 <div>
                   <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
+                  <p className="text-xs text-muted-foreground mt-0.5 mb-1">ಚುನಾವಣಾ ಅಧಿಕಾರಿಯ ದೃಢೀಕೃತ ಪ್ರಮಾಣಪತ್ರ — Duly certified by the Election Officer</p>
                   <label className="flex-1 cursor-pointer">
                     <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls,.csv" className="hidden" onChange={(e) => { setNgoBenefitsDoc(e.target.files?.[0]?.name || ""); clearError("ngoBenefitsDoc"); }} />
                     <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.ngoBenefitsDoc && "border-destructive")}>
