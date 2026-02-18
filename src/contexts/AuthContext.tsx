@@ -45,21 +45,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const loginDataOfficer = async (credentials: { username: string; password: string }) => {
-    if (credentials.username === "dataofficer" && credentials.password === "Data@1234") {
-      const token = "mock-do-token-" + Date.now();
-      const doUser: User = {
-        id: "do-1",
-        username: "dataofficer",
-        email: "dataofficer@karnataka.gov.in",
-        name: "Data Officer",
-        role: "DATA_OFFICER",
-      };
-      setToken(token);
-      setUser(doUser);
-      setUserState(doUser);
-    } else {
-      throw new Error("Invalid credentials");
-    }
+    const response = await apiLogin({ username: credentials.username, password: credentials.password });
+    const userWithRole: User = { ...response.user, role: "DATA_OFFICER" as UserRole };
+    setToken(response.token);
+    setUser(userWithRole);
+    setUserState(userWithRole);
   };
 
   const logout = () => {

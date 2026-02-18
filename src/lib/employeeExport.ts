@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
-import { type NewEmployee } from "@/lib/employeeStorage";
+import { type NewEmployee } from "@/lib/api";
 
 export function exportEmployeesToPDF(employees: NewEmployee[], title: string = "Employee List") {
   const doc = new jsPDF();

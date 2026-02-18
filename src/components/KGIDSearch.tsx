@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Search, X } from "lucide-react";
-import { getEmployees, type NewEmployee } from "@/lib/employeeStorage";
+import { type NewEmployee } from "@/lib/api";
 
 interface KGIDSearchProps {
   onSelect: (employee: NewEmployee) => void;
@@ -20,10 +20,7 @@ const KGIDSearch: React.FC<KGIDSearchProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const allEmployees = useMemo(
-    () => externalEmployees ?? getEmployees(),
-    [externalEmployees]
-  );
+  const allEmployees = externalEmployees ?? [];
 
   const suggestions = useMemo(() => {
     if (query.length < 1) return [];

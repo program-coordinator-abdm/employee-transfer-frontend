@@ -15,7 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { KARNATAKA_DISTRICTS, type PositionInfo } from "@/lib/positions";
 import { getTaluks, getCities } from "@/lib/karnatakaGeo";
-import { saveEmployee, updateEmployee, getEmployeeById, type NewEmployee, type PastServiceEntry } from "@/lib/employeeStorage";
+import { createEmployee, updateEmployeeById, getNewEmployeeById, type NewEmployee, type PastServiceEntry } from "@/lib/api";
 import Toast, { useToastState } from "@/components/Toast";
 
 interface FormErrors {
@@ -105,36 +105,38 @@ const EmployeeCreate: React.FC = () => {
   // Load existing employee data in edit mode
   useEffect(() => {
     if (!editId) return;
-    const existing = getEmployeeById(editId);
-    if (!existing) return;
-    setKgid(existing.kgid); setName(existing.name);
-    setDesignation(existing.designation); setDesignationGroup(existing.designationGroup); setDesignationSubGroup(existing.designationSubGroup);
-    setDateOfEntry(new Date(existing.dateOfEntry)); setGender(existing.gender);
-    setProbationaryPeriod(existing.probationaryPeriod); setProbationaryPeriodDoc(existing.probationaryPeriodDoc);
-    setDateOfBirth(new Date(existing.dateOfBirth));
-    setAddress(existing.address); setPinCode(existing.pinCode); setEmail(existing.email);
-    setPhoneNumber(existing.phoneNumber); setTelephoneNumber(existing.telephoneNumber);
-    setOfficeAddress(existing.officeAddress); setOfficePinCode(existing.officePinCode);
-    setOfficeEmail(existing.officeEmail); setOfficePhoneNumber(existing.officePhoneNumber);
-    setOfficeTelephoneNumber(existing.officeTelephoneNumber);
-    setCurrentPostHeld(existing.currentPostHeld); setCurrentPostGroup(existing.currentPostGroup);
-    setCurrentPostSubGroup(existing.currentPostSubGroup); setCurrentInstitution(existing.currentInstitution);
-    setCurrentDistrict(existing.currentDistrict); setCurrentTaluk(existing.currentTaluk);
-    setCurrentCityTownVillage(existing.currentCityTownVillage);
-    setCurrentWorkingSince(new Date(existing.currentWorkingSince));
-    setPastServices(existing.pastServices);
-    setPastFromDates(existing.pastServices.map(s => s.fromDate ? new Date(s.fromDate) : undefined));
-    setPastToDates(existing.pastServices.map(s => s.toDate ? new Date(s.toDate) : undefined));
-    setTerminallyIll(existing.terminallyIll); setTerminallyIllDoc(existing.terminallyIllDoc);
-    setPregnantOrChildUnderOne(existing.pregnantOrChildUnderOne); setPregnantOrChildUnderOneDoc(existing.pregnantOrChildUnderOneDoc);
-    setRetiringWithinTwoYears(existing.retiringWithinTwoYears); setRetiringWithinTwoYearsDoc(existing.retiringWithinTwoYearsDoc);
-    setChildSpouseDisability(existing.childSpouseDisability); setChildSpouseDisabilityDoc(existing.childSpouseDisabilityDoc);
-    setDivorceeWidowWithChild(existing.divorceeWidowWithChild); setDivorceeWidowWithChildDoc(existing.divorceeWidowWithChildDoc);
-    setSpouseGovtServant(existing.spouseGovtServant); setSpouseGovtServantDoc(existing.spouseGovtServantDoc);
-    setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
-    if (existing.empDeclDate) setEmpDeclDate(new Date(existing.empDeclDate));
-    setOfficerDeclAgreed(existing.officerDeclAgreed); setOfficerDeclName(existing.officerDeclName);
-    if (existing.officerDeclDate) setOfficerDeclDate(new Date(existing.officerDeclDate));
+    getNewEmployeeById(editId).then((existing) => {
+      setKgid(existing.kgid); setName(existing.name);
+      setDesignation(existing.designation); setDesignationGroup(existing.designationGroup); setDesignationSubGroup(existing.designationSubGroup);
+      setDateOfEntry(new Date(existing.dateOfEntry)); setGender(existing.gender);
+      setProbationaryPeriod(existing.probationaryPeriod); setProbationaryPeriodDoc(existing.probationaryPeriodDoc);
+      setDateOfBirth(new Date(existing.dateOfBirth));
+      setAddress(existing.address); setPinCode(existing.pinCode); setEmail(existing.email);
+      setPhoneNumber(existing.phoneNumber); setTelephoneNumber(existing.telephoneNumber);
+      setOfficeAddress(existing.officeAddress); setOfficePinCode(existing.officePinCode);
+      setOfficeEmail(existing.officeEmail); setOfficePhoneNumber(existing.officePhoneNumber);
+      setOfficeTelephoneNumber(existing.officeTelephoneNumber);
+      setCurrentPostHeld(existing.currentPostHeld); setCurrentPostGroup(existing.currentPostGroup);
+      setCurrentPostSubGroup(existing.currentPostSubGroup); setCurrentInstitution(existing.currentInstitution);
+      setCurrentDistrict(existing.currentDistrict); setCurrentTaluk(existing.currentTaluk);
+      setCurrentCityTownVillage(existing.currentCityTownVillage);
+      setCurrentWorkingSince(new Date(existing.currentWorkingSince));
+      setPastServices(existing.pastServices);
+      setPastFromDates(existing.pastServices.map(s => s.fromDate ? new Date(s.fromDate) : undefined));
+      setPastToDates(existing.pastServices.map(s => s.toDate ? new Date(s.toDate) : undefined));
+      setTerminallyIll(existing.terminallyIll); setTerminallyIllDoc(existing.terminallyIllDoc);
+      setPregnantOrChildUnderOne(existing.pregnantOrChildUnderOne); setPregnantOrChildUnderOneDoc(existing.pregnantOrChildUnderOneDoc);
+      setRetiringWithinTwoYears(existing.retiringWithinTwoYears); setRetiringWithinTwoYearsDoc(existing.retiringWithinTwoYearsDoc);
+      setChildSpouseDisability(existing.childSpouseDisability); setChildSpouseDisabilityDoc(existing.childSpouseDisabilityDoc);
+      setDivorceeWidowWithChild(existing.divorceeWidowWithChild); setDivorceeWidowWithChildDoc(existing.divorceeWidowWithChildDoc);
+      setSpouseGovtServant(existing.spouseGovtServant); setSpouseGovtServantDoc(existing.spouseGovtServantDoc);
+      setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
+      if (existing.empDeclDate) setEmpDeclDate(new Date(existing.empDeclDate));
+      setOfficerDeclAgreed(existing.officerDeclAgreed); setOfficerDeclName(existing.officerDeclName);
+      if (existing.officerDeclDate) setOfficerDeclDate(new Date(existing.officerDeclDate));
+    }).catch(() => {
+      showToast("Failed to load employee data", "error");
+    });
   }, [editId]);
 
   const clearError = (field: string) => {
@@ -283,15 +285,16 @@ const EmployeeCreate: React.FC = () => {
     spouseGovtServant, spouseGovtServantDoc,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
       showToast("Please fill all required fields", "error");
       return;
     }
 
-    const emp: NewEmployee = {
-      id: isEditMode ? editId : Date.now().toString(),
+    const payload = {
       kgid, name, designation, designationGroup, designationSubGroup,
       dateOfEntry: dateOfEntry!.toISOString(),
       gender, probationaryPeriod, probationaryPeriodDoc,
@@ -309,17 +312,24 @@ const EmployeeCreate: React.FC = () => {
       spouseGovtServant, spouseGovtServantDoc,
       empDeclAgreed, empDeclName, empDeclDate: empDeclDate?.toISOString() || "",
       officerDeclAgreed, officerDeclName, officerDeclDate: officerDeclDate?.toISOString() || "",
-      createdAt: isEditMode ? (getEmployeeById(editId)?.createdAt || new Date().toISOString()) : new Date().toISOString(),
     };
-    if (isEditMode) {
-      updateEmployee(emp);
-      showToast("Employee updated successfully!", "success");
-      setTimeout(() => navigate("/employee-list"), 1200);
-    } else {
-      saveEmployee(emp);
-      setSubmittedEmp(emp);
-      setFormStep("submitted");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+
+    setSubmitting(true);
+    try {
+      if (isEditMode) {
+        await updateEmployeeById(editId, payload);
+        showToast("Employee updated successfully!", "success");
+        setTimeout(() => navigate("/employee-list"), 1200);
+      } else {
+        const saved = await createEmployee(payload);
+        setSubmittedEmp({ ...payload, id: saved.id, createdAt: saved.createdAt });
+        setFormStep("submitted");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    } catch (err) {
+      showToast("Failed to save employee. Please try again.", "error");
+    } finally {
+      setSubmitting(false);
     }
   };
 

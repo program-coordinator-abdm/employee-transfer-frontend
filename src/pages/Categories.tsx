@@ -9,7 +9,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet } from "lucide-react";
 import KGIDSearch from "@/components/KGIDSearch";
 import { cn } from "@/lib/utils";
-import { getEmployees, type NewEmployee } from "@/lib/employeeStorage";
+import { getNewEmployees, type NewEmployee } from "@/lib/api";
 import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
 
 interface DropdownGroupConfig {
@@ -193,12 +193,23 @@ const Categories: React.FC = () => {
   const navigate = useNavigate();
   const [selections, setSelections] = useState<Record<string, string>>({});
   const [subSelections, setSubSelections] = useState<Record<string, string>>({});
+  const [allEmployees, setAllEmployees] = useState<NewEmployee[]>([]);
+  const [employeesLoading, setEmployeesLoading] = useState(false);
 
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       navigate("/login");
     }
   }, [isLoading, isAuthenticated, navigate]);
+
+  // Fetch employees from backend
+  React.useEffect(() => {
+    setEmployeesLoading(true);
+    getNewEmployees()
+      .then(setAllEmployees)
+      .catch(() => setAllEmployees([]))
+      .finally(() => setEmployeesLoading(false));
+  }, []);
 
   const handleSelectionChange = (groupKey: string, value: string) => {
     setSelections((prev) => ({ ...prev, [groupKey]: value }));
@@ -209,11 +220,7 @@ const Categories: React.FC = () => {
     setSubSelections((prev) => ({ ...prev, [groupKey]: value }));
   };
 
-  // Get all employees and filter by active selection
-  const allEmployees = useMemo(() => getEmployees(), [selections, subSelections]);
-
   const activeFilter = useMemo(() => {
-    // Find which group has an active sub-selection (specific position) or main selection
     for (const group of GROUP_CONFIGS) {
       const sub = subSelections[group.key];
       if (sub) return { groupKey: group.key, position: sub, category: selections[group.key] || "" };
@@ -226,7 +233,6 @@ const Categories: React.FC = () => {
   const filteredEmployees = useMemo(() => {
     if (!activeFilter) return [];
     return allEmployees.filter((emp) => {
-      // Match by designation or current post
       return emp.designation === activeFilter.position || emp.currentPostHeld === activeFilter.position;
     });
   }, [allEmployees, activeFilter]);
@@ -273,13 +279,13 @@ const Categories: React.FC = () => {
         </Card>
 
         {/* View Employees link + KGID Search */}
-        {getEmployees().length > 0 && (
+        {allEmployees.length > 0 && (
           <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <Button variant="outline" onClick={() => navigate("/employee-list")} className="gap-2 border-primary/30 text-primary hover:bg-primary/10">
-              <Users className="w-4 h-4" /> View All Employees ({getEmployees().length})
+              <Users className="w-4 h-4" /> View All Employees ({allEmployees.length})
             </Button>
             <div className="w-full sm:w-72">
-              <KGIDSearch onSelect={(emp) => navigate(`/employee/view/${emp.id}`)} placeholder="Quick search by KGID..." />
+              <KGIDSearch onSelect={(emp) => navigate(`/employee/view/${emp.id}`)} employees={allEmployees} placeholder="Quick search by KGID..." />
             </div>
           </div>
         )}

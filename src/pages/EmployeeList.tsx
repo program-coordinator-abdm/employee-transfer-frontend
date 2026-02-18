@@ -1,16 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet } from "lucide-react";
+import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet, Loader2 } from "lucide-react";
 import Header from "@/components/Header";
-import KGIDSearch from "@/components/KGIDSearch";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getEmployees } from "@/lib/employeeStorage";
+import { getNewEmployees, type NewEmployee } from "@/lib/api";
 import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
 
 const EmployeeList: React.FC = () => {
   const navigate = useNavigate();
-  const employees = getEmployees();
+  const [employees, setEmployees] = useState<NewEmployee[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getNewEmployees()
+      .then(setEmployees)
+      .catch(() => setEmployees([]))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -44,13 +51,11 @@ const EmployeeList: React.FC = () => {
           </div>
         </div>
 
-        {employees.length > 0 && (
-          <div className="mb-4 max-w-sm">
-            <KGIDSearch onSelect={(emp) => navigate(`/employee-view/${emp.id}`)} placeholder="Search by KGID number..." />
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        )}
-
-        {employees.length === 0 ? (
+        ) : employees.length === 0 ? (
           <Card className="p-12 text-center">
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
