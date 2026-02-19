@@ -18,6 +18,8 @@ const GROUPS = [
   { group: "Group A", subGroup: "Doctors (JRO & LRO)", heading: "Group A — Doctors (JRO & LRO)", prefix: "a-jro" },
   { group: "Group B", subGroup: "Officers", heading: "Group B — Officers", prefix: "b" },
   { group: "Group C", subGroup: "Employees", heading: "Group C — Employees", prefix: "c" },
+  { group: "Group D", subGroup: "Grade 1", heading: "Group D — Grade 1", prefix: "d-g1" },
+  { group: "Group D", subGroup: "Grade 2", heading: "Group D — Grade 2", prefix: "d-g2" },
 ];
 
 const PositionDropdown: React.FC<PositionDropdownProps> = ({ value, onChange, placeholder = "Search and select a position..." }) => {
