@@ -73,6 +73,8 @@ const EmployeeCreate: React.FC = () => {
   const [currentDistrict, setCurrentDistrict] = useState("");
   const [currentTaluk, setCurrentTaluk] = useState("");
   const [currentCityTownVillage, setCurrentCityTownVillage] = useState("");
+  const [currentVillageOtherMode, setCurrentVillageOtherMode] = useState(false);
+  const [pastVillageOtherModes, setPastVillageOtherModes] = useState<boolean[]>([false]);
   const [currentWorkingSince, setCurrentWorkingSince] = useState<Date>();
   const [currentZone, setCurrentZone] = useState("");
 
@@ -171,6 +173,7 @@ const EmployeeCreate: React.FC = () => {
     setPastFromDates([...pastFromDates, undefined]);
     setPastToDates([...pastToDates, undefined]);
     setPastZones([...pastZones, ""]);
+    setPastVillageOtherModes([...pastVillageOtherModes, false]);
   };
 
   const removePastService = (idx: number) => {
@@ -178,6 +181,7 @@ const EmployeeCreate: React.FC = () => {
     setPastFromDates(pastFromDates.filter((_, i) => i !== idx));
     setPastToDates(pastToDates.filter((_, i) => i !== idx));
     setPastZones(pastZones.filter((_, i) => i !== idx));
+    setPastVillageOtherModes(pastVillageOtherModes.filter((_, i) => i !== idx));
   };
 
   const updatePastService = (idx: number, field: keyof PastServiceEntry, value: string) => {
@@ -735,7 +739,7 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 <div>
                   <label className="input-label">District <span className="text-destructive">*</span></label>
-                  <select value={currentDistrict} onChange={(e) => { setCurrentDistrict(e.target.value); setCurrentTaluk(""); setCurrentCityTownVillage(""); clearError("currentDistrict"); }} className={`input-field ${errors.currentDistrict ? "border-destructive" : ""}`}>
+                  <select value={currentDistrict} onChange={(e) => { setCurrentDistrict(e.target.value); setCurrentTaluk(""); setCurrentCityTownVillage(""); setCurrentVillageOtherMode(false); clearError("currentDistrict"); }} className={`input-field ${errors.currentDistrict ? "border-destructive" : ""}`}>
                     <option value="">Select District</option>
                     {KARNATAKA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
                   </select>
@@ -743,7 +747,7 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 <div>
                   <label className="input-label">Taluk <span className="text-destructive">*</span></label>
-                  <select value={currentTaluk} onChange={(e) => { setCurrentTaluk(e.target.value); setCurrentCityTownVillage(""); clearError("currentTaluk"); }} className={`input-field ${errors.currentTaluk ? "border-destructive" : ""}`} disabled={!currentDistrict}>
+                  <select value={currentTaluk} onChange={(e) => { setCurrentTaluk(e.target.value); setCurrentCityTownVillage(""); setCurrentVillageOtherMode(false); clearError("currentTaluk"); }} className={`input-field ${errors.currentTaluk ? "border-destructive" : ""}`} disabled={!currentDistrict}>
                     <option value="">{currentDistrict ? "Select Taluk" : "Select District first"}</option>
                     {getTaluks(currentDistrict).map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
@@ -751,10 +755,45 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 <div>
                   <label className="input-label">City / Town / Village <span className="text-destructive">*</span></label>
-                  <select value={currentCityTownVillage} onChange={(e) => { setCurrentCityTownVillage(e.target.value); clearError("currentCityTownVillage"); }} className={`input-field ${errors.currentCityTownVillage ? "border-destructive" : ""}`} disabled={!currentTaluk}>
-                    <option value="">{currentTaluk ? "Select City/Town/Village" : "Select Taluk first"}</option>
-                    {getCities(currentDistrict, currentTaluk).map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                  {(() => {
+                    const cities = getCities(currentDistrict, currentTaluk);
+                    return (
+                      <>
+                        <select
+                          value={currentVillageOtherMode ? "__other__" : currentCityTownVillage}
+                          onChange={(e) => {
+                            if (e.target.value === "__other__") {
+                              setCurrentVillageOtherMode(true);
+                              setCurrentCityTownVillage("");
+                              clearError("currentCityTownVillage");
+                              setTimeout(() => document.getElementById("currentVillageOther")?.focus(), 50);
+                            } else {
+                              setCurrentVillageOtherMode(false);
+                              setCurrentCityTownVillage(e.target.value);
+                              clearError("currentCityTownVillage");
+                            }
+                          }}
+                          className={`input-field ${errors.currentCityTownVillage ? "border-destructive" : ""}`}
+                          disabled={!currentTaluk}
+                        >
+                          <option value="">{currentTaluk ? "Select City/Town/Village" : "Select Taluk first"}</option>
+                          {cities.map((c) => <option key={c} value={c}>{c}</option>)}
+                          <option value="__other__">Others (Enter manually)</option>
+                        </select>
+                        {currentVillageOtherMode && (
+                          <input
+                            id="currentVillageOther"
+                            type="text"
+                            value={currentCityTownVillage}
+                            onChange={(e) => { setCurrentCityTownVillage(e.target.value); clearError("currentCityTownVillage"); }}
+                            placeholder="Enter village/town name..."
+                            className={`input-field mt-2 ${errors.currentCityTownVillage ? "border-destructive" : ""}`}
+                            autoFocus
+                          />
+                        )}
+                      </>
+                    );
+                  })()}
                   <FieldError error={errors.currentCityTownVillage} />
                 </div>
               </div>
@@ -829,10 +868,44 @@ const EmployeeCreate: React.FC = () => {
                       </div>
                       <div>
                         <label className="input-label">City / Town / Village</label>
-                        <select value={service.cityTownVillage} onChange={(e) => updatePastService(idx, "cityTownVillage", e.target.value)} className="input-field" disabled={!service.taluk}>
-                          <option value="">{service.taluk ? "Select City/Town/Village" : "Select Taluk first"}</option>
-                          {getCities(service.district, service.taluk).map((c) => <option key={c} value={c}>{c}</option>)}
-                        </select>
+                        {(() => {
+                          const cities = getCities(service.district, service.taluk);
+                          const isOtherMode = pastVillageOtherModes[idx] || false;
+                          return (
+                            <>
+                              <select
+                                value={isOtherMode ? "__other__" : service.cityTownVillage}
+                                onChange={(e) => {
+                                  if (e.target.value === "__other__") {
+                                    const nm = [...pastVillageOtherModes]; nm[idx] = true; setPastVillageOtherModes(nm);
+                                    updatePastService(idx, "cityTownVillage", "");
+                                    setTimeout(() => document.getElementById(`pastVillageOther_${idx}`)?.focus(), 50);
+                                  } else {
+                                    const nm = [...pastVillageOtherModes]; nm[idx] = false; setPastVillageOtherModes(nm);
+                                    updatePastService(idx, "cityTownVillage", e.target.value);
+                                  }
+                                }}
+                                className="input-field"
+                                disabled={!service.taluk}
+                              >
+                                <option value="">{service.taluk ? "Select City/Town/Village" : "Select Taluk first"}</option>
+                                {cities.map((c) => <option key={c} value={c}>{c}</option>)}
+                                <option value="__other__">Others (Enter manually)</option>
+                              </select>
+                              {isOtherMode && (
+                                <input
+                                  id={`pastVillageOther_${idx}`}
+                                  type="text"
+                                  value={service.cityTownVillage}
+                                  onChange={(e) => updatePastService(idx, "cityTownVillage", e.target.value)}
+                                  placeholder="Enter village/town name..."
+                                  className="input-field mt-2"
+                                  autoFocus
+                                />
+                              )}
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
