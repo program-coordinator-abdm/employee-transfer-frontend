@@ -655,7 +655,7 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     officeEmail: raw.officeEmail ?? "",
     officePhoneNumber: raw.officePhoneNumber ?? "",
     officeTelephoneNumber: raw.officeTelephoneNumber ?? "",
-    currentPostHeld: raw.currentPostHeld ?? "",
+    currentPostHeld: raw.currentPostHeld ?? raw.designation ?? "",
     currentPostGroup: raw.currentPostGroup ?? "",
     currentPostSubGroup: raw.currentPostSubGroup ?? "",
     currentInstitution: raw.currentInstitution ?? "",
