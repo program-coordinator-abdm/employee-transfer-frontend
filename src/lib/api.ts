@@ -631,9 +631,67 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
   });
 };
 
+// Helper: map backend keys to NewEmployee frontend keys
+function mapBackendToNewEmployee(raw: any): NewEmployee {
+  return {
+    id: raw.id,
+    kgid: raw.empKgid ?? raw.kgid ?? "",
+    name: raw.empName ?? raw.name ?? "",
+    designation: raw.designation ?? "",
+    designationGroup: raw.designationGroup ?? "",
+    designationSubGroup: raw.designationSubGroup ?? "",
+    dateOfEntry: raw.dateOfEntry ?? "",
+    dateOfBirth: raw.dob ?? raw.dateOfBirth ?? "",
+    gender: raw.gender ?? "",
+    probationaryPeriod: raw.probationaryPeriod ?? false,
+    probationaryPeriodDoc: raw.probationaryPeriodDoc ?? "",
+    address: raw.address ?? "",
+    pinCode: raw.pinCode ?? "",
+    email: raw.email ?? "",
+    phoneNumber: raw.phoneNumber ?? "",
+    telephoneNumber: raw.telephoneNumber ?? "",
+    officeAddress: raw.officeAddress ?? "",
+    officePinCode: raw.officePinCode ?? "",
+    officeEmail: raw.officeEmail ?? "",
+    officePhoneNumber: raw.officePhoneNumber ?? "",
+    officeTelephoneNumber: raw.officeTelephoneNumber ?? "",
+    currentPostHeld: raw.currentPostHeld ?? "",
+    currentPostGroup: raw.currentPostGroup ?? "",
+    currentPostSubGroup: raw.currentPostSubGroup ?? "",
+    currentInstitution: raw.currentInstitution ?? "",
+    currentDistrict: raw.currentDistrict ?? "",
+    currentTaluk: raw.currentTaluk ?? "",
+    currentCityTownVillage: raw.currentCityTownVillage ?? "",
+    currentWorkingSince: raw.currentWorkingSince ?? "",
+    pastServices: raw.pastServices ?? [],
+    terminallyIll: raw.terminallyIll ?? false,
+    terminallyIllDoc: raw.terminallyIllDoc ?? "",
+    pregnantOrChildUnderOne: raw.pregnantOrChildUnderOne ?? false,
+    pregnantOrChildUnderOneDoc: raw.pregnantOrChildUnderOneDoc ?? "",
+    retiringWithinTwoYears: raw.retiringWithinTwoYears ?? false,
+    retiringWithinTwoYearsDoc: raw.retiringWithinTwoYearsDoc ?? "",
+    childSpouseDisability: raw.childSpouseDisability ?? false,
+    childSpouseDisabilityDoc: raw.childSpouseDisabilityDoc ?? "",
+    divorceeWidowWithChild: raw.divorceeWidowWithChild ?? false,
+    divorceeWidowWithChildDoc: raw.divorceeWidowWithChildDoc ?? "",
+    spouseGovtServant: raw.spouseGovtServant ?? false,
+    spouseGovtServantDoc: raw.spouseGovtServantDoc ?? "",
+    ngoBenefits: raw.ngoBenefits ?? false,
+    ngoBenefitsDoc: raw.ngoBenefitsDoc ?? "",
+    empDeclAgreed: raw.empDeclAgreed ?? false,
+    empDeclName: raw.empDeclName ?? "",
+    empDeclDate: raw.empDeclDate ?? "",
+    officerDeclAgreed: raw.officerDeclAgreed ?? false,
+    officerDeclName: raw.officerDeclName ?? "",
+    officerDeclDate: raw.officerDeclDate ?? "",
+    createdAt: raw.createdAt,
+  };
+}
+
 // Get single new-format employee by ID
 export const getNewEmployeeById = async (id: string): Promise<NewEmployee> => {
-  return apiClient<NewEmployee>(`/employees/${id}`);
+  const raw = await apiClient<any>(`/employees/${id}`);
+  return mapBackendToNewEmployee(raw);
 };
 
 // Get all new-format employees
@@ -645,8 +703,9 @@ export const getNewEmployees = async (params?: {
   if (params?.category) searchParams.set("category", params.category);
   if (params?.query) searchParams.set("query", params.query);
   const qs = searchParams.toString();
-  const res = await apiClient<{ data: NewEmployee[] }>(`/employees${qs ? `?${qs}` : ""}`);
-  return res.data || (Array.isArray(res) ? res : []);
+  const res = await apiClient<any>(`/employees${qs ? `?${qs}` : ""}`);
+  const arr = res.data || (Array.isArray(res) ? res : []);
+  return arr.map(mapBackendToNewEmployee);
 };
 
 // Search suggestions (with optional category)
