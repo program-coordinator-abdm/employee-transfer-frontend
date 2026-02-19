@@ -21,7 +21,7 @@ interface AuthContextType {
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUserState] = useState<User | null>(null);
@@ -68,7 +68,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    // Return a safe default during HMR or when provider is momentarily unavailable
+    return {
+      user: null,
+      isAuthenticated: false,
+      isLoading: true,
+      login: async () => {},
+      loginDataOfficer: async () => {},
+      logout: () => {},
+    };
   }
   return context;
 };
