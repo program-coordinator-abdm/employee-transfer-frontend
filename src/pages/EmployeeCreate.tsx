@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import FileUploadField from "@/components/FileUploadField";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2, Upload, Download, Printer, CheckCircle2 } from "lucide-react";
 import jsPDF from "jspdf";
@@ -621,19 +622,11 @@ const EmployeeCreate: React.FC = () => {
                   <span className="text-sm text-muted-foreground">{probationaryPeriod ? "Yes" : "No"}</span>
                 </div>
                 {probationaryPeriod && (
-                  <div>
-                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
-                    <label className="flex-1 cursor-pointer">
-                      <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg" className="hidden" onChange={(e) => { setProbationaryPeriodDoc(e.target.files?.[0]?.name || ""); clearError("probationaryPeriodDoc"); }} />
-                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.probationaryPeriodDoc && "border-destructive")}>
-                        <Upload className="w-4 h-4 text-muted-foreground" />
-                        <span className={cn("text-sm", probationaryPeriodDoc ? "text-foreground" : "text-muted-foreground")}>
-                          {probationaryPeriodDoc || "Choose file (PDF, DOC, DOCX, JPG, JPEG)..."}
-                        </span>
-                      </div>
-                    </label>
-                    <FieldError error={errors.probationaryPeriodDoc} />
-                  </div>
+                   <FileUploadField
+                      value={probationaryPeriodDoc}
+                      onChange={(name) => { setProbationaryPeriodDoc(name); clearError("probationaryPeriodDoc"); }}
+                      error={errors.probationaryPeriodDoc}
+                    />
                 )}
               </div>
             </div>
@@ -972,19 +965,11 @@ const EmployeeCreate: React.FC = () => {
                   </div>
                 </div>
                 {terminallyIll && (
-                  <div>
-                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
-                    <label className="flex-1 cursor-pointer">
-                      <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg" className="hidden" onChange={(e) => { setTerminallyIllDoc(e.target.files?.[0]?.name || ""); clearError("terminallyIllDoc"); }} />
-                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.terminallyIllDoc && "border-destructive")}>
-                        <Upload className="w-4 h-4 text-muted-foreground" />
-                        <span className={cn("text-sm", terminallyIllDoc ? "text-foreground" : "text-muted-foreground")}>
-                          {terminallyIllDoc || "Choose file (PDF, DOC, DOCX, JPG, JPEG)..."}
-                        </span>
-                      </div>
-                    </label>
-                    <FieldError error={errors.terminallyIllDoc} />
-                  </div>
+                  <FileUploadField
+                      value={terminallyIllDoc}
+                      onChange={(name) => { setTerminallyIllDoc(name); clearError("terminallyIllDoc"); }}
+                      error={errors.terminallyIllDoc}
+                    />
                 )}
               </div>
 
@@ -998,19 +983,11 @@ const EmployeeCreate: React.FC = () => {
                   </div>
                 </div>
                 {pregnantOrChildUnderOne && (
-                  <div>
-                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
-                    <label className="flex-1 cursor-pointer">
-                      <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg" className="hidden" onChange={(e) => { setPregnantOrChildUnderOneDoc(e.target.files?.[0]?.name || ""); clearError("pregnantOrChildUnderOneDoc"); }} />
-                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.pregnantOrChildUnderOneDoc && "border-destructive")}>
-                        <Upload className="w-4 h-4 text-muted-foreground" />
-                        <span className={cn("text-sm", pregnantOrChildUnderOneDoc ? "text-foreground" : "text-muted-foreground")}>
-                          {pregnantOrChildUnderOneDoc || "Choose file (PDF, DOC, DOCX, JPG, JPEG)..."}
-                        </span>
-                      </div>
-                    </label>
-                    <FieldError error={errors.pregnantOrChildUnderOneDoc} />
-                  </div>
+                  <FileUploadField
+                      value={pregnantOrChildUnderOneDoc}
+                      onChange={(name) => { setPregnantOrChildUnderOneDoc(name); clearError("pregnantOrChildUnderOneDoc"); }}
+                      error={errors.pregnantOrChildUnderOneDoc}
+                    />
                 )}
               </div>
 
@@ -1024,19 +1001,11 @@ const EmployeeCreate: React.FC = () => {
                   </div>
                 </div>
                 {retiringWithinTwoYears && (
-                  <div>
-                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
-                    <label className="flex-1 cursor-pointer">
-                      <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg" className="hidden" onChange={(e) => { setRetiringWithinTwoYearsDoc(e.target.files?.[0]?.name || ""); clearError("retiringWithinTwoYearsDoc"); }} />
-                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.retiringWithinTwoYearsDoc && "border-destructive")}>
-                        <Upload className="w-4 h-4 text-muted-foreground" />
-                        <span className={cn("text-sm", retiringWithinTwoYearsDoc ? "text-foreground" : "text-muted-foreground")}>
-                          {retiringWithinTwoYearsDoc || "Choose file (PDF, DOC, DOCX, JPG, JPEG)..."}
-                        </span>
-                      </div>
-                    </label>
-                    <FieldError error={errors.retiringWithinTwoYearsDoc} />
-                  </div>
+                  <FileUploadField
+                      value={retiringWithinTwoYearsDoc}
+                      onChange={(name) => { setRetiringWithinTwoYearsDoc(name); clearError("retiringWithinTwoYearsDoc"); }}
+                      error={errors.retiringWithinTwoYearsDoc}
+                    />
                 )}
               </div>
 
@@ -1050,19 +1019,11 @@ const EmployeeCreate: React.FC = () => {
                   </div>
                 </div>
                 {childSpouseDisability && (
-                  <div>
-                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
-                    <label className="flex-1 cursor-pointer">
-                      <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg" className="hidden" onChange={(e) => { setChildSpouseDisabilityDoc(e.target.files?.[0]?.name || ""); clearError("childSpouseDisabilityDoc"); }} />
-                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.childSpouseDisabilityDoc && "border-destructive")}>
-                        <Upload className="w-4 h-4 text-muted-foreground" />
-                        <span className={cn("text-sm", childSpouseDisabilityDoc ? "text-foreground" : "text-muted-foreground")}>
-                          {childSpouseDisabilityDoc || "Choose file (PDF, DOC, DOCX, JPG, JPEG)..."}
-                        </span>
-                      </div>
-                    </label>
-                    <FieldError error={errors.childSpouseDisabilityDoc} />
-                  </div>
+                  <FileUploadField
+                      value={childSpouseDisabilityDoc}
+                      onChange={(name) => { setChildSpouseDisabilityDoc(name); clearError("childSpouseDisabilityDoc"); }}
+                      error={errors.childSpouseDisabilityDoc}
+                    />
                 )}
               </div>
 
@@ -1076,19 +1037,11 @@ const EmployeeCreate: React.FC = () => {
                   </div>
                 </div>
                 {divorceeWidowWithChild && (
-                  <div>
-                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
-                    <label className="flex-1 cursor-pointer">
-                      <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg" className="hidden" onChange={(e) => { setDivorceeWidowWithChildDoc(e.target.files?.[0]?.name || ""); clearError("divorceeWidowWithChildDoc"); }} />
-                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.divorceeWidowWithChildDoc && "border-destructive")}>
-                        <Upload className="w-4 h-4 text-muted-foreground" />
-                        <span className={cn("text-sm", divorceeWidowWithChildDoc ? "text-foreground" : "text-muted-foreground")}>
-                          {divorceeWidowWithChildDoc || "Choose file (PDF, DOC, DOCX, JPG, JPEG)..."}
-                        </span>
-                      </div>
-                    </label>
-                    <FieldError error={errors.divorceeWidowWithChildDoc} />
-                  </div>
+                  <FileUploadField
+                      value={divorceeWidowWithChildDoc}
+                      onChange={(name) => { setDivorceeWidowWithChildDoc(name); clearError("divorceeWidowWithChildDoc"); }}
+                      error={errors.divorceeWidowWithChildDoc}
+                    />
                 )}
               </div>
 
@@ -1102,19 +1055,11 @@ const EmployeeCreate: React.FC = () => {
                   </div>
                 </div>
                 {spouseGovtServant && (
-                  <div>
-                    <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
-                    <label className="flex-1 cursor-pointer">
-                      <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg" className="hidden" onChange={(e) => { setSpouseGovtServantDoc(e.target.files?.[0]?.name || ""); clearError("spouseGovtServantDoc"); }} />
-                      <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.spouseGovtServantDoc && "border-destructive")}>
-                        <Upload className="w-4 h-4 text-muted-foreground" />
-                        <span className={cn("text-sm", spouseGovtServantDoc ? "text-foreground" : "text-muted-foreground")}>
-                          {spouseGovtServantDoc || "Choose file (PDF, DOC, DOCX, JPG, JPEG)..."}
-                        </span>
-                      </div>
-                    </label>
-                    <FieldError error={errors.spouseGovtServantDoc} />
-                  </div>
+                  <FileUploadField
+                      value={spouseGovtServantDoc}
+                      onChange={(name) => { setSpouseGovtServantDoc(name); clearError("spouseGovtServantDoc"); }}
+                      error={errors.spouseGovtServantDoc}
+                    />
                 )}
               </div>
             </div>
@@ -1136,18 +1081,13 @@ const EmployeeCreate: React.FC = () => {
               </div>
               {ngoBenefits && (
                 <div>
-                  <label className="input-label text-xs">Attach Documentary Proof <span className="text-destructive">*</span></label>
-                  <p className="text-xs text-muted-foreground mt-0.5 mb-1">ಚುನಾವಣಾ ಅಧಿಕಾರಿಯ ದೃಢೀಕೃತ ಪ್ರಮಾಣಪತ್ರ — Duly certified by the Election Officer</p>
-                  <label className="flex-1 cursor-pointer">
-                    <input type="file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls,.csv" className="hidden" onChange={(e) => { setNgoBenefitsDoc(e.target.files?.[0]?.name || ""); clearError("ngoBenefitsDoc"); }} />
-                    <div className={cn("input-field flex items-center gap-2 cursor-pointer", errors.ngoBenefitsDoc && "border-destructive")}>
-                      <Upload className="w-4 h-4 text-muted-foreground" />
-                      <span className={cn("text-sm", ngoBenefitsDoc ? "text-foreground" : "text-muted-foreground")}>
-                        {ngoBenefitsDoc || "Choose file (PDF, DOC, DOCX, JPG, JPEG, PNG, XLSX, CSV)..."}
-                      </span>
-                    </div>
-                  </label>
-                  <FieldError error={errors.ngoBenefitsDoc} />
+                  <p className="text-xs text-muted-foreground mb-1">ಚುನಾವಣಾ ಅಧಿಕಾರಿಯ ದೃಢೀಕೃತ ಪ್ರಮಾಣಪತ್ರ — Duly certified by the Election Officer</p>
+                  <FileUploadField
+                    value={ngoBenefitsDoc}
+                    onChange={(name) => { setNgoBenefitsDoc(name); clearError("ngoBenefitsDoc"); }}
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls,.csv"
+                    error={errors.ngoBenefitsDoc}
+                  />
                 </div>
               )}
             </div>
