@@ -182,15 +182,15 @@ interface TransferRequest {
 
 // Token management
 export const getToken = (): string | null => {
-  return localStorage.getItem("jwt_token");
+  return localStorage.getItem("token");
 };
 
 export const setToken = (token: string): void => {
-  localStorage.setItem("jwt_token", token);
+  localStorage.setItem("token", token);
 };
 
 export const removeToken = (): void => {
-  localStorage.removeItem("jwt_token");
+  localStorage.removeItem("token");
 };
 
 export const getUser = (): LoginResponse["user"] | null => {
@@ -224,13 +224,19 @@ const apiClient = async <T>(
       headers,
     });
 
+    if (response.status === 401 || response.status === 403) {
+      removeToken();
+      removeUser();
+      window.location.href = "/login";
+      throw new Error("Session expired");
+    }
+
     if (!response.ok) {
       throw new Error(`API Error: ${response.status}`);
     }
 
     return response.json();
   } catch (error) {
-    console.warn("API not available, using mock data:", error);
     throw error;
   }
 };
@@ -298,57 +304,23 @@ function mapBackendEmployee(e: BackendEmployee): Employee {
 export const login = async (credentials: {
   username?: string;
   email?: string;
-  phone?: string;
   password: string;
 }): Promise<LoginResponse> => {
-  try {
-    const res = await apiClient<BackendLoginResponse>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify(credentials),
-    });
+  const res = await apiClient<BackendLoginResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(credentials),
+  });
 
-    return {
-      token: res.token,
-      user: {
-        id: res.user.id,
-        username: res.user.username,
-        email: res.user.email,
-        name: res.user.username,
-        avatar: res.user.profilePictureUrl ?? undefined,
-      },
-    };
-  } catch {
-    // Fallback to mock login when API is unavailable
-    const email = credentials.email || "";
-    const username = credentials.username || "";
-    const password = credentials.password;
-    
-    if (email === "admin@karnataka.gov.in" && password === "Admin@123") {
-      return {
-        token: "mock-jwt-token-" + Date.now(),
-        user: {
-          id: "1",
-          username: "admin",
-          email: email,
-          name: "Administrator",
-        },
-      };
-    }
-
-    if (username === "dataofficer" && password === "Data@1234") {
-      return {
-        token: "mock-jwt-token-" + Date.now(),
-        user: {
-          id: "2",
-          username: username,
-          email: "dataofficer@karnataka.gov.in",
-          name: "Data Officer",
-        },
-      };
-    }
-    
-    throw new Error("Invalid credentials");
-  }
+  return {
+    token: res.token,
+    user: {
+      id: res.user.id,
+      username: res.user.username,
+      email: res.user.email,
+      name: res.user.username,
+      avatar: res.user.profilePictureUrl ?? undefined,
+    },
+  };
 };
 
 // Employees API

@@ -1,40 +1,14 @@
 import React, { useState } from "react";
 import { FileSpreadsheet, FileText, Download } from "lucide-react";
-import { MOCK_EMPLOYEES } from "@/lib/constants";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import { downloadEmployeesCSV, downloadEmployeesPDF } from "@/lib/api";
 
 const ExportButtons: React.FC = () => {
   const [isExporting, setIsExporting] = useState<"csv" | "pdf" | null>(null);
 
-  const handleExportCSV = () => {
+  const handleExportCSV = async () => {
     setIsExporting("csv");
     try {
-      const headers = ["Name", "KGID", "Role", "Position", "City", "Years of Work", "DOB"];
-      const rows = MOCK_EMPLOYEES.map((emp) => [
-        emp.name,
-        emp.kgid,
-        emp.role,
-        emp.currentPosition,
-        emp.currentCity,
-        emp.yearsOfWork.toString(),
-        emp.dob,
-      ]);
-
-      const csvContent = [
-        headers.join(","),
-        ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
-      ].join("\n");
-
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "employees.csv";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      await downloadEmployeesCSV();
     } catch (e) {
       console.error(e);
       alert("CSV export failed. Please try again.");
@@ -43,35 +17,10 @@ const ExportButtons: React.FC = () => {
     }
   };
 
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
     setIsExporting("pdf");
     try {
-      const doc = new jsPDF();
-      
-      // Title
-      doc.setFontSize(18);
-      doc.text("Employee Directory", 14, 22);
-      doc.setFontSize(10);
-      doc.text("Government of Karnataka - Employee Transfer Management", 14, 30);
-
-      // Table
-      const tableData = MOCK_EMPLOYEES.map((emp) => [
-        emp.name,
-        emp.kgid,
-        emp.role,
-        emp.currentCity,
-        emp.yearsOfWork.toString(),
-      ]);
-
-      autoTable(doc, {
-        startY: 38,
-        head: [["Name", "KGID", "Role", "City", "Years"]],
-        body: tableData,
-        styles: { fontSize: 9 },
-        headStyles: { fillColor: [0, 128, 128] },
-      });
-
-      doc.save("employees.pdf");
+      await downloadEmployeesPDF();
     } catch (e) {
       console.error(e);
       alert("PDF export failed. Please try again.");
