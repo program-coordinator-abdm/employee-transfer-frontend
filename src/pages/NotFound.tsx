@@ -17,7 +17,7 @@ const NotFound = () => {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-center">
             <h1 className="text-xl font-bold text-banner-foreground">
-              Employee Transfer Management
+              Health and Family Welfare Department Database
             </h1>
           </div>
         </div>

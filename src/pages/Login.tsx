@@ -78,7 +78,7 @@ const Login: React.FC = () => {
             </div>
             <div className="text-center flex-1">
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-banner-foreground">
-                Employee Transfer Management
+                Health and Family Welfare Department Database
               </h1>
             </div>
             <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center border-2 border-border/30 overflow-hidden shadow-md">
