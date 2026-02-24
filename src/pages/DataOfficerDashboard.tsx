@@ -60,7 +60,7 @@ const DataOfficerDashboard: React.FC = () => {
             </div>
             <div className="text-center flex-1 px-4">
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-banner-foreground">
-                Employee Transfer Management
+                Health and Family Welfare Department Database
               </h1>
             </div>
             <div className="flex items-center gap-3">
