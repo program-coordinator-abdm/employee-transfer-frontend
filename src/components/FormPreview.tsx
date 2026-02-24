@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { type PastServiceEntry } from "@/lib/api";
+import { type PastServiceEntry, type EducationFormEntry } from "@/lib/api";
 
 const fmt = (iso: string | Date | undefined) => {
   if (!iso) return "—";
@@ -78,6 +78,7 @@ export interface FormPreviewData {
   currentCityTownVillage: string;
   currentWorkingSince?: Date;
   pastServices: PastServiceEntry[];
+  educationDetails: EducationFormEntry[];
   terminallyIll: boolean;
   terminallyIllDoc: string;
   pregnantOrChildUnderOne: boolean;
@@ -147,7 +148,19 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Probationary Period Completion document", data.probationaryPeriod ? `Yes — ${data.probationaryPeriodDoc}` : "No"],
     ]);
 
-    addSection("4. Communication Address", [
+    addSection("4. Education Information", (() => {
+      const rows: [string, string][] = [];
+      data.educationDetails.filter(e => e.level).forEach((e, i) => {
+        rows.push([`#${i + 1} Level`, e.level]);
+        rows.push([`#${i + 1} Institution`, e.institution]);
+        rows.push([`#${i + 1} Year of Passing`, e.yearOfPassing]);
+        rows.push([`#${i + 1} Grade/Percentage`, e.gradePercentage]);
+        if (e.documentProof) rows.push([`#${i + 1} Document`, e.documentProof]);
+      });
+      return rows.length > 0 ? rows : [["", "No education entries"]];
+    })());
+
+    addSection("5. Communication Address", [
       ["Personal Address", data.address],
       ["Pin Code", data.pinCode],
       ["Email", data.email],
@@ -160,7 +173,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Office Telephone", data.officeTelephoneNumber || "—"],
     ]);
 
-    addSection("5. Current Working Details", [
+    addSection("6. Current Working Details", [
       ["Post Held", data.currentPostHeld],
       ["Group", `${data.currentPostGroup} — ${data.currentPostSubGroup}`],
       ["Institution", data.currentInstitution],
@@ -179,7 +192,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         rows.push([`#${i + 1} From – To`, `${fmt(ps.fromDate)} — ${fmt(ps.toDate)}`]);
         rows.push([`#${i + 1} Tenure`, ps.tenure]);
       });
-      addSection("6. Past Service Details", rows);
+      addSection("7. Past Service Details", rows);
     }
 
     const conditions: [string, string][] = [
@@ -190,9 +203,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Widow/Divorcee with child < 12", data.divorceeWidowWithChild ? `Yes — ${data.divorceeWidowWithChildDoc}` : "No"],
       ["Spouse Govt Servant", data.spouseGovtServant ? `Yes — ${data.spouseGovtServantDoc}` : "No"],
     ];
-    addSection("7. Special Conditions", conditions);
+    addSection("8. Special Conditions", conditions);
 
-    addSection("8. NGO Benefits for Elected Members", [
+    addSection("9. NGO Benefits for Elected Members", [
       ["NGO Benefits", data.ngoBenefits ? `Yes — ${data.ngoBenefitsDoc}` : "No"],
     ]);
 
@@ -242,8 +255,30 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         </div>
       </PreviewSection>
 
-      {/* Section 4 */}
-      <PreviewSection title="Communication Address" number="4" onEdit={() => onEdit(4)}>
+      {/* Section 4 - Education */}
+      <PreviewSection title="Education Information" number="4" onEdit={() => onEdit(4)}>
+        {data.educationDetails.length === 0 || (data.educationDetails.length === 1 && !data.educationDetails[0].level) ? (
+          <p className="text-sm text-muted-foreground">No education entries.</p>
+        ) : (
+          <div className="space-y-4">
+            {data.educationDetails.filter(e => e.level).map((e, idx) => (
+              <div key={idx} className="bg-muted/30 rounded-lg p-4 border border-border">
+                <p className="text-xs font-semibold text-muted-foreground mb-3">Entry #{idx + 1}</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <Field label="Level" value={e.level} />
+                  <Field label="Institution" value={e.institution} />
+                  <Field label="Year of Passing" value={e.yearOfPassing} />
+                  <Field label="Grade / Percentage" value={e.gradePercentage} />
+                  {e.documentProof && <Field label="Document" value={e.documentProof} />}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </PreviewSection>
+
+      {/* Section 5 */}
+      <PreviewSection title="Communication Address" number="5" onEdit={() => onEdit(5)}>
         <h4 className="text-xs font-semibold text-primary uppercase tracking-wide mb-3">Personal</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <Field label="Address" value={data.address} />
@@ -263,8 +298,8 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         </div>
       </PreviewSection>
 
-      {/* Section 5 */}
-      <PreviewSection title="Current Working Details" number="5" onEdit={() => onEdit(5)}>
+      {/* Section 6 */}
+      <PreviewSection title="Current Working Details" number="6" onEdit={() => onEdit(6)}>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Field label="Post Held" value={data.currentPostHeld} />
           <Field label="Group" value={`${data.currentPostGroup} — ${data.currentPostSubGroup}`} />
@@ -276,8 +311,8 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         </div>
       </PreviewSection>
 
-      {/* Section 6 */}
-      <PreviewSection title="Past Service Details" number="6" onEdit={() => onEdit(6)}>
+      {/* Section 7 */}
+      <PreviewSection title="Past Service Details" number="7" onEdit={() => onEdit(7)}>
         {data.pastServices.length === 0 || (data.pastServices.length === 1 && !data.pastServices[0].postHeld) ? (
           <p className="text-sm text-muted-foreground">No past service entries.</p>
         ) : (
@@ -302,8 +337,8 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         )}
       </PreviewSection>
 
-      {/* Section 7 */}
-      <PreviewSection title="Special Conditions" number="7" onEdit={() => onEdit(7)}>
+      {/* Section 8 */}
+      <PreviewSection title="Special Conditions" number="8" onEdit={() => onEdit(8)}>
         <div className="grid grid-cols-1 gap-3">
           <Field label="Terminal illness / Serious ailment" value={boolLabel(data.terminallyIll, data.terminallyIllDoc)} />
           <Field label="Pregnant / Child < 1 year" value={boolLabel(data.pregnantOrChildUnderOne, data.pregnantOrChildUnderOneDoc)} />
@@ -314,8 +349,8 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         </div>
       </PreviewSection>
 
-      {/* Section 8 */}
-      <PreviewSection title="NGO Benefits for Elected Members" number="8" onEdit={() => onEdit(8)}>
+      {/* Section 9 */}
+      <PreviewSection title="NGO Benefits for Elected Members" number="9" onEdit={() => onEdit(9)}>
         <p className="text-sm text-muted-foreground mb-3">Benefits related to NGO elected membership will be added here</p>
         <Field label="NGO Benefits" value={boolLabel(data.ngoBenefits, data.ngoBenefitsDoc)} />
       </PreviewSection>
