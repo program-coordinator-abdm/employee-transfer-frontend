@@ -16,7 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { KARNATAKA_DISTRICTS, type PositionInfo } from "@/lib/positions";
 import { getTaluks, getCities } from "@/lib/karnatakaGeo";
-import { createEmployee, updateEmployeeById, getNewEmployeeById, type NewEmployee, type PastServiceEntry } from "@/lib/api";
+import { createEmployee, updateEmployeeById, getNewEmployeeById, type NewEmployee, type PastServiceEntry, type EducationFormEntry } from "@/lib/api";
 import Toast, { useToastState } from "@/components/Toast";
 
 interface FormErrors {
@@ -28,6 +28,12 @@ const EMPTY_PAST_SERVICE: () => PastServiceEntry = () => ({
   institution: "", district: "", taluk: "", cityTownVillage: "",
   fromDate: "", toDate: "", tenure: "",
 });
+
+const EMPTY_EDUCATION: () => EducationFormEntry = () => ({
+  level: "", institution: "", yearOfPassing: "", gradePercentage: "", documentProof: "",
+});
+
+const EDUCATION_LEVELS = ["10th/SSLC", "PU/12th", "Diploma", "BSc", "MSc", "PhD", "Others"];
 
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -103,6 +109,9 @@ const EmployeeCreate: React.FC = () => {
   const [ngoBenefits, setNgoBenefits] = useState(false);
   const [ngoBenefitsDoc, setNgoBenefitsDoc] = useState("");
 
+  // Education Details
+  const [educationDetails, setEducationDetails] = useState<EducationFormEntry[]>([EMPTY_EDUCATION()]);
+
   // Declaration
   const [empDeclAgreed, setEmpDeclAgreed] = useState(false);
   const [empDeclName, setEmpDeclName] = useState("");
@@ -141,6 +150,7 @@ const EmployeeCreate: React.FC = () => {
       setSpouseGovtServant(existing.spouseGovtServant); setSpouseGovtServantDoc(existing.spouseGovtServantDoc);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
       if (existing.ngoBenefitsDoc !== undefined) setNgoBenefitsDoc(existing.ngoBenefitsDoc);
+      if (existing.educationDetails && existing.educationDetails.length > 0) setEducationDetails(existing.educationDetails);
       setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
       if (existing.empDeclDate) setEmpDeclDate(new Date(existing.empDeclDate));
       setOfficerDeclAgreed(existing.officerDeclAgreed); setOfficerDeclName(existing.officerDeclName);
@@ -199,6 +209,13 @@ const EmployeeCreate: React.FC = () => {
     ));
   };
 
+  // Education helpers
+  const addEducation = () => setEducationDetails([...educationDetails, EMPTY_EDUCATION()]);
+  const removeEducation = (idx: number) => setEducationDetails(educationDetails.filter((_, i) => i !== idx));
+  const updateEducation = (idx: number, field: keyof EducationFormEntry, value: string) => {
+    setEducationDetails(prev => prev.map((e, i) => i === idx ? { ...e, [field]: value } : e));
+  };
+
   const updatePastFromDate = (idx: number, date: Date | undefined) => {
     const newDates = [...pastFromDates];
     newDates[idx] = date;
@@ -248,6 +265,13 @@ const EmployeeCreate: React.FC = () => {
     if (spouseGovtServant && !spouseGovtServantDoc) errs.spouseGovtServantDoc = "Documentary proof is required";
     if (probationaryPeriod && !probationaryPeriodDoc) errs.probationaryPeriodDoc = "Documentary proof is required";
     if (ngoBenefits && !ngoBenefitsDoc) errs.ngoBenefitsDoc = "Documentary proof is required";
+
+    educationDetails.forEach((e, i) => {
+      if (!e.level) errs[`edu_${i}_level`] = "Education level is required";
+      if (!e.institution) errs[`edu_${i}_institution`] = "Institution name is required";
+      if (!e.yearOfPassing) errs[`edu_${i}_yearOfPassing`] = "Year of passing is required";
+      if (!e.gradePercentage) errs[`edu_${i}_gradePercentage`] = "Grade/Percentage is required";
+    });
 
     pastServices.forEach((s, i) => {
       if (!s.postHeld) errs[`past_${i}_postHeld`] = "Post is required";
@@ -307,7 +331,7 @@ const EmployeeCreate: React.FC = () => {
     officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
     currentPostHeld, currentPostGroup, currentPostSubGroup,
     currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
-    currentWorkingSince, pastServices,
+    currentWorkingSince, pastServices, educationDetails,
     terminallyIll, terminallyIllDoc,
     pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
     retiringWithinTwoYears, retiringWithinTwoYearsDoc,
@@ -336,7 +360,7 @@ const EmployeeCreate: React.FC = () => {
       currentPostHeld, currentPostGroup, currentPostSubGroup,
       currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: currentWorkingSince!.toISOString(),
-      pastServices, terminallyIll, terminallyIllDoc,
+      pastServices, educationDetails, terminallyIll, terminallyIllDoc,
       pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
       retiringWithinTwoYears, retiringWithinTwoYearsDoc,
       childSpouseDisability, childSpouseDisabilityDoc,
@@ -410,7 +434,18 @@ const EmployeeCreate: React.FC = () => {
       ["Gender", emp.gender],
       ["Probationary Period Completion document", emp.probationaryPeriod ? `Yes — ${emp.probationaryPeriodDoc}` : "No"],
     ]);
-    addSection("4. Communication Address", [
+    // Education section
+    const eduRows: [string, string][] = [];
+    (emp.educationDetails || []).filter(e => e.level).forEach((e, i) => {
+      eduRows.push([`#${i + 1} Level`, e.level]);
+      eduRows.push([`#${i + 1} Institution`, e.institution]);
+      eduRows.push([`#${i + 1} Year`, e.yearOfPassing]);
+      eduRows.push([`#${i + 1} Grade/Percentage`, e.gradePercentage]);
+      if (e.documentProof) eduRows.push([`#${i + 1} Document`, e.documentProof]);
+    });
+    if (eduRows.length > 0) addSection("4. Education Information", eduRows);
+
+    addSection("5. Communication Address", [
       ["Personal Address", emp.address], ["Pin Code", emp.pinCode],
       ["Email", emp.email], ["Phone", emp.phoneNumber],
       ["Telephone", emp.telephoneNumber || "—"],
@@ -418,7 +453,7 @@ const EmployeeCreate: React.FC = () => {
       ["Office Email", emp.officeEmail], ["Office Phone", emp.officePhoneNumber],
       ["Office Telephone", emp.officeTelephoneNumber || "—"],
     ]);
-    addSection("5. Current Working Details", [
+    addSection("6. Current Working Details", [
       ["Post Held", emp.currentPostHeld],
       ["Group", `${emp.currentPostGroup} — ${emp.currentPostSubGroup}`],
       ["Institution", emp.currentInstitution],
@@ -436,9 +471,9 @@ const EmployeeCreate: React.FC = () => {
         rows.push([`#${i + 1} From – To`, `${fmt(ps.fromDate)} — ${fmt(ps.toDate)}`]);
         rows.push([`#${i + 1} Tenure`, ps.tenure]);
       });
-      addSection("6. Past Service Details", rows);
+      addSection("7. Past Service Details", rows);
     }
-    addSection("7. Special Conditions", [
+    addSection("8. Special Conditions", [
       ["Terminal Illness", emp.terminallyIll ? `Yes — ${emp.terminallyIllDoc}` : "No"],
       ["Pregnant / Child < 1 year", emp.pregnantOrChildUnderOne ? `Yes — ${emp.pregnantOrChildUnderOneDoc}` : "No"],
       ["Retiring within 2 years", emp.retiringWithinTwoYears ? `Yes — ${emp.retiringWithinTwoYearsDoc}` : "No"],
@@ -446,10 +481,10 @@ const EmployeeCreate: React.FC = () => {
       ["Widow/Divorcee with child < 12", emp.divorceeWidowWithChild ? `Yes — ${emp.divorceeWidowWithChildDoc}` : "No"],
       ["Spouse Govt Servant", emp.spouseGovtServant ? `Yes — ${emp.spouseGovtServantDoc}` : "No"],
     ]);
-    addSection("8. NGO Benefits for Elected Members", [
+    addSection("9. NGO Benefits for Elected Members", [
       ["NGO Benefits", emp.ngoBenefits ? `Yes — ${emp.ngoBenefitsDoc}` : "No"],
     ]);
-    addSection("9. Declarations", [
+    addSection("10. Declarations", [
       ["Employee Declaration", emp.empDeclAgreed ? "Agreed" : "Not Agreed"],
       ["Employee Name", emp.empDeclName],
       ["Employee Date", fmt(emp.empDeclDate)],
@@ -633,10 +668,69 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 4. Communication Address */}
+          {/* 4. Education Information */}
           <div className={cn(!shouldShowSection(4) && "hidden")} ref={el => { sectionRefs.current[4] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="4" title="Communication Address" />
+            <SectionTitle number="4" title="Education Information" />
+            <p className="text-sm text-muted-foreground mb-5">Add all education qualifications with supporting documents</p>
+            <div className="space-y-6">
+              {educationDetails.map((edu, idx) => (
+                <div key={idx} className="relative bg-muted/30 rounded-xl p-5 border border-border">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-semibold text-foreground">Education Entry #{idx + 1}</span>
+                    {educationDetails.length > 1 && (
+                      <Button type="button" variant="ghost" size="sm" onClick={() => removeEducation(idx)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                        <Trash2 className="w-4 h-4 mr-1" /> Remove
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="input-label">Education Level <span className="text-destructive">*</span></label>
+                      <select value={edu.level} onChange={(e) => { updateEducation(idx, "level", e.target.value); clearError(`edu_${idx}_level`); }} className={`input-field ${errors[`edu_${idx}_level`] ? "border-destructive" : ""}`}>
+                        <option value="">Select Level</option>
+                        {EDUCATION_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
+                      </select>
+                      <FieldError error={errors[`edu_${idx}_level`]} />
+                    </div>
+                    <div>
+                      <label className="input-label">Name of Institution <span className="text-destructive">*</span></label>
+                      <input value={edu.institution} onChange={(e) => { updateEducation(idx, "institution", e.target.value); clearError(`edu_${idx}_institution`); }} className={`input-field ${errors[`edu_${idx}_institution`] ? "border-destructive" : ""}`} placeholder="Institution / School / College name" />
+                      <FieldError error={errors[`edu_${idx}_institution`]} />
+                    </div>
+                    <div>
+                      <label className="input-label">Year of Passing <span className="text-destructive">*</span></label>
+                      <input value={edu.yearOfPassing} onChange={(e) => { updateEducation(idx, "yearOfPassing", e.target.value.replace(/\D/g, "").slice(0, 4)); clearError(`edu_${idx}_yearOfPassing`); }} className={`input-field ${errors[`edu_${idx}_yearOfPassing`] ? "border-destructive" : ""}`} placeholder="e.g. 2015" maxLength={4} />
+                      <FieldError error={errors[`edu_${idx}_yearOfPassing`]} />
+                    </div>
+                    <div>
+                      <label className="input-label">Grade / Percentage <span className="text-destructive">*</span></label>
+                      <input value={edu.gradePercentage} onChange={(e) => { updateEducation(idx, "gradePercentage", e.target.value); clearError(`edu_${idx}_gradePercentage`); }} className={`input-field ${errors[`edu_${idx}_gradePercentage`] ? "border-destructive" : ""}`} placeholder="e.g. 85% or A+" />
+                      <FieldError error={errors[`edu_${idx}_gradePercentage`]} />
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <FileUploadField
+                      value={edu.documentProof}
+                      onChange={(name) => { updateEducation(idx, "documentProof", name); }}
+                      label="Upload Certificate / Marksheet"
+                      required={false}
+                      hint="Upload certificate or marksheet. Max file size: 5 MB."
+                    />
+                  </div>
+                </div>
+              ))}
+              <Button type="button" variant="outline" onClick={addEducation} className="w-full border-dashed border-2 border-primary/40 text-primary hover:bg-primary/5">
+                <Plus className="w-4 h-4 mr-2" /> Add Another Education Entry
+              </Button>
+            </div>
+          </Card>
+          </div>
+
+          {/* 5. Communication Address */}
+          <div className={cn(!shouldShowSection(5) && "hidden")} ref={el => { sectionRefs.current[5] = el; }}>
+          <Card className="p-6">
+            <SectionTitle number="5" title="Communication Address" />
 
             {/* Personal Address */}
             <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Personal Address</h4>
@@ -704,10 +798,10 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 5. Current Working Details */}
-          <div className={cn(!shouldShowSection(5) && "hidden")} ref={el => { sectionRefs.current[5] = el; }}>
+          {/* 6. Current Working Details */}
+          <div className={cn(!shouldShowSection(6) && "hidden")} ref={el => { sectionRefs.current[6] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="5" title="Current Working Details" />
+            <SectionTitle number="6" title="Current Working Details" />
             <div className="space-y-4">
               <div>
                 <label className="input-label">Post Held <span className="text-destructive">*</span></label>
@@ -811,10 +905,10 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 6. Past Service Details */}
-          <div className={cn(!shouldShowSection(6) && "hidden")} ref={el => { sectionRefs.current[6] = el; }}>
+          {/* 7. Past Service Details */}
+          <div className={cn(!shouldShowSection(7) && "hidden")} ref={el => { sectionRefs.current[7] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="6" title="Past Service Details" />
+            <SectionTitle number="7" title="Past Service Details" />
             <p className="text-sm text-muted-foreground mb-5">Add all the transfer and promotion details since the date of Appointment according to Service Record</p>
             <div className="space-y-6">
               {pastServices.map((service, idx) => (
@@ -950,10 +1044,10 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 7. Special Conditions */}
-          <div className={cn(!shouldShowSection(7) && "hidden")} ref={el => { sectionRefs.current[7] = el; }}>
+          {/* 8. Special Conditions */}
+          <div className={cn(!shouldShowSection(8) && "hidden")} ref={el => { sectionRefs.current[8] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="7" title="Special Conditions" />
+            <SectionTitle number="8" title="Special Conditions" />
             <div className="space-y-5">
               {/* 1. Terminal Illness */}
               <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
@@ -1066,10 +1160,10 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 8. NGO Benefits for Elected Members */}
-          <div className={cn(!shouldShowSection(8) && "hidden")} ref={el => { sectionRefs.current[8] = el; }}>
+          {/* 9. NGO Benefits for Elected Members */}
+          <div className={cn(!shouldShowSection(9) && "hidden")} ref={el => { sectionRefs.current[9] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="8" title="NGO Benefits for Elected Members" />
+            <SectionTitle number="9" title="NGO Benefits for Elected Members" />
             <p className="text-sm text-muted-foreground mb-5">Benefits related to NGO elected membership will be added here</p>
             <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
               <div className="flex items-center justify-between gap-4">
@@ -1116,7 +1210,7 @@ const EmployeeCreate: React.FC = () => {
           {/* 9. Declaration — only shown in declare step */}
           <div className={cn(formStep !== "declare" && "hidden")}>
           <Card className="p-6">
-            <SectionTitle number="9" title="Declaration" />
+            <SectionTitle number="10" title="Declaration" />
 
             {/* Employee Declaration */}
             <div className="mb-8">

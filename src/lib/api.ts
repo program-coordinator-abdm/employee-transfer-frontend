@@ -429,6 +429,14 @@ export interface PastServiceEntry {
   tenure: string;
 }
 
+export interface EducationFormEntry {
+  level: string;
+  institution: string;
+  yearOfPassing: string;
+  gradePercentage: string;
+  documentProof: string;
+}
+
 export interface NewEmployee {
   id?: string;
   kgid: string;
@@ -460,6 +468,7 @@ export interface NewEmployee {
   currentCityTownVillage: string;
   currentWorkingSince: string;
   pastServices: PastServiceEntry[];
+  educationDetails: EducationFormEntry[];
   terminallyIll: boolean;
   terminallyIllDoc: string;
   pregnantOrChildUnderOne: boolean;
@@ -536,6 +545,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     officerDeclName: payload.officerDeclName,
     officerDeclDate: payload.officerDeclDate,
     pastServices: payload.pastServices,
+    educationDetails: payload.educationDetails,
   };
   return apiClient<NewEmployee>("/employees", {
     method: "POST",
@@ -596,6 +606,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     officerDeclName: payload.officerDeclName,
     officerDeclDate: payload.officerDeclDate,
     pastServices: payload.pastServices,
+    educationDetails: payload.educationDetails,
   };
   return apiClient<NewEmployee>(`/employees/${id}`, {
     method: "PUT",
@@ -636,6 +647,7 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     currentCityTownVillage: raw.currentCityTownVillage ?? "",
     currentWorkingSince: raw.currentWorkingSince ?? "",
     pastServices: raw.pastServices ?? [],
+    educationDetails: raw.educationDetails ?? [],
     terminallyIll: raw.terminallyIll ?? false,
     terminallyIllDoc: raw.terminallyIllDoc ?? "",
     pregnantOrChildUnderOne: raw.pregnantOrChildUnderOne ?? false,
