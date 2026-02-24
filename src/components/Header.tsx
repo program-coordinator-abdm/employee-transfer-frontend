@@ -42,8 +42,8 @@ const Header: React.FC = () => {
 
           {/* Center: App Title */}
           <div className="text-center flex-1 px-4">
-            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-banner-foreground tracking-wide">
-              Employee Transfer Management
+            <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-banner-foreground tracking-wide whitespace-nowrap">
+              Health and Family Welfare Department Database
             </h1>
             <p className="text-xs text-banner-foreground/70 hidden sm:block">
               Karnataka State Government Portal
