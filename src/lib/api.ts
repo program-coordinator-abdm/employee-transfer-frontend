@@ -684,10 +684,11 @@ export const getNewEmployees = async (params?: {
   query?: string;
 }): Promise<NewEmployee[]> => {
   const searchParams = new URLSearchParams();
+  searchParams.set("limit", "500"); // Fetch all employees, not just default 20
   if (params?.category) searchParams.set("category", params.category);
   if (params?.query) searchParams.set("query", params.query);
   const qs = searchParams.toString();
-  const res = await apiClient<any>(`/employees${qs ? `?${qs}` : ""}`);
+  const res = await apiClient<any>(`/employees?${qs}`);
   const arr = res.data || (Array.isArray(res) ? res : []);
   return arr.map(mapBackendToNewEmployee);
 };

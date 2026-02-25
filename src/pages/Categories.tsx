@@ -400,7 +400,7 @@ const Categories: React.FC = () => {
               <Users className="w-4 h-4" /> View All Employees ({allEmployees.length})
             </Button>
             <div className="w-full sm:w-72">
-              <KGIDSearch onSelect={(emp) => navigate(`/employee/view/${emp.id}`)} employees={allEmployees} placeholder="Quick search by KGID..." />
+              <KGIDSearch onSelect={(emp) => navigate(`/employee-view/${emp.id}`)} employees={allEmployees} placeholder="Quick search by KGID..." />
             </div>
           </div>
         )}
@@ -499,7 +499,7 @@ const Categories: React.FC = () => {
             {filteredEmployees.length > 0 && (
               <div className="mb-4 max-w-sm">
                 <KGIDSearch
-                  onSelect={(emp) => navigate(`/employee/view/${emp.id}`)}
+                  onSelect={(emp) => navigate(`/employee-view/${emp.id}`)}
                   employees={filteredEmployees}
                   placeholder="Search within results by KGID..."
                 />
@@ -536,7 +536,7 @@ const Categories: React.FC = () => {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigate(`/employee/view/${emp.id}`)}
+                        onClick={() => navigate(`/employee-view/${emp.id}`)}
                         className="gap-1.5 text-primary border-primary/30 hover:bg-primary/10 flex-shrink-0"
                       >
                         <Eye className="w-4 h-4" /> View
