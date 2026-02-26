@@ -60,6 +60,8 @@ const EmployeeCreate: React.FC = () => {
   const [probationaryPeriodDoc, setProbationaryPeriodDoc] = useState("");
   const [probationDeclarationDate, setProbationDeclarationDate] = useState<Date>();
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
+  const [cltCompleted, setCltCompleted] = useState(false);
+  const [cltCompletedDoc, setCltCompletedDoc] = useState("");
 
   // Personal Address
   const [address, setAddress] = useState("");
@@ -143,6 +145,8 @@ const EmployeeCreate: React.FC = () => {
       setProbationaryPeriod(existing.probationaryPeriod); setProbationaryPeriodDoc(existing.probationaryPeriodDoc);
       if (existing.probationDeclarationDate) setProbationDeclarationDate(new Date(existing.probationDeclarationDate));
       setDateOfBirth(new Date(existing.dateOfBirth));
+      if (existing.cltCompleted !== undefined) setCltCompleted(existing.cltCompleted);
+      if (existing.cltCompletedDoc) setCltCompletedDoc(existing.cltCompletedDoc);
       setAddress(existing.address); setPinCode(existing.pinCode); setEmail(existing.email);
       setPhoneNumber(existing.phoneNumber); setTelephoneNumber(existing.telephoneNumber);
       setOfficeAddress(existing.officeAddress); setOfficePinCode(existing.officePinCode);
@@ -347,6 +351,7 @@ const EmployeeCreate: React.FC = () => {
   const getPreviewData = (): FormPreviewData => ({
     kgid, name, designation, designationGroup, designationSubGroup, firstPostHeld,
     dateOfEntry, gender, probationaryPeriod, probationaryPeriodDoc, probationDeclarationDate, dateOfBirth,
+    cltCompleted, cltCompletedDoc,
     address, pinCode, email, phoneNumber, telephoneNumber,
     officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
     currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
@@ -377,6 +382,7 @@ const EmployeeCreate: React.FC = () => {
       gender, probationaryPeriod, probationaryPeriodDoc,
       probationDeclarationDate: probationDeclarationDate?.toISOString() || "",
       dateOfBirth: dateOfBirth!.toISOString(),
+      cltCompleted, cltCompletedDoc,
       address, pinCode, email, phoneNumber, telephoneNumber,
       officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
       currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
@@ -715,6 +721,21 @@ const EmployeeCreate: React.FC = () => {
                       />
                     </div>
                   </div>
+                )}
+              </div>
+              <div className="flex flex-col gap-3 pt-4">
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="cltCompleted" className="text-sm font-medium">CLT Completed</Label>
+                  <Switch id="cltCompleted" checked={cltCompleted} onCheckedChange={setCltCompleted} />
+                  <span className="text-sm text-muted-foreground">{cltCompleted ? "Yes" : "No"}</span>
+                </div>
+                {cltCompleted && (
+                  <FileUploadField
+                    value={cltCompletedDoc}
+                    onChange={(name) => setCltCompletedDoc(name)}
+                    label="Upload CLT Document"
+                    required={false}
+                  />
                 )}
               </div>
             </div>

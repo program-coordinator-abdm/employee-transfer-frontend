@@ -61,6 +61,8 @@ export interface FormPreviewData {
   probationaryPeriodDoc: string;
   probationDeclarationDate?: Date;
   dateOfBirth?: Date;
+  cltCompleted: boolean;
+  cltCompletedDoc: string;
   address: string;
   pinCode: string;
   email: string;
@@ -154,6 +156,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Date of Birth", fmt(data.dateOfBirth)],
       ["Gender", data.gender],
       ["Probationary Period Completion document", data.probationaryPeriod ? `Yes — ${data.probationaryPeriodDoc}` : "No"],
+      ["CLT Completed", data.cltCompleted ? `Yes${data.cltCompletedDoc ? ` — ${data.cltCompletedDoc}` : ""}` : "No"],
     ]);
 
     addSection("4. Education Information", (() => {
@@ -276,6 +279,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           {data.probationaryPeriod && data.probationDeclarationDate && (
             <Field label="Probation Declaration Date" value={fmt(data.probationDeclarationDate)} />
           )}
+          <Field label="CLT Completed" value={data.cltCompleted ? (data.cltCompletedDoc ? `Yes — ${data.cltCompletedDoc}` : "Yes") : "No"} />
         </div>
       </PreviewSection>
 
