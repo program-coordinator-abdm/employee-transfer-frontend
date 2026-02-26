@@ -751,20 +751,33 @@ export const getNewEmployeeById = async (id: string): Promise<NewEmployee> => {
   return mapBackendToNewEmployee(raw);
 };
 
-// Get all new-format employees
+// Get all new-format employees (paginates through all pages)
 export const getNewEmployees = async (params?: {
   category?: string;
   query?: string;
 }): Promise<NewEmployee[]> => {
-  const searchParams = new URLSearchParams();
-  searchParams.set("page", "1");
-  searchParams.set("limit", "100"); // API max is 100
-  if (params?.category) searchParams.set("category", params.category);
-  if (params?.query) searchParams.set("query", params.query);
-  const qs = searchParams.toString();
-  const res = await apiClient<any>(`/employees?${qs}`);
-  const arr = res.data || (Array.isArray(res) ? res : []);
-  return arr.map(mapBackendToNewEmployee);
+  const allEmployees: NewEmployee[] = [];
+  let page = 1;
+  const limit = 100; // API max per page
+
+  while (true) {
+    const searchParams = new URLSearchParams();
+    searchParams.set("page", String(page));
+    searchParams.set("limit", String(limit));
+    if (params?.category) searchParams.set("category", params.category);
+    if (params?.query) searchParams.set("query", params.query);
+    const qs = searchParams.toString();
+    const res = await apiClient<any>(`/employees?${qs}`);
+    const arr = res.data || (Array.isArray(res) ? res : []);
+    const mapped = arr.map(mapBackendToNewEmployee);
+    allEmployees.push(...mapped);
+
+    // If we got fewer than limit, we've reached the last page
+    if (mapped.length < limit) break;
+    page++;
+  }
+
+  return allEmployees;
 };
 
 // Search suggestions (with optional category)

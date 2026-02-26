@@ -12,7 +12,7 @@ interface KGIDSearchProps {
 const KGIDSearch: React.FC<KGIDSearchProps> = ({
   onSelect,
   employees: externalEmployees,
-  placeholder = "Search by KGID number...",
+  placeholder = "Search by KGID or Name...",
 }) => {
   const [query, setQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -25,7 +25,9 @@ const KGIDSearch: React.FC<KGIDSearchProps> = ({
   const suggestions = useMemo(() => {
     if (query.length < 1) return [];
     const q = query.toLowerCase();
-    return allEmployees.filter((emp) => emp.kgid.toLowerCase().includes(q)).slice(0, 8);
+    return allEmployees
+      .filter((emp) => emp.kgid.toLowerCase().includes(q) || emp.name.toLowerCase().includes(q))
+      .slice(0, 8);
   }, [query, allEmployees]);
 
   useEffect(() => {
@@ -92,7 +94,7 @@ const KGIDSearch: React.FC<KGIDSearchProps> = ({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           className="w-full h-10 pl-10 pr-9 rounded-lg border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
-          aria-label="Search by KGID"
+          aria-label="Search by KGID or Name"
           aria-autocomplete="list"
           aria-expanded={showSuggestions && suggestions.length > 0}
         />
@@ -129,7 +131,7 @@ const KGIDSearch: React.FC<KGIDSearchProps> = ({
 
       {showSuggestions && query.length >= 1 && suggestions.length === 0 && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-lg shadow-lg z-50 p-4 text-center">
-          <p className="text-sm text-muted-foreground">No employees found with KGID "{query}"</p>
+          <p className="text-sm text-muted-foreground">No employees found matching "{query}"</p>
         </div>
       )}
     </div>
