@@ -452,6 +452,8 @@ export interface NewEmployee {
   probationaryPeriodDoc: string;
   probationDeclarationDate: string;
   dateOfBirth: string;
+  cltCompleted: boolean;
+  cltCompletedDoc: string;
   address: string;
   pinCode: string;
   email: string;
@@ -513,6 +515,8 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     dateOfEntry: payload.dateOfEntry,
     dateOfJoining: payload.dateOfEntry,
     dob: payload.dateOfBirth,
+    cltCompleted: payload.cltCompleted,
+    cltCompletedDoc: payload.cltCompletedDoc,
     gender: payload.gender,
     address: payload.address,
     pinCode: payload.pinCode,
@@ -582,6 +586,8 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     dateOfEntry: payload.dateOfEntry,
     dateOfJoining: payload.dateOfEntry,
     dob: payload.dateOfBirth,
+    cltCompleted: payload.cltCompleted,
+    cltCompletedDoc: payload.cltCompletedDoc,
     gender: payload.gender,
     address: payload.address,
     pinCode: payload.pinCode,
@@ -651,6 +657,8 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     firstPostHeld: raw.firstPostHeld ?? "",
     dateOfEntry: raw.dateOfEntry ?? "",
     dateOfBirth: raw.dob ?? raw.dateOfBirth ?? "",
+    cltCompleted: raw.cltCompleted ?? false,
+    cltCompletedDoc: raw.cltCompletedDoc ?? "",
     gender: raw.gender ?? "",
     probationaryPeriod: raw.probationaryPeriod ?? false,
     probationaryPeriodDoc: raw.probationaryPeriodDoc ?? "",
