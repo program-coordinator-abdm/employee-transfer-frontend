@@ -206,7 +206,7 @@ const EmployeeView: React.FC = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <Field label="Designation" value={emp.designation} />
             <Field label="Group" value={`${emp.designationGroup} — ${emp.designationSubGroup}`} />
-            <Field label="Date of Entry into Service" value={fmt(emp.dateOfEntry)} />
+            <Field label="Date of Entry into Service (Regular post only)" value={fmt(emp.dateOfEntry)} />
             <Field label="Date of Birth" value={fmt(emp.dateOfBirth)} />
             <Field label="Gender" value={emp.gender} />
             <Field label="Probationary Period Completion document" value={
@@ -262,7 +262,7 @@ const EmployeeView: React.FC = () => {
                     <Field label="District" value={ps.district} />
                     {ps.taluk && <Field label="Taluk" value={ps.taluk} />}
                     {ps.cityTownVillage && <Field label="City/Town/Village" value={ps.cityTownVillage} />}
-                    <Field label="From" value={fmt(ps.fromDate)} />
+                    <Field label="From (Regular posts only)" value={fmt(ps.fromDate)} />
                     <Field label="To" value={fmt(ps.toDate)} />
                     <Field label="Tenure" value={ps.tenure} />
                   </div>
