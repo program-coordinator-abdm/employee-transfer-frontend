@@ -157,7 +157,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         rows.push([`#${i + 1} Level`, e.level]);
         rows.push([`#${i + 1} Institution`, e.institution]);
         rows.push([`#${i + 1} Date of Passing`, e.yearOfPassing]);
-        rows.push([`#${i + 1} Grade/Percentage`, e.gradePercentage]);
+        
         if (e.documentProof) rows.push([`#${i + 1} Document`, e.documentProof]);
       });
       return rows.length > 0 ? rows : [["", "No education entries"]];
@@ -275,7 +275,6 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
                   <Field label="Level" value={e.level} />
                   <Field label="Institution" value={e.institution} />
                   <Field label="Date of Passing" value={e.yearOfPassing} />
-                  <Field label="Grade / Percentage" value={e.gradePercentage} />
                   {e.documentProof && <Field label="Document" value={e.documentProof} />}
                 </div>
               </div>
