@@ -34,7 +34,7 @@ const EMPTY_EDUCATION: () => EducationFormEntry = () => ({
   level: "", institution: "", yearOfPassing: "", gradePercentage: "", documentProof: "",
 });
 
-const EDUCATION_LEVELS = ["10th/SSLC", "PU/12th", "Diploma", "Bachelor's degree (UG)", "Master's degree (PG)", "Paramedical", "PhD", "Others"];
+const EDUCATION_LEVELS = ["10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG)", "Master's degree (PG)", "Paramedical", "PhD", "Others"];
 
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -277,7 +277,7 @@ const EmployeeCreate: React.FC = () => {
       if (!e.level) errs[`edu_${i}_level`] = "Education level is required";
       if (!e.institution) errs[`edu_${i}_institution`] = "Institution name is required";
       if (!e.yearOfPassing) errs[`edu_${i}_yearOfPassing`] = "Date of passing is required";
-      if (!e.gradePercentage) errs[`edu_${i}_gradePercentage`] = "Grade/Percentage is required";
+      
     });
 
     pastServices.forEach((s, i) => {
@@ -448,7 +448,7 @@ const EmployeeCreate: React.FC = () => {
       eduRows.push([`#${i + 1} Level`, e.level]);
       eduRows.push([`#${i + 1} Institution`, e.institution]);
       eduRows.push([`#${i + 1} Year`, e.yearOfPassing]);
-      eduRows.push([`#${i + 1} Grade/Percentage`, e.gradePercentage]);
+      
       if (e.documentProof) eduRows.push([`#${i + 1} Document`, e.documentProof]);
     });
     if (eduRows.length > 0) addSection("4. Education Information", eduRows);
@@ -737,11 +737,6 @@ const EmployeeCreate: React.FC = () => {
                         disabled={(d) => d > new Date()}
                       />
                       <FieldError error={errors[`edu_${idx}_yearOfPassing`]} />
-                    </div>
-                    <div>
-                      <label className="input-label">Grade / Percentage <span className="text-destructive">*</span></label>
-                      <input value={edu.gradePercentage} onChange={(e) => { updateEducation(idx, "gradePercentage", e.target.value); clearError(`edu_${idx}_gradePercentage`); }} className={`input-field ${errors[`edu_${idx}_gradePercentage`] ? "border-destructive" : ""}`} placeholder="e.g. 85% or A+" />
-                      <FieldError error={errors[`edu_${idx}_gradePercentage`]} />
                     </div>
                   </div>
                   <div className="mt-4">
