@@ -248,8 +248,8 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
     ];
     addSection("10. Special Conditions", conditions);
 
-    addSection("11. NGO Benefits for Elected Members", [
-      ["NGO Benefits", data.ngoBenefits ? `Yes — ${data.ngoBenefitsDoc}` : "No"],
+    addSection("11. Elected NGO Members Details", [
+      ["Elected NGO Member", data.ngoBenefits ? `Yes — ${data.ngoBenefitsDoc}` : "No"],
     ]);
 
     doc.save(`Employee_Preview_${data.kgid || "draft"}.pdf`);
@@ -432,9 +432,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       </PreviewSection>
 
       {/* Section 11 */}
-      <PreviewSection title="NGO Benefits for Elected Members" number="11" onEdit={() => onEdit(11)}>
-        <p className="text-sm text-muted-foreground mb-3">Benefits related to NGO elected membership will be added here</p>
-        <Field label="NGO Benefits" value={boolLabel(data.ngoBenefits, data.ngoBenefitsDoc)} />
+      <PreviewSection title="Elected NGO Members Details" number="11" onEdit={() => onEdit(11)}>
+        <p className="text-sm text-muted-foreground mb-3">Details related to elected NGO membership</p>
+        <Field label="Are you an elected NGO member?" value={boolLabel(data.ngoBenefits, data.ngoBenefitsDoc)} />
       </PreviewSection>
 
       {/* Proceed */}

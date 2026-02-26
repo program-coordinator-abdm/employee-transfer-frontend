@@ -590,8 +590,8 @@ const EmployeeCreate: React.FC = () => {
       ["Disability 40%+", emp.childSpouseDisability ? `Yes — ${emp.childSpouseDisabilityDoc}` : "No"],
       ["Widow/Divorcee with child < 12", emp.divorceeWidowWithChild ? `Yes — ${emp.divorceeWidowWithChildDoc}` : "No"],
     ]);
-    addSection("11. NGO Benefits for Elected Members", [
-      ["NGO Benefits", emp.ngoBenefits ? `Yes — ${emp.ngoBenefitsDoc}` : "No"],
+    addSection("11. Elected NGO Members Details", [
+      ["Elected NGO Member", emp.ngoBenefits ? `Yes — ${emp.ngoBenefitsDoc}` : "No"],
     ]);
     addSection("12. Declarations", [
       ["Employee Declaration", emp.empDeclAgreed ? "Agreed" : "Not Agreed"],
@@ -1501,11 +1501,11 @@ const EmployeeCreate: React.FC = () => {
           {/* 11. NGO Benefits for Elected Members */}
           <div className={cn(!shouldShowSection(11) && "hidden")} ref={el => { sectionRefs.current[11] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="11" title="NGO Benefits for Elected Members" />
-            <p className="text-sm text-muted-foreground mb-5">Benefits related to NGO elected membership will be added here</p>
+            <SectionTitle number="11" title="Elected NGO Members Details" />
+            <p className="text-sm text-muted-foreground mb-5">Details related to elected NGO membership</p>
             <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
               <div className="flex items-center justify-between gap-4">
-                <Label className="text-sm font-medium leading-snug">Do you have NGO benefits for elected members?</Label>
+                <Label className="text-sm font-medium leading-snug">Are you an elected NGO member?</Label>
                 <div className="flex items-center gap-2 shrink-0">
                   <Switch checked={ngoBenefits} onCheckedChange={setNgoBenefits} />
                   <span className="text-sm text-muted-foreground w-8">{ngoBenefits ? "Yes" : "No"}</span>
