@@ -88,6 +88,14 @@ const EmployeeCreate: React.FC = () => {
   const [pastVillageOtherModes, setPastVillageOtherModes] = useState<boolean[]>([false]);
   const [currentWorkingSince, setCurrentWorkingSince] = useState<Date>();
   const [currentZone, setCurrentZone] = useState("");
+  const [currentAreaType, setCurrentAreaType] = useState("");
+
+  // Spouse working details
+  const [spouseDesignation, setSpouseDesignation] = useState("");
+  const [spouseDistrict, setSpouseDistrict] = useState("");
+  const [spouseTaluk, setSpouseTaluk] = useState("");
+  const [spouseCityTownVillage, setSpouseCityTownVillage] = useState("");
+  const [spouseVillageOtherMode, setSpouseVillageOtherMode] = useState(false);
 
   // Past services
   const [pastServices, setPastServices] = useState<PastServiceEntry[]>([EMPTY_PAST_SERVICE()]);
@@ -155,6 +163,11 @@ const EmployeeCreate: React.FC = () => {
       setChildSpouseDisability(existing.childSpouseDisability); setChildSpouseDisabilityDoc(existing.childSpouseDisabilityDoc);
       setDivorceeWidowWithChild(existing.divorceeWidowWithChild); setDivorceeWidowWithChildDoc(existing.divorceeWidowWithChildDoc);
       setSpouseGovtServant(existing.spouseGovtServant); setSpouseGovtServantDoc(existing.spouseGovtServantDoc);
+      if (existing.spouseDesignation) setSpouseDesignation(existing.spouseDesignation);
+      if (existing.spouseDistrict) setSpouseDistrict(existing.spouseDistrict);
+      if (existing.spouseTaluk) setSpouseTaluk(existing.spouseTaluk);
+      if (existing.spouseCityTownVillage) setSpouseCityTownVillage(existing.spouseCityTownVillage);
+      if (existing.currentAreaType) setCurrentAreaType(existing.currentAreaType);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
       if (existing.ngoBenefitsDoc !== undefined) setNgoBenefitsDoc(existing.ngoBenefitsDoc);
       if (existing.educationDetails && existing.educationDetails.length > 0) setEducationDetails(existing.educationDetails);
@@ -338,13 +351,14 @@ const EmployeeCreate: React.FC = () => {
     officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
     currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
     currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
-    currentWorkingSince, pastServices, educationDetails,
+    currentWorkingSince, currentAreaType, pastServices, educationDetails,
     terminallyIll, terminallyIllDoc,
     pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
     retiringWithinTwoYears, retiringWithinTwoYearsDoc,
     childSpouseDisability, childSpouseDisabilityDoc,
     divorceeWidowWithChild, divorceeWidowWithChildDoc,
     spouseGovtServant, spouseGovtServantDoc,
+    spouseDesignation, spouseDistrict, spouseTaluk, spouseCityTownVillage,
     ngoBenefits, ngoBenefitsDoc,
   });
 
@@ -368,12 +382,14 @@ const EmployeeCreate: React.FC = () => {
       currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
       currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: currentWorkingSince!.toISOString(),
+      currentAreaType,
       pastServices, educationDetails, terminallyIll, terminallyIllDoc,
       pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
       retiringWithinTwoYears, retiringWithinTwoYearsDoc,
       childSpouseDisability, childSpouseDisabilityDoc,
       divorceeWidowWithChild, divorceeWidowWithChildDoc,
       spouseGovtServant, spouseGovtServantDoc,
+      spouseDesignation, spouseDistrict, spouseTaluk, spouseCityTownVillage,
       ngoBenefits, ngoBenefitsDoc,
       empDeclAgreed, empDeclName, empDeclDate: empDeclDate?.toISOString() || "",
       officerDeclAgreed, officerDeclName, officerDeclDate: officerDeclDate?.toISOString() || "",
@@ -468,6 +484,7 @@ const EmployeeCreate: React.FC = () => {
       ["District", emp.currentDistrict],
       ["Taluk", emp.currentTaluk],
       ["City/Town/Village", emp.currentCityTownVillage],
+      ...(emp.currentAreaType ? [["Area Type", emp.currentAreaType] as [string, string]] : []),
       ["Working Since", fmt(emp.currentWorkingSince)],
     ]);
     if (emp.pastServices.length > 0) {
@@ -481,18 +498,28 @@ const EmployeeCreate: React.FC = () => {
       });
       addSection("7. Past Service Details", rows);
     }
-    addSection("8. Special Conditions", [
+    // Spouse Working Details
+    const spouseRows: [string, string][] = [
+      ["Spouse Govt Servant", emp.spouseGovtServant ? `Yes — ${emp.spouseGovtServantDoc}` : "No"],
+    ];
+    if (emp.spouseGovtServant) {
+      if (emp.spouseDesignation) spouseRows.push(["Spouse Designation", emp.spouseDesignation]);
+      if (emp.spouseDistrict) spouseRows.push(["District", emp.spouseDistrict]);
+      if (emp.spouseTaluk) spouseRows.push(["Taluk", emp.spouseTaluk]);
+      if (emp.spouseCityTownVillage) spouseRows.push(["City/Town/Village", emp.spouseCityTownVillage]);
+    }
+    addSection("8. Spouse Working Details", spouseRows);
+    addSection("9. Special Conditions", [
       ["Terminal Illness", emp.terminallyIll ? `Yes — ${emp.terminallyIllDoc}` : "No"],
       ["Pregnant / Child < 1 year", emp.pregnantOrChildUnderOne ? `Yes — ${emp.pregnantOrChildUnderOneDoc}` : "No"],
       ["Retiring within 2 years", emp.retiringWithinTwoYears ? `Yes — ${emp.retiringWithinTwoYearsDoc}` : "No"],
       ["Disability 40%+", emp.childSpouseDisability ? `Yes — ${emp.childSpouseDisabilityDoc}` : "No"],
       ["Widow/Divorcee with child < 12", emp.divorceeWidowWithChild ? `Yes — ${emp.divorceeWidowWithChildDoc}` : "No"],
-      ["Spouse Govt Servant", emp.spouseGovtServant ? `Yes — ${emp.spouseGovtServantDoc}` : "No"],
     ]);
-    addSection("9. NGO Benefits for Elected Members", [
+    addSection("10. NGO Benefits for Elected Members", [
       ["NGO Benefits", emp.ngoBenefits ? `Yes — ${emp.ngoBenefitsDoc}` : "No"],
     ]);
-    addSection("10. Declarations", [
+    addSection("11. Declarations", [
       ["Employee Declaration", emp.empDeclAgreed ? "Agreed" : "Not Agreed"],
       ["Employee Name", emp.empDeclName],
       ["Employee Date", fmt(emp.empDeclDate)],
@@ -763,7 +790,7 @@ const EmployeeCreate: React.FC = () => {
             <SectionTitle number="5" title="Communication Address" />
 
             {/* Personal Address */}
-            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Personal Address</h4>
+            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Personal Communication Address (Current)</h4>
             <div className="space-y-4 mb-6">
               <div>
                 <label className="input-label">Address <span className="text-destructive">*</span></label>
@@ -919,6 +946,17 @@ const EmployeeCreate: React.FC = () => {
                     );
                   })()}
                   <FieldError error={errors.currentCityTownVillage} />
+                </div>
+              </div>
+              <div>
+                <label className="input-label">Area Type</label>
+                <div className="flex gap-4 mt-2">
+                  {["Rural", "Urban"].map((t) => (
+                    <label key={t} className="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="currentAreaType" value={t} checked={currentAreaType === t} onChange={() => setCurrentAreaType(t)} className="accent-primary w-4 h-4" />
+                      <span className="text-sm font-medium text-foreground">{t}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
               <div className="max-w-sm">
@@ -1088,10 +1126,101 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 8. Special Conditions */}
+          {/* 8. Spouse Working Details */}
           <div className={cn(!shouldShowSection(8) && "hidden")} ref={el => { sectionRefs.current[8] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="8" title="Special Conditions" />
+            <SectionTitle number="8" title="Spouse Working Details" />
+            <div className="space-y-5">
+              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between gap-4">
+                  <Label className="text-sm font-medium leading-snug">Medical Officer or the staff being married to an employee of a Central Government or State Government or Aided Institution</Label>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Switch checked={spouseGovtServant} onCheckedChange={setSpouseGovtServant} />
+                    <span className="text-sm text-muted-foreground w-8">{spouseGovtServant ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+                {spouseGovtServant && (
+                  <div className="space-y-4">
+                    <FileUploadField
+                      value={spouseGovtServantDoc}
+                      onChange={(name) => { setSpouseGovtServantDoc(name); clearError("spouseGovtServantDoc"); }}
+                      error={errors.spouseGovtServantDoc}
+                    />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="input-label">Spouse Designation</label>
+                        <PositionDropdown
+                          value={spouseDesignation}
+                          onChange={(pos) => setSpouseDesignation(pos?.name || "")}
+                          placeholder="Select designation..."
+                        />
+                      </div>
+                      <div>
+                        <label className="input-label">District</label>
+                        <select value={spouseDistrict} onChange={(e) => { setSpouseDistrict(e.target.value); setSpouseTaluk(""); setSpouseCityTownVillage(""); setSpouseVillageOtherMode(false); }} className="input-field">
+                          <option value="">Select District</option>
+                          {KARNATAKA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="input-label">Taluk</label>
+                        <select value={spouseTaluk} onChange={(e) => { setSpouseTaluk(e.target.value); setSpouseCityTownVillage(""); setSpouseVillageOtherMode(false); }} className="input-field" disabled={!spouseDistrict}>
+                          <option value="">{spouseDistrict ? "Select Taluk" : "Select District first"}</option>
+                          {getTaluks(spouseDistrict).map((t) => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="input-label">City / Town / Village</label>
+                        {(() => {
+                          const cities = getCities(spouseDistrict, spouseTaluk);
+                          return (
+                            <>
+                              <select
+                                value={spouseVillageOtherMode ? "__other__" : spouseCityTownVillage}
+                                onChange={(e) => {
+                                  if (e.target.value === "__other__") {
+                                    setSpouseVillageOtherMode(true);
+                                    setSpouseCityTownVillage("");
+                                    setTimeout(() => document.getElementById("spouseVillageOther")?.focus(), 50);
+                                  } else {
+                                    setSpouseVillageOtherMode(false);
+                                    setSpouseCityTownVillage(e.target.value);
+                                  }
+                                }}
+                                className="input-field"
+                                disabled={!spouseTaluk}
+                              >
+                                <option value="">{spouseTaluk ? "Select City/Town/Village" : "Select Taluk first"}</option>
+                                {cities.map((c) => <option key={c} value={c}>{c}</option>)}
+                                <option value="__other__">Others (Enter manually)</option>
+                              </select>
+                              {spouseVillageOtherMode && (
+                                <input
+                                  id="spouseVillageOther"
+                                  type="text"
+                                  value={spouseCityTownVillage}
+                                  onChange={(e) => setSpouseCityTownVillage(e.target.value)}
+                                  placeholder="Enter village/town name..."
+                                  className="input-field mt-2"
+                                  autoFocus
+                                />
+                              )}
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
+          </div>
+
+          {/* 9. Special Conditions */}
+          <div className={cn(!shouldShowSection(9) && "hidden")} ref={el => { sectionRefs.current[9] = el; }}>
+          <Card className="p-6">
+            <SectionTitle number="9" title="Special Conditions" />
             <div className="space-y-5">
               {/* 1. Terminal Illness */}
               <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
@@ -1183,31 +1312,15 @@ const EmployeeCreate: React.FC = () => {
                 )}
               </div>
 
-              {/* 6. Spouse Govt Servant */}
-              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
-                <div className="flex items-center justify-between gap-4">
-                  <Label className="text-sm font-medium leading-snug">Medical Officer or the staff being married to an employee of a Central Government or State Government or Aided Institution</Label>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Switch checked={spouseGovtServant} onCheckedChange={setSpouseGovtServant} />
-                    <span className="text-sm text-muted-foreground w-8">{spouseGovtServant ? "Yes" : "No"}</span>
-                  </div>
-                </div>
-                {spouseGovtServant && (
-                  <FileUploadField
-                      value={spouseGovtServantDoc}
-                      onChange={(name) => { setSpouseGovtServantDoc(name); clearError("spouseGovtServantDoc"); }}
-                      error={errors.spouseGovtServantDoc}
-                    />
-                )}
-              </div>
+              
             </div>
           </Card>
           </div>
 
-          {/* 9. NGO Benefits for Elected Members */}
-          <div className={cn(!shouldShowSection(9) && "hidden")} ref={el => { sectionRefs.current[9] = el; }}>
+          {/* 10. NGO Benefits for Elected Members */}
+          <div className={cn(!shouldShowSection(10) && "hidden")} ref={el => { sectionRefs.current[10] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="9" title="NGO Benefits for Elected Members" />
+            <SectionTitle number="10" title="NGO Benefits for Elected Members" />
             <p className="text-sm text-muted-foreground mb-5">Benefits related to NGO elected membership will be added here</p>
             <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
               <div className="flex items-center justify-between gap-4">
@@ -1251,10 +1364,10 @@ const EmployeeCreate: React.FC = () => {
             </div>
           )}
 
-          {/* 9. Declaration — only shown in declare step */}
+          {/* 11. Declaration — only shown in declare step */}
           <div className={cn(formStep !== "declare" && "hidden")}>
           <Card className="p-6">
-            <SectionTitle number="10" title="Declaration" />
+            <SectionTitle number="11" title="Declaration" />
 
             {/* Employee Declaration */}
             <div className="mb-8">

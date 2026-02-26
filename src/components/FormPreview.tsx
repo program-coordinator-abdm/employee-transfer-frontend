@@ -80,6 +80,7 @@ export interface FormPreviewData {
   currentTaluk: string;
   currentCityTownVillage: string;
   currentWorkingSince?: Date;
+  currentAreaType: string;
   pastServices: PastServiceEntry[];
   educationDetails: EducationFormEntry[];
   terminallyIll: boolean;
@@ -94,6 +95,10 @@ export interface FormPreviewData {
   divorceeWidowWithChildDoc: string;
   spouseGovtServant: boolean;
   spouseGovtServantDoc: string;
+  spouseDesignation: string;
+  spouseDistrict: string;
+  spouseTaluk: string;
+  spouseCityTownVillage: string;
   ngoBenefits: boolean;
   ngoBenefitsDoc: string;
 }
@@ -183,6 +188,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["District", data.currentDistrict],
       ["Taluk", data.currentTaluk],
       ["City/Town/Village", data.currentCityTownVillage],
+      ...(data.currentAreaType ? [["Area Type", data.currentAreaType] as [string, string]] : []),
       ["Working Since", fmt(data.currentWorkingSince)],
     ]);
 
@@ -198,17 +204,28 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       addSection("7. Past Service Details", rows);
     }
 
+    // Spouse Working Details
+    const spouseRows: [string, string][] = [
+      ["Spouse Govt Servant", data.spouseGovtServant ? `Yes — ${data.spouseGovtServantDoc}` : "No"],
+    ];
+    if (data.spouseGovtServant) {
+      if (data.spouseDesignation) spouseRows.push(["Spouse Designation", data.spouseDesignation]);
+      if (data.spouseDistrict) spouseRows.push(["District", data.spouseDistrict]);
+      if (data.spouseTaluk) spouseRows.push(["Taluk", data.spouseTaluk]);
+      if (data.spouseCityTownVillage) spouseRows.push(["City/Town/Village", data.spouseCityTownVillage]);
+    }
+    addSection("8. Spouse Working Details", spouseRows);
+
     const conditions: [string, string][] = [
       ["Terminal Illness", data.terminallyIll ? `Yes — ${data.terminallyIllDoc}` : "No"],
       ["Pregnant / Child < 1 year", data.pregnantOrChildUnderOne ? `Yes — ${data.pregnantOrChildUnderOneDoc}` : "No"],
       ["Retiring within 2 years", data.retiringWithinTwoYears ? `Yes — ${data.retiringWithinTwoYearsDoc}` : "No"],
       ["Disability 40%+", data.childSpouseDisability ? `Yes — ${data.childSpouseDisabilityDoc}` : "No"],
       ["Widow/Divorcee with child < 12", data.divorceeWidowWithChild ? `Yes — ${data.divorceeWidowWithChildDoc}` : "No"],
-      ["Spouse Govt Servant", data.spouseGovtServant ? `Yes — ${data.spouseGovtServantDoc}` : "No"],
     ];
-    addSection("8. Special Conditions", conditions);
+    addSection("9. Special Conditions", conditions);
 
-    addSection("9. NGO Benefits for Elected Members", [
+    addSection("10. NGO Benefits for Elected Members", [
       ["NGO Benefits", data.ngoBenefits ? `Yes — ${data.ngoBenefitsDoc}` : "No"],
     ]);
 
@@ -314,6 +331,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           <Field label="District" value={data.currentDistrict} />
           <Field label="Taluk" value={data.currentTaluk} />
           <Field label="City/Town/Village" value={data.currentCityTownVillage} />
+          {data.currentAreaType && <Field label="Area Type" value={data.currentAreaType} />}
           <Field label="Working Since" value={fmt(data.currentWorkingSince)} />
         </div>
       </PreviewSection>
@@ -345,20 +363,34 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         )}
       </PreviewSection>
 
-      {/* Section 8 */}
-      <PreviewSection title="Special Conditions" number="8" onEdit={() => onEdit(8)}>
+      {/* Section 8 - Spouse Working Details */}
+      <PreviewSection title="Spouse Working Details" number="8" onEdit={() => onEdit(8)}>
+        <div className="grid grid-cols-1 gap-3">
+          <Field label="Spouse Govt Servant" value={boolLabel(data.spouseGovtServant, data.spouseGovtServantDoc)} />
+          {data.spouseGovtServant && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
+              {data.spouseDesignation && <Field label="Spouse Designation" value={data.spouseDesignation} />}
+              {data.spouseDistrict && <Field label="District" value={data.spouseDistrict} />}
+              {data.spouseTaluk && <Field label="Taluk" value={data.spouseTaluk} />}
+              {data.spouseCityTownVillage && <Field label="City/Town/Village" value={data.spouseCityTownVillage} />}
+            </div>
+          )}
+        </div>
+      </PreviewSection>
+
+      {/* Section 9 */}
+      <PreviewSection title="Special Conditions" number="9" onEdit={() => onEdit(9)}>
         <div className="grid grid-cols-1 gap-3">
           <Field label="Terminal illness / Serious ailment" value={boolLabel(data.terminallyIll, data.terminallyIllDoc)} />
           <Field label="Pregnant / Child < 1 year" value={boolLabel(data.pregnantOrChildUnderOne, data.pregnantOrChildUnderOneDoc)} />
           <Field label="Retiring within 2 years" value={boolLabel(data.retiringWithinTwoYears, data.retiringWithinTwoYearsDoc)} />
           <Field label="Disability 40%+" value={boolLabel(data.childSpouseDisability, data.childSpouseDisabilityDoc)} />
           <Field label="Widow/Divorcee with child < 12" value={boolLabel(data.divorceeWidowWithChild, data.divorceeWidowWithChildDoc)} />
-          <Field label="Spouse Govt Servant" value={boolLabel(data.spouseGovtServant, data.spouseGovtServantDoc)} />
         </div>
       </PreviewSection>
 
-      {/* Section 9 */}
-      <PreviewSection title="NGO Benefits for Elected Members" number="9" onEdit={() => onEdit(9)}>
+      {/* Section 10 */}
+      <PreviewSection title="NGO Benefits for Elected Members" number="10" onEdit={() => onEdit(10)}>
         <p className="text-sm text-muted-foreground mb-3">Benefits related to NGO elected membership will be added here</p>
         <Field label="NGO Benefits" value={boolLabel(data.ngoBenefits, data.ngoBenefitsDoc)} />
       </PreviewSection>

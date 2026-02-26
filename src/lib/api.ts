@@ -471,6 +471,7 @@ export interface NewEmployee {
   currentTaluk: string;
   currentCityTownVillage: string;
   currentWorkingSince: string;
+  currentAreaType: string;
   pastServices: PastServiceEntry[];
   educationDetails: EducationFormEntry[];
   terminallyIll: boolean;
@@ -485,6 +486,10 @@ export interface NewEmployee {
   divorceeWidowWithChildDoc: string;
   spouseGovtServant: boolean;
   spouseGovtServantDoc: string;
+  spouseDesignation: string;
+  spouseDistrict: string;
+  spouseTaluk: string;
+  spouseCityTownVillage: string;
   ngoBenefits: boolean;
   ngoBenefitsDoc: string;
   empDeclAgreed: boolean;
@@ -528,6 +533,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     currentTaluk: payload.currentTaluk,
     currentCityTownVillage: payload.currentCityTownVillage,
     currentWorkingSince: payload.currentWorkingSince,
+    currentAreaType: payload.currentAreaType,
     probationaryPeriod: payload.probationaryPeriod,
     probationaryPeriodDoc: payload.probationaryPeriodDoc,
     probationDeclarationDate: payload.probationDeclarationDate,
@@ -543,6 +549,10 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     divorceeWidowWithChildDoc: payload.divorceeWidowWithChildDoc,
     spouseGovtServant: payload.spouseGovtServant,
     spouseGovtServantDoc: payload.spouseGovtServantDoc,
+    spouseDesignation: payload.spouseDesignation,
+    spouseDistrict: payload.spouseDistrict,
+    spouseTaluk: payload.spouseTaluk,
+    spouseCityTownVillage: payload.spouseCityTownVillage,
     ngoBenefits: payload.ngoBenefits,
     ngoBenefitsDoc: payload.ngoBenefitsDoc,
     empDeclAgreed: payload.empDeclAgreed,
@@ -592,6 +602,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     currentTaluk: payload.currentTaluk,
     currentCityTownVillage: payload.currentCityTownVillage,
     currentWorkingSince: payload.currentWorkingSince,
+    currentAreaType: payload.currentAreaType,
     probationaryPeriod: payload.probationaryPeriod,
     probationaryPeriodDoc: payload.probationaryPeriodDoc,
     probationDeclarationDate: payload.probationDeclarationDate,
@@ -607,6 +618,10 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     divorceeWidowWithChildDoc: payload.divorceeWidowWithChildDoc,
     spouseGovtServant: payload.spouseGovtServant,
     spouseGovtServantDoc: payload.spouseGovtServantDoc,
+    spouseDesignation: payload.spouseDesignation,
+    spouseDistrict: payload.spouseDistrict,
+    spouseTaluk: payload.spouseTaluk,
+    spouseCityTownVillage: payload.spouseCityTownVillage,
     ngoBenefits: payload.ngoBenefits,
     ngoBenefitsDoc: payload.ngoBenefitsDoc,
     empDeclAgreed: payload.empDeclAgreed,
@@ -659,6 +674,7 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     currentTaluk: raw.currentTaluk ?? "",
     currentCityTownVillage: raw.currentCityTownVillage ?? "",
     currentWorkingSince: raw.currentWorkingSince ?? "",
+    currentAreaType: raw.currentAreaType ?? "",
     pastServices: raw.pastServices ?? [],
     educationDetails: raw.educationDetails ?? [],
     terminallyIll: raw.terminallyIll ?? false,
@@ -673,6 +689,10 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     divorceeWidowWithChildDoc: raw.divorceeWidowWithChildDoc ?? "",
     spouseGovtServant: raw.spouseGovtServant ?? false,
     spouseGovtServantDoc: raw.spouseGovtServantDoc ?? "",
+    spouseDesignation: raw.spouseDesignation ?? "",
+    spouseDistrict: raw.spouseDistrict ?? "",
+    spouseTaluk: raw.spouseTaluk ?? "",
+    spouseCityTownVillage: raw.spouseCityTownVillage ?? "",
     ngoBenefits: raw.ngoBenefits ?? false,
     ngoBenefitsDoc: raw.ngoBenefitsDoc ?? "",
     empDeclAgreed: raw.empDeclAgreed ?? false,
