@@ -454,6 +454,9 @@ export interface NewEmployee {
   dateOfBirth: string;
   cltCompleted: boolean;
   cltCompletedDoc: string;
+  isDoctorNursePharmacist: boolean;
+  hprId: string;
+  hfrId: string;
   address: string;
   pinCode: string;
   email: string;
@@ -517,6 +520,9 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     dob: payload.dateOfBirth,
     cltCompleted: payload.cltCompleted,
     cltCompletedDoc: payload.cltCompletedDoc,
+    isDoctorNursePharmacist: payload.isDoctorNursePharmacist,
+    hprId: payload.hprId,
+    hfrId: payload.hfrId,
     gender: payload.gender,
     address: payload.address,
     pinCode: payload.pinCode,
@@ -588,6 +594,9 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     dob: payload.dateOfBirth,
     cltCompleted: payload.cltCompleted,
     cltCompletedDoc: payload.cltCompletedDoc,
+    isDoctorNursePharmacist: payload.isDoctorNursePharmacist,
+    hprId: payload.hprId,
+    hfrId: payload.hfrId,
     gender: payload.gender,
     address: payload.address,
     pinCode: payload.pinCode,
@@ -659,6 +668,9 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     dateOfBirth: raw.dob ?? raw.dateOfBirth ?? "",
     cltCompleted: raw.cltCompleted ?? false,
     cltCompletedDoc: raw.cltCompletedDoc ?? "",
+    isDoctorNursePharmacist: raw.isDoctorNursePharmacist ?? false,
+    hprId: raw.hprId ?? "",
+    hfrId: raw.hfrId ?? "",
     gender: raw.gender ?? "",
     probationaryPeriod: raw.probationaryPeriod ?? false,
     probationaryPeriodDoc: raw.probationaryPeriodDoc ?? "",

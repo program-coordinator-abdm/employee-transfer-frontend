@@ -62,6 +62,9 @@ const EmployeeCreate: React.FC = () => {
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
   const [cltCompleted, setCltCompleted] = useState(false);
   const [cltCompletedDoc, setCltCompletedDoc] = useState("");
+  const [isDoctorNursePharmacist, setIsDoctorNursePharmacist] = useState(false);
+  const [hprId, setHprId] = useState("");
+  const [hfrId, setHfrId] = useState("");
 
   // Personal Address
   const [address, setAddress] = useState("");
@@ -147,6 +150,9 @@ const EmployeeCreate: React.FC = () => {
       setDateOfBirth(new Date(existing.dateOfBirth));
       if (existing.cltCompleted !== undefined) setCltCompleted(existing.cltCompleted);
       if (existing.cltCompletedDoc) setCltCompletedDoc(existing.cltCompletedDoc);
+      if (existing.isDoctorNursePharmacist !== undefined) setIsDoctorNursePharmacist(existing.isDoctorNursePharmacist);
+      if (existing.hprId) setHprId(existing.hprId);
+      if (existing.hfrId) setHfrId(existing.hfrId);
       setAddress(existing.address); setPinCode(existing.pinCode); setEmail(existing.email);
       setPhoneNumber(existing.phoneNumber); setTelephoneNumber(existing.telephoneNumber);
       setOfficeAddress(existing.officeAddress); setOfficePinCode(existing.officePinCode);
@@ -351,7 +357,7 @@ const EmployeeCreate: React.FC = () => {
   const getPreviewData = (): FormPreviewData => ({
     kgid, name, designation, designationGroup, designationSubGroup, firstPostHeld,
     dateOfEntry, gender, probationaryPeriod, probationaryPeriodDoc, probationDeclarationDate, dateOfBirth,
-    cltCompleted, cltCompletedDoc,
+    cltCompleted, cltCompletedDoc, isDoctorNursePharmacist, hprId, hfrId,
     address, pinCode, email, phoneNumber, telephoneNumber,
     officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
     currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
@@ -382,7 +388,7 @@ const EmployeeCreate: React.FC = () => {
       gender, probationaryPeriod, probationaryPeriodDoc,
       probationDeclarationDate: probationDeclarationDate?.toISOString() || "",
       dateOfBirth: dateOfBirth!.toISOString(),
-      cltCompleted, cltCompletedDoc,
+      cltCompleted, cltCompletedDoc, isDoctorNursePharmacist, hprId, hfrId,
       address, pinCode, email, phoneNumber, telephoneNumber,
       officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
       currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
@@ -454,10 +460,16 @@ const EmployeeCreate: React.FC = () => {
     addSection("1. Basic Information", [
       ["KGID", emp.kgid], ["Name", emp.name],
     ]);
-    addSection("2. Designation", [
+    const desigRows: [string, string][] = [
       ["Designation", emp.designation],
       ["Group", `${emp.designationGroup} — ${emp.designationSubGroup}`],
-    ]);
+    ];
+    if (emp.isDoctorNursePharmacist) {
+      desigRows.push(["Doctor/Nurse/Pharmacist", "Yes"]);
+      if (emp.hprId) desigRows.push(["HPR ID", emp.hprId]);
+      if (emp.hfrId) desigRows.push(["HFR ID", emp.hfrId]);
+    }
+    addSection("2. Designation", desigRows);
     addSection("3. Service & Personal Details", [
       ["Date of Entry", fmt(emp.dateOfEntry)],
       ["Date of Birth", fmt(emp.dateOfBirth)],
@@ -663,6 +675,26 @@ const EmployeeCreate: React.FC = () => {
                 {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
+            <Separator className="my-5" />
+            <div className="flex items-center gap-4">
+              <Label className="text-sm font-medium">Doctor / Nurse / Pharmacist</Label>
+              <div className="flex items-center gap-3">
+                <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="isDNP" checked={isDoctorNursePharmacist} onChange={() => setIsDoctorNursePharmacist(true)} className="accent-primary" /> Yes</label>
+                <label className="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="isDNP" checked={!isDoctorNursePharmacist} onChange={() => { setIsDoctorNursePharmacist(false); setHprId(""); setHfrId(""); }} className="accent-primary" /> No</label>
+              </div>
+            </div>
+            {isDoctorNursePharmacist && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+                <div>
+                  <label className="input-label">HPR ID</label>
+                  <input value={hprId} onChange={(e) => setHprId(e.target.value)} className="input-field" placeholder="Enter HPR ID" />
+                </div>
+                <div>
+                  <label className="input-label">HFR ID</label>
+                  <input value={hfrId} onChange={(e) => setHfrId(e.target.value)} className="input-field" placeholder="Enter HFR ID" />
+                </div>
+              </div>
+            )}
           </Card>
           </div>
 
