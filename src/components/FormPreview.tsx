@@ -106,6 +106,11 @@ export interface FormPreviewData {
   spouseCityTownVillage: string;
   ngoBenefits: boolean;
   ngoBenefitsDoc: string;
+  timeboundApplicable: boolean;
+  timeboundCategory: string;
+  timeboundYears: string;
+  timeboundDoc: string;
+  timeboundDate?: Date;
 }
 
 interface FormPreviewProps {
@@ -222,6 +227,18 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
     }
     addSection("8. Spouse Working Details", spouseRows);
 
+    // Timebound
+    const tbRows: [string, string][] = [
+      ["Timebound Applicable", data.timeboundApplicable ? "Yes" : "No"],
+    ];
+    if (data.timeboundApplicable) {
+      if (data.timeboundCategory) tbRows.push(["Category", data.timeboundCategory]);
+      if (data.timeboundYears) tbRows.push(["Years", data.timeboundYears]);
+      if (data.timeboundDoc) tbRows.push(["Document", data.timeboundDoc]);
+      if (data.timeboundDate) tbRows.push(["Date", fmt(data.timeboundDate)]);
+    }
+    addSection("9. Timebound", tbRows);
+
     const conditions: [string, string][] = [
       ["Terminal Illness", data.terminallyIll ? `Yes — ${data.terminallyIllDoc}` : "No"],
       ["Pregnant / Child < 1 year", data.pregnantOrChildUnderOne ? `Yes — ${data.pregnantOrChildUnderOneDoc}` : "No"],
@@ -229,9 +246,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Disability 40%+", data.childSpouseDisability ? `Yes — ${data.childSpouseDisabilityDoc}` : "No"],
       ["Widow/Divorcee with child < 12", data.divorceeWidowWithChild ? `Yes — ${data.divorceeWidowWithChildDoc}` : "No"],
     ];
-    addSection("9. Special Conditions", conditions);
+    addSection("10. Special Conditions", conditions);
 
-    addSection("10. NGO Benefits for Elected Members", [
+    addSection("11. NGO Benefits for Elected Members", [
       ["NGO Benefits", data.ngoBenefits ? `Yes — ${data.ngoBenefitsDoc}` : "No"],
     ]);
 
@@ -388,8 +405,23 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         </div>
       </PreviewSection>
 
-      {/* Section 9 */}
-      <PreviewSection title="Special Conditions" number="9" onEdit={() => onEdit(9)}>
+      {/* Section 9 - Timebound */}
+      <PreviewSection title="Timebound" number="9" onEdit={() => onEdit(8)}>
+        <div className="grid grid-cols-1 gap-3">
+          <Field label="Timebound Applicable" value={data.timeboundApplicable ? "Yes" : "No"} />
+          {data.timeboundApplicable && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
+              {data.timeboundCategory && <Field label="Category" value={data.timeboundCategory} />}
+              {data.timeboundYears && <Field label="Years" value={data.timeboundYears} />}
+              {data.timeboundDoc && <Field label="Document" value={data.timeboundDoc} />}
+              {data.timeboundDate && <Field label="Date" value={fmt(data.timeboundDate)} />}
+            </div>
+          )}
+        </div>
+      </PreviewSection>
+
+      {/* Section 10 */}
+      <PreviewSection title="Special Conditions" number="10" onEdit={() => onEdit(10)}>
         <div className="grid grid-cols-1 gap-3">
           <Field label="Terminal illness / Serious ailment" value={boolLabel(data.terminallyIll, data.terminallyIllDoc)} />
           <Field label="Pregnant / Child < 1 year" value={boolLabel(data.pregnantOrChildUnderOne, data.pregnantOrChildUnderOneDoc)} />
@@ -399,8 +431,8 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         </div>
       </PreviewSection>
 
-      {/* Section 10 */}
-      <PreviewSection title="NGO Benefits for Elected Members" number="10" onEdit={() => onEdit(10)}>
+      {/* Section 11 */}
+      <PreviewSection title="NGO Benefits for Elected Members" number="11" onEdit={() => onEdit(11)}>
         <p className="text-sm text-muted-foreground mb-3">Benefits related to NGO elected membership will be added here</p>
         <Field label="NGO Benefits" value={boolLabel(data.ngoBenefits, data.ngoBenefitsDoc)} />
       </PreviewSection>
