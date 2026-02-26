@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet, Loader2, ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ const EmployeeList: React.FC = () => {
   const [employees, setEmployees] = useState<NewEmployee[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     getNewEmployees()
@@ -22,9 +23,20 @@ const EmployeeList: React.FC = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const totalPages = Math.ceil(employees.length / PAGE_SIZE);
+  const filteredEmployees = useMemo(() => {
+    if (!searchQuery.trim()) return employees;
+    const q = searchQuery.trim().toLowerCase();
+    return employees.filter(
+      (emp) =>
+        emp.name.toLowerCase().includes(q) ||
+        emp.kgid.toLowerCase().includes(q) ||
+        emp.currentPostHeld.toLowerCase().includes(q)
+    );
+  }, [employees, searchQuery]);
+
+  const totalPages = Math.ceil(filteredEmployees.length / PAGE_SIZE);
   const startIdx = (currentPage - 1) * PAGE_SIZE;
-  const paginatedEmployees = employees.slice(startIdx, startIdx + PAGE_SIZE);
+  const paginatedEmployees = filteredEmployees.slice(startIdx, startIdx + PAGE_SIZE);
 
   const getPageNumbers = (): (number | "...")[] => {
     const pages: (number | "...")[] = [];
@@ -54,16 +66,16 @@ const EmployeeList: React.FC = () => {
             </button>
             <div>
               <h1 className="text-2xl font-bold text-foreground">Employee Details</h1>
-              <p className="text-sm text-muted-foreground">{employees.length} employee{employees.length !== 1 ? "s" : ""} registered</p>
+              <p className="text-sm text-muted-foreground">{filteredEmployees.length} employee{filteredEmployees.length !== 1 ? "s" : ""}{searchQuery.trim() ? ` matching "${searchQuery.trim()}"` : " registered"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             {employees.length > 0 && (
               <>
-                <Button variant="outline" size="sm" onClick={() => exportEmployeesToPDF(employees, "Employee_List")} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
+                <Button variant="outline" size="sm" onClick={() => exportEmployeesToPDF(filteredEmployees, "Employee_List")} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
                   <FileDown className="w-4 h-4" /> PDF
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => exportEmployeesToExcel(employees, "Employee_List")} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
+                <Button variant="outline" size="sm" onClick={() => exportEmployeesToExcel(filteredEmployees, "Employee_List")} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
                   <FileSpreadsheet className="w-4 h-4" /> Excel
                 </Button>
               </>
@@ -74,21 +86,47 @@ const EmployeeList: React.FC = () => {
           </div>
         </div>
 
+        {/* Search Bar */}
+        {!loading && employees.length > 0 && (
+          <div className="relative mb-6">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+              placeholder="Search by name, KGID, or designation..."
+              className="input-field w-full pl-12 pr-10"
+              aria-label="Search employees"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => { setSearchQuery(""); setCurrentPage(1); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted transition-colors"
+                aria-label="Clear search"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            )}
+          </div>
+        )}
+
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ) : employees.length === 0 ? (
+        ) : filteredEmployees.length === 0 ? (
           <Card className="p-12 text-center">
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
                 <UserPlus className="w-8 h-8 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">No employees yet</h3>
-              <p className="text-muted-foreground text-sm max-w-md">Start by adding a new employee to the system.</p>
-              <Button onClick={() => navigate("/employee/new")} className="btn-primary mt-2">
-                <UserPlus className="w-4 h-4 mr-2" /> Add New Employee
-              </Button>
+              <h3 className="text-lg font-semibold text-foreground">{searchQuery.trim() ? "No matching employees" : "No employees yet"}</h3>
+              <p className="text-muted-foreground text-sm max-w-md">{searchQuery.trim() ? `No employees found matching "${searchQuery.trim()}". Try a different search.` : "Start by adding a new employee to the system."}</p>
+              {!searchQuery.trim() && (
+                <Button onClick={() => navigate("/employee/new")} className="btn-primary mt-2">
+                  <UserPlus className="w-4 h-4 mr-2" /> Add New Employee
+                </Button>
+              )}
             </div>
           </Card>
         ) : (
@@ -133,8 +171,8 @@ const EmployeeList: React.FC = () => {
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div className="text-sm text-muted-foreground">
                     Showing <span className="font-medium text-foreground">{startIdx + 1}</span> to{" "}
-                    <span className="font-medium text-foreground">{Math.min(startIdx + PAGE_SIZE, employees.length)}</span> of{" "}
-                    <span className="font-medium text-foreground">{employees.length}</span> employees
+                    <span className="font-medium text-foreground">{Math.min(startIdx + PAGE_SIZE, filteredEmployees.length)}</span> of{" "}
+                    <span className="font-medium text-foreground">{filteredEmployees.length}</span> employees
                   </div>
 
                   <div className="flex items-center gap-1">
