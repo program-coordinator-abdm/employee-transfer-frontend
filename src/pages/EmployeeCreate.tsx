@@ -487,7 +487,18 @@ const EmployeeCreate: React.FC = () => {
       if (emp.hfrId) desigRows.push(["HFR ID", emp.hfrId]);
     }
     addSection("2. Designation", desigRows);
-    addSection("3. Service & Personal Details", [
+    // Timebound in PDF
+    const tbPdfRows: [string, string][] = [
+      ["Timebound Applicable", emp.timeboundApplicable ? "Yes" : "No"],
+    ];
+    if (emp.timeboundApplicable) {
+      if (emp.timeboundCategory) tbPdfRows.push(["Category", emp.timeboundCategory]);
+      if (emp.timeboundYears) tbPdfRows.push(["Years", emp.timeboundYears]);
+      if (emp.timeboundDoc) tbPdfRows.push(["Document", emp.timeboundDoc]);
+      if (emp.timeboundDate) tbPdfRows.push(["Date", fmt(emp.timeboundDate)]);
+    }
+    addSection("3. Timebound", tbPdfRows);
+    addSection("4. Service & Personal Details", [
       ["Date of Entry", fmt(emp.dateOfEntry)],
       ["Date of Birth", fmt(emp.dateOfBirth)],
       ["Gender", emp.gender],
@@ -502,9 +513,9 @@ const EmployeeCreate: React.FC = () => {
       
       if (e.documentProof) eduRows.push([`#${i + 1} Document`, e.documentProof]);
     });
-    if (eduRows.length > 0) addSection("4. Education Information", eduRows);
+    if (eduRows.length > 0) addSection("5. Education Information", eduRows);
 
-    addSection("5. Communication Address", [
+    addSection("6. Communication Address", [
       ["Personal Address", emp.address], ["Pin Code", emp.pinCode],
       ["Email", emp.email], ["Phone", emp.phoneNumber],
       ["Telephone", emp.telephoneNumber || "—"],
@@ -512,7 +523,7 @@ const EmployeeCreate: React.FC = () => {
       ["Office Email", emp.officeEmail], ["Office Phone", emp.officePhoneNumber],
       ["Office Telephone", emp.officeTelephoneNumber || "—"],
     ]);
-    addSection("6. Current Working Details", [
+    addSection("7. Current Working Details", [
       ["Post Held", emp.currentPostHeld],
       ["Group", `${emp.currentPostGroup} — ${emp.currentPostSubGroup}`],
       ["Institution", emp.currentInstitution],
@@ -531,7 +542,7 @@ const EmployeeCreate: React.FC = () => {
         rows.push([`#${i + 1} From – To`, `${fmt(ps.fromDate)} — ${fmt(ps.toDate)}`]);
         rows.push([`#${i + 1} Tenure`, ps.tenure]);
       });
-      addSection("7. Past Service Details", rows);
+      addSection("8. Past Service Details", rows);
     }
     // Spouse Working Details
     const spouseRows: [string, string][] = [
@@ -543,18 +554,7 @@ const EmployeeCreate: React.FC = () => {
       if (emp.spouseTaluk) spouseRows.push(["Taluk", emp.spouseTaluk]);
       if (emp.spouseCityTownVillage) spouseRows.push(["City/Town/Village", emp.spouseCityTownVillage]);
     }
-    addSection("8. Spouse Working Details", spouseRows);
-    // Timebound
-    const tbRows: [string, string][] = [
-      ["Timebound Applicable", emp.timeboundApplicable ? "Yes" : "No"],
-    ];
-    if (emp.timeboundApplicable) {
-      if (emp.timeboundCategory) tbRows.push(["Category", emp.timeboundCategory]);
-      if (emp.timeboundYears) tbRows.push(["Years", emp.timeboundYears]);
-      if (emp.timeboundDoc) tbRows.push(["Document", emp.timeboundDoc]);
-      if (emp.timeboundDate) tbRows.push(["Date", fmt(emp.timeboundDate)]);
-    }
-    addSection("9. Timebound", tbRows);
+    addSection("9. Spouse Working Details", spouseRows);
     addSection("10. Special Conditions", [
       ["Terminal Illness", emp.terminallyIll ? `Yes — ${emp.terminallyIllDoc}` : "No"],
       ["Pregnant / Child < 1 year", emp.pregnantOrChildUnderOne ? `Yes — ${emp.pregnantOrChildUnderOneDoc}` : "No"],
@@ -726,10 +726,77 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 3. Service & Personal */}
+          {/* 3. Timebound */}
           <div className={cn(!shouldShowSection(3) && "hidden")} ref={el => { sectionRefs.current[3] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="3" title="Service & Personal Details" />
+            <SectionTitle number="3" title="Timebound" />
+            <div className="space-y-5">
+              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between gap-4">
+                  <Label className="text-sm font-medium leading-snug">Is Timebound applicable?</Label>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); } }} />
+                    <span className="text-sm text-muted-foreground w-8">{timeboundApplicable ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+                {timeboundApplicable && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="input-label">Category <span className="text-destructive">*</span></label>
+                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); }} className="input-field">
+                          <option value="">Select Category</option>
+                          <option value="Doctors">Doctors</option>
+                          <option value="Others">Others</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="input-label">Years <span className="text-destructive">*</span></label>
+                        <select value={timeboundYears} onChange={(e) => setTimeboundYears(e.target.value)} className="input-field" disabled={!timeboundCategory}>
+                          <option value="">{timeboundCategory ? "Select Years" : "Select Category first"}</option>
+                          {timeboundCategory === "Doctors" && (
+                            <>
+                              <option value="6">6 Years</option>
+                              <option value="13">13 Years</option>
+                              <option value="20">20 Years</option>
+                            </>
+                          )}
+                          {timeboundCategory === "Others" && (
+                            <>
+                              <option value="10">10 Years</option>
+                              <option value="15">15 Years</option>
+                              <option value="20">20 Years</option>
+                            </>
+                          )}
+                        </select>
+                      </div>
+                    </div>
+                    <FileUploadField
+                      value={timeboundDoc}
+                      onChange={(name) => setTimeboundDoc(name)}
+                      label="Upload Timebound Document"
+                      required={false}
+                    />
+                    <div>
+                      <label className="input-label">Timebound Date</label>
+                      <DatePickerField
+                        value={timeboundDate}
+                        onChange={(d) => setTimeboundDate(d)}
+                        placeholder="Select timebound date"
+                        disabled={(d) => d > new Date()}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
+          </div>
+
+          {/* 4. Service & Personal */}
+          <div className={cn(!shouldShowSection(4) && "hidden")} ref={el => { sectionRefs.current[4] = el; }}>
+          <Card className="p-6">
+            <SectionTitle number="4" title="Service & Personal Details" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="input-label">Date of Entry into Service <span className="text-destructive">*</span></label>
@@ -802,10 +869,10 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 4. Education Information */}
-          <div className={cn(!shouldShowSection(4) && "hidden")} ref={el => { sectionRefs.current[4] = el; }}>
+          {/* 5. Education Information */}
+          <div className={cn(!shouldShowSection(5) && "hidden")} ref={el => { sectionRefs.current[5] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="4" title="Education Information" />
+            <SectionTitle number="5" title="Education Information" />
             <p className="text-sm text-muted-foreground mb-5">Add all education qualifications with supporting documents</p>
             <div className="space-y-6">
               {educationDetails.map((edu, idx) => (
@@ -865,10 +932,10 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 5. Communication Address */}
-          <div className={cn(!shouldShowSection(5) && "hidden")} ref={el => { sectionRefs.current[5] = el; }}>
+          {/* 6. Communication Address */}
+          <div className={cn(!shouldShowSection(6) && "hidden")} ref={el => { sectionRefs.current[6] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="5" title="Communication Address" />
+            <SectionTitle number="6" title="Communication Address" />
 
             {/* Personal Address */}
             <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Personal Communication Address (Current)</h4>
@@ -936,10 +1003,10 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 6. Current Working Details */}
-          <div className={cn(!shouldShowSection(6) && "hidden")} ref={el => { sectionRefs.current[6] = el; }}>
+          {/* 7. Current Working Details */}
+          <div className={cn(!shouldShowSection(7) && "hidden")} ref={el => { sectionRefs.current[7] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="6" title="Current Working Details" />
+            <SectionTitle number="7" title="Current Working Details" />
             <div className="space-y-4">
               <div>
                 <label className="input-label">Post Held <span className="text-destructive">*</span></label>
@@ -1061,10 +1128,10 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 7. Past Service Details */}
-          <div className={cn(!shouldShowSection(7) && "hidden")} ref={el => { sectionRefs.current[7] = el; }}>
+          {/* 8. Past Service Details */}
+          <div className={cn(!shouldShowSection(8) && "hidden")} ref={el => { sectionRefs.current[8] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="7" title="Past Service Details (Enter regular posts only)" />
+            <SectionTitle number="8" title="Past Service Details (Enter regular posts only)" />
             <p className="text-sm text-muted-foreground mb-5">Add all the transfer and promotion details since the date of Appointment (Enter regular posts only) according to Service Record</p>
             <div className="space-y-6">
               {pastServices.map((service, idx) => (
@@ -1203,73 +1270,6 @@ const EmployeeCreate: React.FC = () => {
                 <span className="text-2xl font-bold text-primary">{totalZonePoints}</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">Auto-calculated from current and past service zone selections</p>
-            </div>
-          </Card>
-          </div>
-
-          {/* 8. Timebound */}
-          <div className={cn(!shouldShowSection(8) && "hidden")} ref={el => { sectionRefs.current[8] = el; }}>
-          <Card className="p-6">
-            <SectionTitle number="8" title="Timebound" />
-            <div className="space-y-5">
-              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
-                <div className="flex items-center justify-between gap-4">
-                  <Label className="text-sm font-medium leading-snug">Is Timebound applicable?</Label>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); } }} />
-                    <span className="text-sm text-muted-foreground w-8">{timeboundApplicable ? "Yes" : "No"}</span>
-                  </div>
-                </div>
-                {timeboundApplicable && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="input-label">Category <span className="text-destructive">*</span></label>
-                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); }} className="input-field">
-                          <option value="">Select Category</option>
-                          <option value="Doctors">Doctors</option>
-                          <option value="Others">Others</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="input-label">Years <span className="text-destructive">*</span></label>
-                        <select value={timeboundYears} onChange={(e) => setTimeboundYears(e.target.value)} className="input-field" disabled={!timeboundCategory}>
-                          <option value="">{timeboundCategory ? "Select Years" : "Select Category first"}</option>
-                          {timeboundCategory === "Doctors" && (
-                            <>
-                              <option value="6">6 Years</option>
-                              <option value="13">13 Years</option>
-                              <option value="20">20 Years</option>
-                            </>
-                          )}
-                          {timeboundCategory === "Others" && (
-                            <>
-                              <option value="10">10 Years</option>
-                              <option value="15">15 Years</option>
-                              <option value="20">20 Years</option>
-                            </>
-                          )}
-                        </select>
-                      </div>
-                    </div>
-                    <FileUploadField
-                      value={timeboundDoc}
-                      onChange={(name) => setTimeboundDoc(name)}
-                      label="Upload Timebound Document"
-                      required={false}
-                    />
-                    <div>
-                      <label className="input-label">Timebound Date</label>
-                      <DatePickerField
-                        value={timeboundDate}
-                        onChange={(d) => setTimeboundDate(d)}
-                        placeholder="Select timebound date"
-                        disabled={(d) => d > new Date()}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           </Card>
           </div>

@@ -159,7 +159,19 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Group", `${data.designationGroup} — ${data.designationSubGroup}`],
     ]);
 
-    addSection("3. Service & Personal Details", [
+    // Timebound
+    const tbPdfRows: [string, string][] = [
+      ["Timebound Applicable", data.timeboundApplicable ? "Yes" : "No"],
+    ];
+    if (data.timeboundApplicable) {
+      if (data.timeboundCategory) tbPdfRows.push(["Category", data.timeboundCategory]);
+      if (data.timeboundYears) tbPdfRows.push(["Years", data.timeboundYears]);
+      if (data.timeboundDoc) tbPdfRows.push(["Document", data.timeboundDoc]);
+      if (data.timeboundDate) tbPdfRows.push(["Date", fmt(data.timeboundDate)]);
+    }
+    addSection("3. Timebound", tbPdfRows);
+
+    addSection("4. Service & Personal Details", [
       ["Date of Entry", fmt(data.dateOfEntry)],
       ["Date of Birth", fmt(data.dateOfBirth)],
       ["Gender", data.gender],
@@ -167,7 +179,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["CLT Completed", data.cltCompleted ? `Yes${data.cltCompletedDoc ? ` — ${data.cltCompletedDoc}` : ""}` : "No"],
     ]);
 
-    addSection("4. Education Information", (() => {
+    addSection("5. Education Information", (() => {
       const rows: [string, string][] = [];
       data.educationDetails.filter(e => e.level).forEach((e, i) => {
         rows.push([`#${i + 1} Level`, e.level]);
@@ -179,7 +191,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       return rows.length > 0 ? rows : [["", "No education entries"]];
     })());
 
-    addSection("5. Communication Address", [
+    addSection("6. Communication Address", [
       ["Personal Address", data.address],
       ["Pin Code", data.pinCode],
       ["Email", data.email],
@@ -192,7 +204,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Office Telephone", data.officeTelephoneNumber || "—"],
     ]);
 
-    addSection("6. Current Working Details", [
+    addSection("7. Current Working Details", [
       ["Post Held", data.currentPostHeld],
       ["Group", `${data.currentPostGroup} — ${data.currentPostSubGroup}`],
       ["Institution", data.currentInstitution],
@@ -212,7 +224,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         rows.push([`#${i + 1} From – To`, `${fmt(ps.fromDate)} — ${fmt(ps.toDate)}`]);
         rows.push([`#${i + 1} Tenure`, ps.tenure]);
       });
-      addSection("7. Past Service Details", rows);
+      addSection("8. Past Service Details", rows);
     }
 
     // Spouse Working Details
@@ -225,19 +237,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       if (data.spouseTaluk) spouseRows.push(["Taluk", data.spouseTaluk]);
       if (data.spouseCityTownVillage) spouseRows.push(["City/Town/Village", data.spouseCityTownVillage]);
     }
-    addSection("8. Spouse Working Details", spouseRows);
-
-    // Timebound
-    const tbRows: [string, string][] = [
-      ["Timebound Applicable", data.timeboundApplicable ? "Yes" : "No"],
-    ];
-    if (data.timeboundApplicable) {
-      if (data.timeboundCategory) tbRows.push(["Category", data.timeboundCategory]);
-      if (data.timeboundYears) tbRows.push(["Years", data.timeboundYears]);
-      if (data.timeboundDoc) tbRows.push(["Document", data.timeboundDoc]);
-      if (data.timeboundDate) tbRows.push(["Date", fmt(data.timeboundDate)]);
-    }
-    addSection("9. Timebound", tbRows);
+    addSection("9. Spouse Working Details", spouseRows);
 
     const conditions: [string, string][] = [
       ["Terminal Illness", data.terminallyIll ? `Yes — ${data.terminallyIllDoc}` : "No"],
@@ -292,8 +292,23 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         </div>
       </PreviewSection>
 
-      {/* Section 3 */}
-      <PreviewSection title="Service & Personal Details" number="3" onEdit={() => onEdit(3)}>
+      {/* Section 3 - Timebound */}
+      <PreviewSection title="Timebound" number="3" onEdit={() => onEdit(3)}>
+        <div className="grid grid-cols-1 gap-3">
+          <Field label="Timebound Applicable" value={data.timeboundApplicable ? "Yes" : "No"} />
+          {data.timeboundApplicable && (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
+              {data.timeboundCategory && <Field label="Category" value={data.timeboundCategory} />}
+              {data.timeboundYears && <Field label="Years" value={data.timeboundYears} />}
+              {data.timeboundDoc && <Field label="Document" value={data.timeboundDoc} />}
+              {data.timeboundDate && <Field label="Date" value={fmt(data.timeboundDate)} />}
+            </div>
+          )}
+        </div>
+      </PreviewSection>
+
+      {/* Section 4 */}
+      <PreviewSection title="Service & Personal Details" number="4" onEdit={() => onEdit(4)}>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Field label="Date of Entry" value={fmt(data.dateOfEntry)} />
           <Field label="Date of Birth" value={fmt(data.dateOfBirth)} />
@@ -307,7 +322,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       </PreviewSection>
 
       {/* Section 4 - Education */}
-      <PreviewSection title="Education Information" number="4" onEdit={() => onEdit(4)}>
+      <PreviewSection title="Education Information" number="5" onEdit={() => onEdit(5)}>
         {data.educationDetails.length === 0 || (data.educationDetails.length === 1 && !data.educationDetails[0].level) ? (
           <p className="text-sm text-muted-foreground">No education entries.</p>
         ) : (
@@ -328,7 +343,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       </PreviewSection>
 
       {/* Section 5 */}
-      <PreviewSection title="Communication Address" number="5" onEdit={() => onEdit(5)}>
+      <PreviewSection title="Communication Address" number="6" onEdit={() => onEdit(6)}>
         <h4 className="text-xs font-semibold text-primary uppercase tracking-wide mb-3">Personal</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <Field label="Address" value={data.address} />
@@ -349,7 +364,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       </PreviewSection>
 
       {/* Section 6 */}
-      <PreviewSection title="Current Working Details" number="6" onEdit={() => onEdit(6)}>
+      <PreviewSection title="Current Working Details" number="7" onEdit={() => onEdit(7)}>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Field label="Post Held" value={data.currentPostHeld} />
           <Field label="Group" value={`${data.currentPostGroup} — ${data.currentPostSubGroup}`} />
@@ -364,7 +379,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       </PreviewSection>
 
       {/* Section 7 */}
-      <PreviewSection title="Past Service Details" number="7" onEdit={() => onEdit(7)}>
+      <PreviewSection title="Past Service Details" number="8" onEdit={() => onEdit(8)}>
         {data.pastServices.length === 0 || (data.pastServices.length === 1 && !data.pastServices[0].postHeld) ? (
           <p className="text-sm text-muted-foreground">No past service entries.</p>
         ) : (
@@ -391,7 +406,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       </PreviewSection>
 
       {/* Section 8 - Spouse Working Details */}
-      <PreviewSection title="Spouse Working Details" number="8" onEdit={() => onEdit(8)}>
+      <PreviewSection title="Spouse Working Details" number="9" onEdit={() => onEdit(9)}>
         <div className="grid grid-cols-1 gap-3">
           <Field label="Spouse Govt Servant" value={boolLabel(data.spouseGovtServant, data.spouseGovtServantDoc)} />
           {data.spouseGovtServant && (
@@ -400,21 +415,6 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
               {data.spouseDistrict && <Field label="District" value={data.spouseDistrict} />}
               {data.spouseTaluk && <Field label="Taluk" value={data.spouseTaluk} />}
               {data.spouseCityTownVillage && <Field label="City/Town/Village" value={data.spouseCityTownVillage} />}
-            </div>
-          )}
-        </div>
-      </PreviewSection>
-
-      {/* Section 9 - Timebound */}
-      <PreviewSection title="Timebound" number="9" onEdit={() => onEdit(8)}>
-        <div className="grid grid-cols-1 gap-3">
-          <Field label="Timebound Applicable" value={data.timeboundApplicable ? "Yes" : "No"} />
-          {data.timeboundApplicable && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
-              {data.timeboundCategory && <Field label="Category" value={data.timeboundCategory} />}
-              {data.timeboundYears && <Field label="Years" value={data.timeboundYears} />}
-              {data.timeboundDoc && <Field label="Document" value={data.timeboundDoc} />}
-              {data.timeboundDate && <Field label="Date" value={fmt(data.timeboundDate)} />}
             </div>
           )}
         </div>
