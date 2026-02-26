@@ -16,7 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { KARNATAKA_DISTRICTS, type PositionInfo } from "@/lib/positions";
 import { getTaluks, getCities } from "@/lib/karnatakaGeo";
-import { createEmployee, updateEmployeeById, getNewEmployeeById, type NewEmployee, type PastServiceEntry, type EducationFormEntry } from "@/lib/api";
+import { createEmployee, updateEmployeeById, getNewEmployeeById, getNewEmployees, type NewEmployee, type PastServiceEntry, type EducationFormEntry } from "@/lib/api";
 import Toast, { useToastState } from "@/components/Toast";
 import { FIRST_POST_HELD_OPTIONS } from "@/lib/firstPostHeld";
 
@@ -201,6 +201,34 @@ const EmployeeCreate: React.FC = () => {
       showToast("Failed to load employee data", "error");
     });
   }, [editId]);
+
+  // Fetch all employees for duplicate KGID check
+  const [allKgids, setAllKgids] = useState<Set<string>>(new Set());
+  const [kgidDuplicate, setKgidDuplicate] = useState(false);
+
+  useEffect(() => {
+    getNewEmployees().then((emps) => {
+      const kgidSet = new Set(emps.map((e) => e.kgid.toLowerCase()));
+      // In edit mode, remove the current employee's KGID so it doesn't flag itself
+      if (editId) {
+        getNewEmployeeById(editId).then((current) => {
+          kgidSet.delete(current.kgid.toLowerCase());
+          setAllKgids(kgidSet);
+        }).catch(() => setAllKgids(kgidSet));
+      } else {
+        setAllKgids(kgidSet);
+      }
+    }).catch(() => {});
+  }, [editId]);
+
+  // Check for duplicate KGID on change
+  useEffect(() => {
+    if (kgid.trim().length > 0 && allKgids.has(kgid.trim().toLowerCase())) {
+      setKgidDuplicate(true);
+    } else {
+      setKgidDuplicate(false);
+    }
+  }, [kgid, allKgids]);
 
   const clearError = (field: string) => {
     if (errors[field]) setErrors((p) => { const n = { ...p }; delete n[field]; return n; });
@@ -662,7 +690,12 @@ const EmployeeCreate: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="input-label">KGID Number <span className="text-destructive">*</span></label>
-                <input value={kgid} onChange={(e) => { setKgid(e.target.value); clearError("kgid"); }} className={`input-field ${errors.kgid ? "border-destructive" : ""}`} placeholder="e.g. KG123456" />
+                <input value={kgid} onChange={(e) => { setKgid(e.target.value); clearError("kgid"); }} className={`input-field ${errors.kgid || kgidDuplicate ? "border-destructive" : ""}`} placeholder="e.g. KG123456" />
+                {kgidDuplicate && (
+                  <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                    ⚠️ This KGID already exists. Please verify before proceeding.
+                  </p>
+                )}
                 <FieldError error={errors.kgid} />
               </div>
               <div>
