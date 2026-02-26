@@ -15,6 +15,7 @@ import Reports from "./pages/Reports";
 import Promotions from "./pages/Promotions";
 import DataOfficerDashboard from "./pages/DataOfficerDashboard";
 import EmployeeCreate from "./pages/EmployeeCreate";
+import Maintenance from "./pages/Maintenance";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,9 @@ const App = () => {
 
               {/* Data Officer routes */}
               <Route path="/data-officer" element={<ProtectedRoute allowedRoles={["DATA_OFFICER"]}><DataOfficerDashboard /></ProtectedRoute>} />
+
+              {/* Maintenance page */}
+              <Route path="/maintenance" element={<Maintenance />} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>

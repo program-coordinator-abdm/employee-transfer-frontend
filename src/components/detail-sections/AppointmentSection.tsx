@@ -20,7 +20,7 @@ const AppointmentSection: React.FC<Props> = ({ appointmentDetails, probationDeta
             <FieldPair label="Order No. & Date" value={appointmentDetails?.orderNoAndDate} />
           </div>
           <div className="mt-4">
-            <FieldPair label="Date of Initial Appointment" value={appointmentDetails?.dateOfInitialAppointment} />
+            <FieldPair label="Date of Initial Appointment (Enter regular posts only)" value={appointmentDetails?.dateOfInitialAppointment} />
           </div>
         </div>
       </div>

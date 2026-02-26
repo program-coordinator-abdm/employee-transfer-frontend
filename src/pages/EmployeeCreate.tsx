@@ -33,7 +33,7 @@ const EMPTY_EDUCATION: () => EducationFormEntry = () => ({
   level: "", institution: "", yearOfPassing: "", gradePercentage: "", documentProof: "",
 });
 
-const EDUCATION_LEVELS = ["10th/SSLC", "PU/12th", "Diploma", "BSc", "MSc", "PhD", "Others"];
+const EDUCATION_LEVELS = ["10th/SSLC", "PU/12th", "Diploma", "Bachelor's degree (UG)", "Master's degree (PG)", "Paramedical", "PhD", "Others"];
 
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -269,7 +269,7 @@ const EmployeeCreate: React.FC = () => {
     educationDetails.forEach((e, i) => {
       if (!e.level) errs[`edu_${i}_level`] = "Education level is required";
       if (!e.institution) errs[`edu_${i}_institution`] = "Institution name is required";
-      if (!e.yearOfPassing) errs[`edu_${i}_yearOfPassing`] = "Year of passing is required";
+      if (!e.yearOfPassing) errs[`edu_${i}_yearOfPassing`] = "Date of passing is required";
       if (!e.gradePercentage) errs[`edu_${i}_gradePercentage`] = "Grade/Percentage is required";
     });
 
@@ -699,8 +699,17 @@ const EmployeeCreate: React.FC = () => {
                       <FieldError error={errors[`edu_${idx}_institution`]} />
                     </div>
                     <div>
-                      <label className="input-label">Year of Passing <span className="text-destructive">*</span></label>
-                      <input value={edu.yearOfPassing} onChange={(e) => { updateEducation(idx, "yearOfPassing", e.target.value.replace(/\D/g, "").slice(0, 4)); clearError(`edu_${idx}_yearOfPassing`); }} className={`input-field ${errors[`edu_${idx}_yearOfPassing`] ? "border-destructive" : ""}`} placeholder="e.g. 2015" maxLength={4} />
+                      <label className="input-label">Date of Passing <span className="text-destructive">*</span></label>
+                      <DatePickerField
+                        value={edu.yearOfPassing ? new Date(edu.yearOfPassing) : undefined}
+                        onChange={(d) => {
+                          const dateStr = d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` : "";
+                          updateEducation(idx, "yearOfPassing", dateStr);
+                          clearError(`edu_${idx}_yearOfPassing`);
+                        }}
+                        placeholder="Select date of passing"
+                        disabled={(d) => d > new Date()}
+                      />
                       <FieldError error={errors[`edu_${idx}_yearOfPassing`]} />
                     </div>
                     <div>
@@ -908,8 +917,8 @@ const EmployeeCreate: React.FC = () => {
           {/* 7. Past Service Details */}
           <div className={cn(!shouldShowSection(7) && "hidden")} ref={el => { sectionRefs.current[7] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="7" title="Past Service Details" />
-            <p className="text-sm text-muted-foreground mb-5">Add all the transfer and promotion details since the date of Appointment according to Service Record</p>
+            <SectionTitle number="7" title="Past Service Details (Enter regular posts only)" />
+            <p className="text-sm text-muted-foreground mb-5">Add all the transfer and promotion details since the date of Appointment (Enter regular posts only) according to Service Record</p>
             <div className="space-y-6">
               {pastServices.map((service, idx) => (
                 <div key={idx} className="relative bg-muted/30 rounded-xl p-5 border border-border">
