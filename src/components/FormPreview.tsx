@@ -205,7 +205,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
     ]);
 
     addSection("7. Current Working Details", [
-      ["Post Held", data.currentPostHeld],
+      ["Designation", data.currentPostHeld],
       ["Group", `${data.currentPostGroup} — ${data.currentPostSubGroup}`],
       ["Institution", data.currentInstitution],
       ["District", data.currentDistrict],
@@ -285,7 +285,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Field label="Designation" value={data.designation} />
           <Field label="Group" value={`${data.designationGroup} — ${data.designationSubGroup}`} />
-          {data.firstPostHeld && <Field label="First Post Held" value={data.firstPostHeld} />}
+          {data.firstPostHeld && <Field label="Post Held" value={data.firstPostHeld} />}
           <Field label="Doctor/Nurse/Pharmacist" value={data.isDoctorNursePharmacist ? "Yes" : "No"} />
           {data.isDoctorNursePharmacist && <Field label="HPR ID" value={data.hprId} />}
           {data.isDoctorNursePharmacist && <Field label="HFR ID" value={data.hfrId} />}
@@ -366,9 +366,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       {/* Section 6 */}
       <PreviewSection title="Current Working Details" number="7" onEdit={() => onEdit(7)}>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <Field label="Post Held" value={data.currentPostHeld} />
+          <Field label="Designation" value={data.currentPostHeld} />
           <Field label="Group" value={`${data.currentPostGroup} — ${data.currentPostSubGroup}`} />
-          {data.currentFirstPostHeld && <Field label="First Post Held" value={data.currentFirstPostHeld} />}
+          {data.currentFirstPostHeld && <Field label="Post Held" value={data.currentFirstPostHeld} />}
           <Field label="Institution" value={data.currentInstitution} />
           <Field label="District" value={data.currentDistrict} />
           <Field label="Taluk" value={data.currentTaluk} />
@@ -388,9 +388,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
               <div key={idx} className="bg-muted/30 rounded-lg p-4 border border-border">
                 <p className="text-xs font-semibold text-muted-foreground mb-3">Entry #{idx + 1}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <Field label="Post Held" value={ps.postHeld} />
+                  <Field label="Designation" value={ps.postHeld} />
                   <Field label="Group" value={`${ps.postGroup} — ${ps.postSubGroup}`} />
-                  {ps.firstPostHeld && <Field label="First Post Held" value={ps.firstPostHeld} />}
+                  {ps.firstPostHeld && <Field label="Post Held" value={ps.firstPostHeld} />}
                   <Field label="Institution" value={ps.institution} />
                   <Field label="District" value={ps.district} />
                   {ps.taluk && <Field label="Taluk" value={ps.taluk} />}

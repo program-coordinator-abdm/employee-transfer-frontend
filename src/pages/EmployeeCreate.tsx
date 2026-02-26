@@ -552,7 +552,7 @@ const EmployeeCreate: React.FC = () => {
       ["Office Telephone", emp.officeTelephoneNumber || "—"],
     ]);
     addSection("7. Current Working Details", [
-      ["Post Held", emp.currentPostHeld],
+      ["Designation", emp.currentPostHeld],
       ["Group", `${emp.currentPostGroup} — ${emp.currentPostSubGroup}`],
       ["Institution", emp.currentInstitution],
       ["District", emp.currentDistrict],
@@ -564,7 +564,7 @@ const EmployeeCreate: React.FC = () => {
     if (emp.pastServices.length > 0) {
       const rows: [string, string][] = [];
       emp.pastServices.forEach((ps, i) => {
-        rows.push([`#${i + 1} Post`, ps.postHeld]);
+        rows.push([`#${i + 1} Designation`, ps.postHeld]);
         rows.push([`#${i + 1} Institution`, ps.institution]);
         rows.push([`#${i + 1} District`, ps.district]);
         rows.push([`#${i + 1} From – To`, `${fmt(ps.fromDate)} — ${fmt(ps.toDate)}`]);
@@ -730,9 +730,9 @@ const EmployeeCreate: React.FC = () => {
               <FieldError error={errors.designation} />
             </div>
             <div className="mt-4">
-              <label className="input-label">First Post Held</label>
+              <label className="input-label">Post Held</label>
               <select value={firstPostHeld} onChange={(e) => setFirstPostHeld(e.target.value)} className="input-field">
-                <option value="">Select First Post Held (Optional)</option>
+                <option value="">Select Post Held (Optional)</option>
                 {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
@@ -1042,7 +1042,7 @@ const EmployeeCreate: React.FC = () => {
             <SectionTitle number="7" title="Current Working Details" />
             <div className="space-y-4">
               <div>
-                <label className="input-label">Post Held <span className="text-destructive">*</span></label>
+                <label className="input-label">Designation <span className="text-destructive">*</span></label>
                 <PositionDropdown
                   value={currentPostHeld}
                   onChange={(pos) => {
@@ -1051,15 +1051,15 @@ const EmployeeCreate: React.FC = () => {
                     setCurrentPostSubGroup(pos?.subGroup || "");
                     clearError("currentPostHeld");
                   }}
-                  placeholder="Select current post..."
+                  placeholder="Select designation..."
                 />
                 {currentPostHeld && <p className="text-xs text-primary mt-1 font-medium">{currentPostGroup} — {currentPostSubGroup}</p>}
                 <FieldError error={errors.currentPostHeld} />
               </div>
               <div>
-                <label className="input-label">First Post Held</label>
+                <label className="input-label">Post Held</label>
                 <select value={currentFirstPostHeld} onChange={(e) => setCurrentFirstPostHeld(e.target.value)} className="input-field">
-                  <option value="">Select First Post Held (Optional)</option>
+                  <option value="">Select Post Held (Optional)</option>
                   {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
               </div>
@@ -1179,19 +1179,19 @@ const EmployeeCreate: React.FC = () => {
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <label className="input-label">Post Held <span className="text-destructive">*</span></label>
+                      <label className="input-label">Designation <span className="text-destructive">*</span></label>
                       <PositionDropdown
                         value={service.postHeld}
                         onChange={(pos) => updatePastServicePosition(idx, pos)}
-                        placeholder="Select post..."
+                        placeholder="Select designation..."
                       />
                       {service.postHeld && <p className="text-xs text-primary mt-1 font-medium">{service.postGroup} — {service.postSubGroup}</p>}
                       <FieldError error={errors[`past_${idx}_postHeld`]} />
                     </div>
                     <div>
-                      <label className="input-label">First Post Held</label>
+                      <label className="input-label">Post Held</label>
                       <select value={service.firstPostHeld || ""} onChange={(e) => updatePastService(idx, "firstPostHeld", e.target.value)} className="input-field">
-                        <option value="">Select First Post Held (Optional)</option>
+                        <option value="">Select Post Held (Optional)</option>
                         {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
                       </select>
                     </div>
