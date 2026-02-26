@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet, Loader2 } from "lucide-react";
+import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getNewEmployees, type NewEmployee } from "@/lib/api";
 import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
 
+const PAGE_SIZE = 20;
+
 const EmployeeList: React.FC = () => {
   const navigate = useNavigate();
   const [employees, setEmployees] = useState<NewEmployee[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     getNewEmployees()
@@ -18,6 +21,26 @@ const EmployeeList: React.FC = () => {
       .catch(() => setEmployees([]))
       .finally(() => setLoading(false));
   }, []);
+
+  const totalPages = Math.ceil(employees.length / PAGE_SIZE);
+  const startIdx = (currentPage - 1) * PAGE_SIZE;
+  const paginatedEmployees = employees.slice(startIdx, startIdx + PAGE_SIZE);
+
+  const getPageNumbers = (): (number | "...")[] => {
+    const pages: (number | "...")[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else if (currentPage <= 3) {
+      for (let i = 1; i <= 4; i++) pages.push(i);
+      pages.push("...", totalPages);
+    } else if (currentPage >= totalPages - 2) {
+      pages.push(1, "...");
+      for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
+    }
+    return pages;
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -69,39 +92,93 @@ const EmployeeList: React.FC = () => {
             </div>
           </Card>
         ) : (
-          <Card className="overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="table-header">
-                    <th className="table-cell text-left">#</th>
-                    <th className="table-cell text-left">Employee Name</th>
-                    <th className="table-cell text-left">KGID Number</th>
-                    <th className="table-cell text-left">Current Designation</th>
-                    <th className="table-cell text-center">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {employees.map((emp, idx) => (
-                    <tr key={emp.id} className="table-row">
-                      <td className="table-cell font-medium">{idx + 1}</td>
-                      <td className="table-cell font-semibold text-foreground">{emp.name}</td>
-                      <td className="table-cell font-mono text-sm">{emp.kgid}</td>
-                      <td className="table-cell">
-                        <span>{emp.currentPostHeld}</span>
-                        <span className="block text-xs text-primary">{emp.currentPostGroup}</span>
-                      </td>
-                      <td className="table-cell text-center">
-                        <Button variant="outline" size="sm" onClick={() => navigate(`/employee-view/${emp.id}`)} className="gap-1.5 text-primary border-primary/30 hover:bg-primary/10">
-                          <Eye className="w-4 h-4" /> View
-                        </Button>
-                      </td>
+          <>
+            <Card className="overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="table-header">
+                      <th className="table-cell text-left">#</th>
+                      <th className="table-cell text-left">Employee Name</th>
+                      <th className="table-cell text-left">KGID Number</th>
+                      <th className="table-cell text-left">Current Designation</th>
+                      <th className="table-cell text-center">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
+                  </thead>
+                  <tbody>
+                    {paginatedEmployees.map((emp, idx) => (
+                      <tr key={emp.id} className="table-row">
+                        <td className="table-cell font-medium">{startIdx + idx + 1}</td>
+                        <td className="table-cell font-semibold text-foreground">{emp.name}</td>
+                        <td className="table-cell font-mono text-sm">{emp.kgid}</td>
+                        <td className="table-cell">
+                          <span>{emp.currentPostHeld}</span>
+                          <span className="block text-xs text-primary">{emp.currentPostGroup}</span>
+                        </td>
+                        <td className="table-cell text-center">
+                          <Button variant="outline" size="sm" onClick={() => navigate(`/employee-view/${emp.id}`)} className="gap-1.5 text-primary border-primary/30 hover:bg-primary/10">
+                            <Eye className="w-4 h-4" /> View
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="mt-4 bg-surface rounded-xl p-4 shadow-elegant border border-border/50">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div className="text-sm text-muted-foreground">
+                    Showing <span className="font-medium text-foreground">{startIdx + 1}</span> to{" "}
+                    <span className="font-medium text-foreground">{Math.min(startIdx + PAGE_SIZE, employees.length)}</span> of{" "}
+                    <span className="font-medium text-foreground">{employees.length}</span> employees
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-1"
+                    >
+                      <ChevronLeft className="w-4 h-4" /> Previous
+                    </button>
+
+                    <div className="flex items-center gap-1 mx-2">
+                      {getPageNumbers().map((page, index) => (
+                        <React.Fragment key={index}>
+                          {page === "..." ? (
+                            <span className="px-2 text-muted-foreground">...</span>
+                          ) : (
+                            <button
+                              onClick={() => setCurrentPage(page)}
+                              className={`min-w-[36px] h-9 px-2 rounded-lg text-sm font-medium transition-all ${
+                                currentPage === page
+                                  ? "bg-primary text-primary-foreground shadow-md"
+                                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                              }`}
+                            >
+                              {page}
+                            </button>
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-1"
+                    >
+                      Next <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </main>
 

@@ -153,7 +153,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       data.educationDetails.filter(e => e.level).forEach((e, i) => {
         rows.push([`#${i + 1} Level`, e.level]);
         rows.push([`#${i + 1} Institution`, e.institution]);
-        rows.push([`#${i + 1} Year of Passing`, e.yearOfPassing]);
+        rows.push([`#${i + 1} Date of Passing`, e.yearOfPassing]);
         rows.push([`#${i + 1} Grade/Percentage`, e.gradePercentage]);
         if (e.documentProof) rows.push([`#${i + 1} Document`, e.documentProof]);
       });
@@ -267,7 +267,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   <Field label="Level" value={e.level} />
                   <Field label="Institution" value={e.institution} />
-                  <Field label="Year of Passing" value={e.yearOfPassing} />
+                  <Field label="Date of Passing" value={e.yearOfPassing} />
                   <Field label="Grade / Percentage" value={e.gradePercentage} />
                   {e.documentProof && <Field label="Document" value={e.documentProof} />}
                 </div>
