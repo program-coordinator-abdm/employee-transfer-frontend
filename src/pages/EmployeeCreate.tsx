@@ -18,13 +18,14 @@ import { KARNATAKA_DISTRICTS, type PositionInfo } from "@/lib/positions";
 import { getTaluks, getCities } from "@/lib/karnatakaGeo";
 import { createEmployee, updateEmployeeById, getNewEmployeeById, type NewEmployee, type PastServiceEntry, type EducationFormEntry } from "@/lib/api";
 import Toast, { useToastState } from "@/components/Toast";
+import { FIRST_POST_HELD_OPTIONS } from "@/lib/firstPostHeld";
 
 interface FormErrors {
   [key: string]: string;
 }
 
 const EMPTY_PAST_SERVICE: () => PastServiceEntry = () => ({
-  postHeld: "", postGroup: "", postSubGroup: "",
+  postHeld: "", postGroup: "", postSubGroup: "", firstPostHeld: "",
   institution: "", district: "", taluk: "", cityTownVillage: "",
   fromDate: "", toDate: "", tenure: "",
 });
@@ -52,10 +53,12 @@ const EmployeeCreate: React.FC = () => {
   const [designation, setDesignation] = useState("");
   const [designationGroup, setDesignationGroup] = useState("");
   const [designationSubGroup, setDesignationSubGroup] = useState("");
+  const [firstPostHeld, setFirstPostHeld] = useState("");
   const [dateOfEntry, setDateOfEntry] = useState<Date>();
   const [gender, setGender] = useState("");
   const [probationaryPeriod, setProbationaryPeriod] = useState(false);
   const [probationaryPeriodDoc, setProbationaryPeriodDoc] = useState("");
+  const [probationDeclarationDate, setProbationDeclarationDate] = useState<Date>();
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
 
   // Personal Address
@@ -75,6 +78,7 @@ const EmployeeCreate: React.FC = () => {
   // Current working
   const [currentPostHeld, setCurrentPostHeld] = useState("");
   const [currentPostGroup, setCurrentPostGroup] = useState("");
+  const [currentFirstPostHeld, setCurrentFirstPostHeld] = useState("");
   const [currentPostSubGroup, setCurrentPostSubGroup] = useState("");
   const [currentInstitution, setCurrentInstitution] = useState("");
   const [currentDistrict, setCurrentDistrict] = useState("");
@@ -126,8 +130,10 @@ const EmployeeCreate: React.FC = () => {
     getNewEmployeeById(editId).then((existing) => {
       setKgid(existing.kgid); setName(existing.name);
       setDesignation(existing.designation); setDesignationGroup(existing.designationGroup); setDesignationSubGroup(existing.designationSubGroup);
+      setFirstPostHeld(existing.firstPostHeld || "");
       setDateOfEntry(new Date(existing.dateOfEntry)); setGender(existing.gender);
       setProbationaryPeriod(existing.probationaryPeriod); setProbationaryPeriodDoc(existing.probationaryPeriodDoc);
+      if (existing.probationDeclarationDate) setProbationDeclarationDate(new Date(existing.probationDeclarationDate));
       setDateOfBirth(new Date(existing.dateOfBirth));
       setAddress(existing.address); setPinCode(existing.pinCode); setEmail(existing.email);
       setPhoneNumber(existing.phoneNumber); setTelephoneNumber(existing.telephoneNumber);
@@ -135,7 +141,8 @@ const EmployeeCreate: React.FC = () => {
       setOfficeEmail(existing.officeEmail); setOfficePhoneNumber(existing.officePhoneNumber);
       setOfficeTelephoneNumber(existing.officeTelephoneNumber);
       setCurrentPostHeld(existing.currentPostHeld); setCurrentPostGroup(existing.currentPostGroup);
-      setCurrentPostSubGroup(existing.currentPostSubGroup); setCurrentInstitution(existing.currentInstitution);
+      setCurrentPostSubGroup(existing.currentPostSubGroup); setCurrentFirstPostHeld(existing.currentFirstPostHeld || "");
+      setCurrentInstitution(existing.currentInstitution);
       setCurrentDistrict(existing.currentDistrict); setCurrentTaluk(existing.currentTaluk);
       setCurrentCityTownVillage(existing.currentCityTownVillage);
       setCurrentWorkingSince(new Date(existing.currentWorkingSince));
@@ -325,11 +332,11 @@ const EmployeeCreate: React.FC = () => {
   };
 
   const getPreviewData = (): FormPreviewData => ({
-    kgid, name, designation, designationGroup, designationSubGroup,
-    dateOfEntry, gender, probationaryPeriod, probationaryPeriodDoc, dateOfBirth,
+    kgid, name, designation, designationGroup, designationSubGroup, firstPostHeld,
+    dateOfEntry, gender, probationaryPeriod, probationaryPeriodDoc, probationDeclarationDate, dateOfBirth,
     address, pinCode, email, phoneNumber, telephoneNumber,
     officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
-    currentPostHeld, currentPostGroup, currentPostSubGroup,
+    currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
     currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
     currentWorkingSince, pastServices, educationDetails,
     terminallyIll, terminallyIllDoc,
@@ -351,13 +358,14 @@ const EmployeeCreate: React.FC = () => {
     }
 
     const payload = {
-      kgid, name, designation, designationGroup, designationSubGroup,
+      kgid, name, designation, designationGroup, designationSubGroup, firstPostHeld,
       dateOfEntry: dateOfEntry!.toISOString(),
       gender, probationaryPeriod, probationaryPeriodDoc,
+      probationDeclarationDate: probationDeclarationDate?.toISOString() || "",
       dateOfBirth: dateOfBirth!.toISOString(),
       address, pinCode, email, phoneNumber, telephoneNumber,
       officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
-      currentPostHeld, currentPostGroup, currentPostSubGroup,
+      currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
       currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: currentWorkingSince!.toISOString(),
       pastServices, educationDetails, terminallyIll, terminallyIllDoc,
@@ -615,6 +623,13 @@ const EmployeeCreate: React.FC = () => {
               )}
               <FieldError error={errors.designation} />
             </div>
+            <div className="mt-4">
+              <label className="input-label">First Post Held</label>
+              <select value={firstPostHeld} onChange={(e) => setFirstPostHeld(e.target.value)} className="input-field">
+                <option value="">Select First Post Held (Optional)</option>
+                {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </div>
           </Card>
           </div>
 
@@ -657,11 +672,22 @@ const EmployeeCreate: React.FC = () => {
                   <span className="text-sm text-muted-foreground">{probationaryPeriod ? "Yes" : "No"}</span>
                 </div>
                 {probationaryPeriod && (
-                   <FileUploadField
+                  <div className="space-y-3">
+                    <FileUploadField
                       value={probationaryPeriodDoc}
                       onChange={(name) => { setProbationaryPeriodDoc(name); clearError("probationaryPeriodDoc"); }}
                       error={errors.probationaryPeriodDoc}
                     />
+                    <div>
+                      <label className="input-label">Probation Declaration Date</label>
+                      <DatePickerField
+                        value={probationDeclarationDate}
+                        onChange={(d) => setProbationDeclarationDate(d)}
+                        placeholder="Select declaration date"
+                        disabled={(d) => d > new Date()}
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
@@ -827,6 +853,13 @@ const EmployeeCreate: React.FC = () => {
                 {currentPostHeld && <p className="text-xs text-primary mt-1 font-medium">{currentPostGroup} — {currentPostSubGroup}</p>}
                 <FieldError error={errors.currentPostHeld} />
               </div>
+              <div>
+                <label className="input-label">First Post Held</label>
+                <select value={currentFirstPostHeld} onChange={(e) => setCurrentFirstPostHeld(e.target.value)} className="input-field">
+                  <option value="">Select First Post Held (Optional)</option>
+                  {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="input-label">Name of Institution <span className="text-destructive">*</span></label>
@@ -940,6 +973,13 @@ const EmployeeCreate: React.FC = () => {
                       />
                       {service.postHeld && <p className="text-xs text-primary mt-1 font-medium">{service.postGroup} — {service.postSubGroup}</p>}
                       <FieldError error={errors[`past_${idx}_postHeld`]} />
+                    </div>
+                    <div>
+                      <label className="input-label">First Post Held</label>
+                      <select value={service.firstPostHeld || ""} onChange={(e) => updatePastService(idx, "firstPostHeld", e.target.value)} className="input-field">
+                        <option value="">Select First Post Held (Optional)</option>
+                        {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
+                      </select>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>

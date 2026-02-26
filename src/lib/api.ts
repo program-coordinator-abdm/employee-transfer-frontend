@@ -420,6 +420,7 @@ export interface PastServiceEntry {
   postHeld: string;
   postGroup: string;
   postSubGroup: string;
+  firstPostHeld: string;
   institution: string;
   district: string;
   taluk: string;
@@ -444,10 +445,12 @@ export interface NewEmployee {
   designation: string;
   designationGroup: string;
   designationSubGroup: string;
+  firstPostHeld: string;
   dateOfEntry: string;
   gender: string;
   probationaryPeriod: boolean;
   probationaryPeriodDoc: string;
+  probationDeclarationDate: string;
   dateOfBirth: string;
   address: string;
   pinCode: string;
@@ -462,6 +465,7 @@ export interface NewEmployee {
   currentPostHeld: string;
   currentPostGroup: string;
   currentPostSubGroup: string;
+  currentFirstPostHeld: string;
   currentInstitution: string;
   currentDistrict: string;
   currentTaluk: string;
@@ -500,6 +504,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     designation: payload.designation,
     designationGroup: payload.designationGroup,
     designationSubGroup: payload.designationSubGroup,
+    firstPostHeld: payload.firstPostHeld,
     dateOfEntry: payload.dateOfEntry,
     dateOfJoining: payload.dateOfEntry,
     dob: payload.dateOfBirth,
@@ -517,6 +522,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     currentPostHeld: payload.currentPostHeld,
     currentPostGroup: payload.currentPostGroup,
     currentPostSubGroup: payload.currentPostSubGroup,
+    currentFirstPostHeld: payload.currentFirstPostHeld,
     currentInstitution: payload.currentInstitution,
     currentDistrict: payload.currentDistrict,
     currentTaluk: payload.currentTaluk,
@@ -524,6 +530,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     currentWorkingSince: payload.currentWorkingSince,
     probationaryPeriod: payload.probationaryPeriod,
     probationaryPeriodDoc: payload.probationaryPeriodDoc,
+    probationDeclarationDate: payload.probationDeclarationDate,
     terminallyIll: payload.terminallyIll,
     terminallyIllDoc: payload.terminallyIllDoc,
     pregnantOrChildUnderOne: payload.pregnantOrChildUnderOne,
@@ -561,6 +568,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     designation: payload.designation,
     designationGroup: payload.designationGroup,
     designationSubGroup: payload.designationSubGroup,
+    firstPostHeld: payload.firstPostHeld,
     dateOfEntry: payload.dateOfEntry,
     dateOfJoining: payload.dateOfEntry,
     dob: payload.dateOfBirth,
@@ -578,6 +586,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     currentPostHeld: payload.currentPostHeld,
     currentPostGroup: payload.currentPostGroup,
     currentPostSubGroup: payload.currentPostSubGroup,
+    currentFirstPostHeld: payload.currentFirstPostHeld,
     currentInstitution: payload.currentInstitution,
     currentDistrict: payload.currentDistrict,
     currentTaluk: payload.currentTaluk,
@@ -585,6 +594,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     currentWorkingSince: payload.currentWorkingSince,
     probationaryPeriod: payload.probationaryPeriod,
     probationaryPeriodDoc: payload.probationaryPeriodDoc,
+    probationDeclarationDate: payload.probationDeclarationDate,
     terminallyIll: payload.terminallyIll,
     terminallyIllDoc: payload.terminallyIllDoc,
     pregnantOrChildUnderOne: payload.pregnantOrChildUnderOne,
@@ -623,11 +633,13 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     designation: raw.designation ?? "",
     designationGroup: raw.designationGroup ?? "",
     designationSubGroup: raw.designationSubGroup ?? "",
+    firstPostHeld: raw.firstPostHeld ?? "",
     dateOfEntry: raw.dateOfEntry ?? "",
     dateOfBirth: raw.dob ?? raw.dateOfBirth ?? "",
     gender: raw.gender ?? "",
     probationaryPeriod: raw.probationaryPeriod ?? false,
     probationaryPeriodDoc: raw.probationaryPeriodDoc ?? "",
+    probationDeclarationDate: raw.probationDeclarationDate ?? "",
     address: raw.address ?? "",
     pinCode: raw.pinCode ?? "",
     email: raw.email ?? "",
@@ -641,6 +653,7 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     currentPostHeld: raw.currentPostHeld ?? raw.currentDesignation ?? raw.designation ?? "",
     currentPostGroup: raw.currentPostGroup ?? "",
     currentPostSubGroup: raw.currentPostSubGroup ?? "",
+    currentFirstPostHeld: raw.currentFirstPostHeld ?? "",
     currentInstitution: raw.currentInstitution ?? "",
     currentDistrict: raw.currentDistrict ?? "",
     currentTaluk: raw.currentTaluk ?? "",

@@ -54,10 +54,12 @@ export interface FormPreviewData {
   designation: string;
   designationGroup: string;
   designationSubGroup: string;
+  firstPostHeld: string;
   dateOfEntry?: Date;
   gender: string;
   probationaryPeriod: boolean;
   probationaryPeriodDoc: string;
+  probationDeclarationDate?: Date;
   dateOfBirth?: Date;
   address: string;
   pinCode: string;
@@ -72,6 +74,7 @@ export interface FormPreviewData {
   currentPostHeld: string;
   currentPostGroup: string;
   currentPostSubGroup: string;
+  currentFirstPostHeld: string;
   currentInstitution: string;
   currentDistrict: string;
   currentTaluk: string;
@@ -242,6 +245,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Field label="Designation" value={data.designation} />
           <Field label="Group" value={`${data.designationGroup} — ${data.designationSubGroup}`} />
+          {data.firstPostHeld && <Field label="First Post Held" value={data.firstPostHeld} />}
         </div>
       </PreviewSection>
 
@@ -252,6 +256,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           <Field label="Date of Birth" value={fmt(data.dateOfBirth)} />
           <Field label="Gender" value={data.gender} />
           <Field label="Probationary Period Completion document" value={boolLabel(data.probationaryPeriod, data.probationaryPeriodDoc)} />
+          {data.probationaryPeriod && data.probationDeclarationDate && (
+            <Field label="Probation Declaration Date" value={fmt(data.probationDeclarationDate)} />
+          )}
         </div>
       </PreviewSection>
 
@@ -303,6 +310,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Field label="Post Held" value={data.currentPostHeld} />
           <Field label="Group" value={`${data.currentPostGroup} — ${data.currentPostSubGroup}`} />
+          {data.currentFirstPostHeld && <Field label="First Post Held" value={data.currentFirstPostHeld} />}
           <Field label="Institution" value={data.currentInstitution} />
           <Field label="District" value={data.currentDistrict} />
           <Field label="Taluk" value={data.currentTaluk} />
@@ -323,6 +331,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   <Field label="Post Held" value={ps.postHeld} />
                   <Field label="Group" value={`${ps.postGroup} — ${ps.postSubGroup}`} />
+                  {ps.firstPostHeld && <Field label="First Post Held" value={ps.firstPostHeld} />}
                   <Field label="Institution" value={ps.institution} />
                   <Field label="District" value={ps.district} />
                   {ps.taluk && <Field label="Taluk" value={ps.taluk} />}
