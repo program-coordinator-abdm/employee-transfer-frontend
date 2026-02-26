@@ -123,7 +123,7 @@ const EmployeeView: React.FC = () => {
       ["Telephone", emp.officeTelephoneNumber || "—"],
     ]);
     addSection("4. Current Working Details", [
-      ["Post Held", emp.currentPostHeld],
+      ["Designation", emp.currentPostHeld],
       ["Group", `${emp.currentPostGroup} — ${emp.currentPostSubGroup}`],
       ["Institution", emp.currentInstitution],
       ["District", emp.currentDistrict],
@@ -237,7 +237,7 @@ const EmployeeView: React.FC = () => {
           {/* Current Working Details */}
           <SectionHeading title="Current Working Details" />
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <Field label="Post Held" value={emp.currentPostHeld} />
+            <Field label="Designation" value={emp.currentPostHeld} />
             <Field label="Group" value={`${emp.currentPostGroup} — ${emp.currentPostSubGroup}`} />
             <Field label="Institution" value={emp.currentInstitution} />
             <Field label="District" value={emp.currentDistrict} />
@@ -256,7 +256,7 @@ const EmployeeView: React.FC = () => {
                 <div key={idx} className="bg-muted/30 rounded-lg p-4 border border-border">
                   <p className="text-xs font-semibold text-muted-foreground mb-3">Service Entry #{idx + 1}</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    <Field label="Post Held" value={ps.postHeld} />
+                    <Field label="Designation" value={ps.postHeld} />
                     <Field label="Group" value={`${ps.postGroup} — ${ps.postSubGroup}`} />
                     <Field label="Institution" value={ps.institution} />
                     <Field label="District" value={ps.district} />
