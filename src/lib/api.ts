@@ -497,6 +497,11 @@ export interface NewEmployee {
   spouseCityTownVillage: string;
   ngoBenefits: boolean;
   ngoBenefitsDoc: string;
+  timeboundApplicable: boolean;
+  timeboundCategory: string;
+  timeboundYears: string;
+  timeboundDoc: string;
+  timeboundDate: string;
   empDeclAgreed: boolean;
   empDeclName: string;
   empDeclDate: string;
@@ -565,6 +570,11 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     spouseCityTownVillage: payload.spouseCityTownVillage,
     ngoBenefits: payload.ngoBenefits,
     ngoBenefitsDoc: payload.ngoBenefitsDoc,
+    timeboundApplicable: payload.timeboundApplicable,
+    timeboundCategory: payload.timeboundCategory,
+    timeboundYears: payload.timeboundYears,
+    timeboundDoc: payload.timeboundDoc,
+    timeboundDate: payload.timeboundDate,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
     empDeclDate: payload.empDeclDate,
@@ -639,6 +649,11 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     spouseCityTownVillage: payload.spouseCityTownVillage,
     ngoBenefits: payload.ngoBenefits,
     ngoBenefitsDoc: payload.ngoBenefitsDoc,
+    timeboundApplicable: payload.timeboundApplicable,
+    timeboundCategory: payload.timeboundCategory,
+    timeboundYears: payload.timeboundYears,
+    timeboundDoc: payload.timeboundDoc,
+    timeboundDate: payload.timeboundDate,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
     empDeclDate: payload.empDeclDate,
@@ -715,6 +730,11 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     spouseCityTownVillage: raw.spouseCityTownVillage ?? "",
     ngoBenefits: raw.ngoBenefits ?? false,
     ngoBenefitsDoc: raw.ngoBenefitsDoc ?? "",
+    timeboundApplicable: raw.timeboundApplicable ?? false,
+    timeboundCategory: raw.timeboundCategory ?? "",
+    timeboundYears: raw.timeboundYears ?? "",
+    timeboundDoc: raw.timeboundDoc ?? "",
+    timeboundDate: raw.timeboundDate ?? "",
     empDeclAgreed: raw.empDeclAgreed ?? false,
     empDeclName: raw.empDeclName ?? "",
     empDeclDate: raw.empDeclDate ?? "",
