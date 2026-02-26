@@ -63,6 +63,9 @@ export interface FormPreviewData {
   dateOfBirth?: Date;
   cltCompleted: boolean;
   cltCompletedDoc: string;
+  isDoctorNursePharmacist: boolean;
+  hprId: string;
+  hfrId: string;
   address: string;
   pinCode: string;
   email: string;
@@ -266,6 +269,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           <Field label="Designation" value={data.designation} />
           <Field label="Group" value={`${data.designationGroup} — ${data.designationSubGroup}`} />
           {data.firstPostHeld && <Field label="First Post Held" value={data.firstPostHeld} />}
+          <Field label="Doctor/Nurse/Pharmacist" value={data.isDoctorNursePharmacist ? "Yes" : "No"} />
+          {data.isDoctorNursePharmacist && <Field label="HPR ID" value={data.hprId} />}
+          {data.isDoctorNursePharmacist && <Field label="HFR ID" value={data.hfrId} />}
         </div>
       </PreviewSection>
 
