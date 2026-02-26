@@ -758,7 +758,7 @@ export const getNewEmployees = async (params?: {
 }): Promise<NewEmployee[]> => {
   const searchParams = new URLSearchParams();
   searchParams.set("page", "1");
-  searchParams.set("limit", "500"); // Fetch all employees, not just default 20
+  searchParams.set("limit", "100"); // API max is 100
   if (params?.category) searchParams.set("category", params.category);
   if (params?.query) searchParams.set("query", params.query);
   const qs = searchParams.toString();
