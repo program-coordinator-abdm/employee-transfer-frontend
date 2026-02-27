@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet } from "lucide-react";
+import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet, XCircle } from "lucide-react";
 import KGIDSearch from "@/components/KGIDSearch";
 import { cn } from "@/lib/utils";
 import { getNewEmployees, type NewEmployee } from "@/lib/api";
@@ -339,6 +339,11 @@ const Categories: React.FC = () => {
     setSubSelections((prev) => ({ ...prev, [groupKey]: value }));
   };
 
+  const handleClearFilters = () => {
+    setSelections({});
+    setSubSelections({});
+  };
+
   const activeFilter = useMemo(() => {
     for (const group of GROUP_CONFIGS) {
       const sub = subSelections[group.key];
@@ -433,6 +438,19 @@ const Categories: React.FC = () => {
             </div>
           ))}
         </div>
+
+        {activeFilter && (
+          <div className="mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleClearFilters}
+              className="gap-1.5 text-destructive border-destructive/30 hover:bg-destructive/10"
+            >
+              <XCircle className="w-4 h-4" /> Clear Filters
+            </Button>
+          </div>
+        )}
 
         {/* Sub-options dropdown for any group with sub-options */}
         {GROUP_CONFIGS.map((group) => {
