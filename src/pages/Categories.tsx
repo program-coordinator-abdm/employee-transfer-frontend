@@ -319,12 +319,16 @@ const Categories: React.FC = () => {
 
   // Fetch employees from backend
   React.useEffect(() => {
+    if (!isAuthenticated) return;
     setEmployeesLoading(true);
     getNewEmployees()
       .then(setAllEmployees)
-      .catch(() => setAllEmployees([]))
+      .catch((err) => {
+        console.error("Failed to fetch employees:", err);
+        setAllEmployees([]);
+      })
       .finally(() => setEmployeesLoading(false));
-  }, []);
+  }, [isAuthenticated]);
 
   const handleSelectionChange = (groupKey: string, value: string) => {
     setSelections((prev) => ({ ...prev, [groupKey]: value }));
