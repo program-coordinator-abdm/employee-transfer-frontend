@@ -34,7 +34,7 @@ const EMPTY_EDUCATION: () => EducationFormEntry = () => ({
   level: "", institution: "", yearOfPassing: "", gradePercentage: "", documentProof: "",
 });
 
-const EDUCATION_LEVELS = ["10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG)", "Master's degree (PG)", "Paramedical", "PhD", "Others"];
+const EDUCATION_LEVELS = ["10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "Paramedical", "PhD", "Others"];
 
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -128,6 +128,10 @@ const EmployeeCreate: React.FC = () => {
   const [timeboundYears, setTimeboundYears] = useState("");
   const [timeboundDoc, setTimeboundDoc] = useState("");
   const [timeboundDate, setTimeboundDate] = useState<Date>();
+  const [promotionRejected, setPromotionRejected] = useState(false);
+  const [promotionRejectedDate, setPromotionRejectedDate] = useState<Date>();
+  const [pgBond, setPgBond] = useState(false);
+  const [pgBondDoc, setPgBondDoc] = useState("");
 
   // NGO Benefits
   const [ngoBenefits, setNgoBenefits] = useState(false);
@@ -190,6 +194,10 @@ const EmployeeCreate: React.FC = () => {
       if (existing.timeboundYears) setTimeboundYears(existing.timeboundYears);
       if (existing.timeboundDoc) setTimeboundDoc(existing.timeboundDoc);
       if (existing.timeboundDate) setTimeboundDate(new Date(existing.timeboundDate));
+      if (existing.promotionRejected !== undefined) setPromotionRejected(existing.promotionRejected);
+      if (existing.promotionRejectedDate) setPromotionRejectedDate(new Date(existing.promotionRejectedDate));
+      if (existing.pgBond !== undefined) setPgBond(existing.pgBond);
+      if (existing.pgBondDoc) setPgBondDoc(existing.pgBondDoc);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
       if (existing.ngoBenefitsDoc !== undefined) setNgoBenefitsDoc(existing.ngoBenefitsDoc);
       if (existing.educationDetails && existing.educationDetails.length > 0) setEducationDetails(existing.educationDetails);
@@ -404,7 +412,7 @@ const EmployeeCreate: React.FC = () => {
     currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
     currentWorkingSince, currentAreaType, pastServices, educationDetails,
     timeboundApplicable, timeboundCategory, timeboundYears, timeboundDoc,
-    timeboundDate,
+    timeboundDate, promotionRejected, promotionRejectedDate, pgBond, pgBondDoc,
     terminallyIll, terminallyIllDoc,
     pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
     retiringWithinTwoYears, retiringWithinTwoYearsDoc,
@@ -440,6 +448,10 @@ const EmployeeCreate: React.FC = () => {
       pastServices, educationDetails,
       timeboundApplicable, timeboundCategory, timeboundYears, timeboundDoc,
       timeboundDate: timeboundDate?.toISOString() || "",
+      promotionRejected,
+      promotionRejectedDate: promotionRejectedDate?.toISOString() || "",
+      pgBond,
+      pgBondDoc,
       terminallyIll, terminallyIllDoc,
       pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
       retiringWithinTwoYears, retiringWithinTwoYearsDoc,
@@ -524,6 +536,14 @@ const EmployeeCreate: React.FC = () => {
       if (emp.timeboundYears) tbPdfRows.push(["Years", emp.timeboundYears]);
       if (emp.timeboundDoc) tbPdfRows.push(["Document", emp.timeboundDoc]);
       if (emp.timeboundDate) tbPdfRows.push(["Date", fmt(emp.timeboundDate)]);
+    }
+    tbPdfRows.push(["Promotion Rejected", emp.promotionRejected ? "Yes" : "No"]);
+    if (emp.promotionRejected && emp.promotionRejectedDate) {
+      tbPdfRows.push(["Promotion Rejected Date", fmt(emp.promotionRejectedDate)]);
+    }
+    tbPdfRows.push(["PG Bond", emp.pgBond ? "Yes" : "No"]);
+    if (emp.pgBond && emp.pgBondDoc) {
+      tbPdfRows.push(["PG Bond Certificate", emp.pgBondDoc]);
     }
     addSection("3. Timebound", tbPdfRows);
     addSection("4. Service & Personal Details", [
@@ -768,7 +788,7 @@ const EmployeeCreate: React.FC = () => {
                 <div className="flex items-center justify-between gap-4">
                   <Label className="text-sm font-medium leading-snug">Is Timebound applicable?</Label>
                   <div className="flex items-center gap-2 shrink-0">
-                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); } }} />
+                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); setPromotionRejected(false); setPromotionRejectedDate(undefined); setPgBond(false); setPgBondDoc(""); } }} />
                     <span className="text-sm text-muted-foreground w-8">{timeboundApplicable ? "Yes" : "No"}</span>
                   </div>
                 </div>
@@ -820,6 +840,47 @@ const EmployeeCreate: React.FC = () => {
                       />
                     </div>
                   </div>
+                )}
+              </div>
+
+              {/* Promotion Rejected */}
+              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between gap-4">
+                  <Label className="text-sm font-medium leading-snug">Any promotion rejected?</Label>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Switch checked={promotionRejected} onCheckedChange={(v) => { setPromotionRejected(v); if (!v) setPromotionRejectedDate(undefined); }} />
+                    <span className="text-sm text-muted-foreground w-8">{promotionRejected ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+                {promotionRejected && (
+                  <div>
+                    <label className="input-label">Promotion Rejected Date</label>
+                    <DatePickerField
+                      value={promotionRejectedDate}
+                      onChange={(d) => setPromotionRejectedDate(d)}
+                      placeholder="Select date"
+                      disabled={(d) => d > new Date()}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* PG Bond */}
+              <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between gap-4">
+                  <Label className="text-sm font-medium leading-snug">PG Bond?</Label>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Switch checked={pgBond} onCheckedChange={(v) => { setPgBond(v); if (!v) setPgBondDoc(""); }} />
+                    <span className="text-sm text-muted-foreground w-8">{pgBond ? "Yes" : "No"}</span>
+                  </div>
+                </div>
+                {pgBond && (
+                  <FileUploadField
+                    value={pgBondDoc}
+                    onChange={(name) => setPgBondDoc(name)}
+                    label="Upload Completion Certificate"
+                    required={false}
+                  />
                 )}
               </div>
             </div>
