@@ -820,6 +820,66 @@ export const getNewEmployees = async (params?: {
   return allEmployees;
 };
 
+// Paginated employee fetch (single page, no loop)
+export interface PaginatedEmployeesResult {
+  employees: NewEmployee[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export const fetchEmployeesPaginated = async (
+  params: { page?: number; pageSize?: number; search?: string },
+  signal?: AbortSignal
+): Promise<PaginatedEmployeesResult> => {
+  const { page = 1, pageSize = 20, search = "" } = params;
+  console.log(`[fetchEmployeesPaginated] START page=${page} pageSize=${pageSize} search="${search}"`);
+
+  const token = getToken();
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+
+  const searchParams = new URLSearchParams({
+    page: String(page),
+    limit: String(pageSize),
+  });
+  if (search.trim()) searchParams.set("query", search.trim());
+
+  const res = await fetch(`${API_BASE_URL}/employees?${searchParams}`, {
+    headers,
+    cache: "no-store",
+    signal,
+  });
+
+  if (res.status === 401 || res.status === 403) {
+    removeToken();
+    removeUser();
+    window.location.href = "/login";
+    throw new Error("Session expired");
+  }
+  if (!res.ok) throw new Error(`API Error: ${res.status}`);
+
+  const data = await res.json();
+  const arr = data.data || (Array.isArray(data) ? data : []);
+  const mapped = arr.map(mapBackendToNewEmployee);
+
+  console.log(`[fetchEmployeesPaginated] END got ${mapped.length} employees, total=${data.total ?? mapped.length}`);
+
+  return {
+    employees: mapped,
+    total: data.total ?? mapped.length,
+    page: data.page ?? page,
+    totalPages: data.totalPages ?? Math.ceil((data.total ?? mapped.length) / pageSize),
+  };
+};
+
+// Download CSV export
+export const downloadEmployeesCSVExport = async (): Promise<void> => {
+  return downloadFile("/employees/export", "employees.csv");
+};
+
 // Search suggestions (with optional category)
 export const getSearchSuggestions = async (
   searchMode: "name" | "kgid",
