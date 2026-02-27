@@ -549,6 +549,12 @@ const EmployeeCreate: React.FC = () => {
       officerDeclAgreed, officerDeclName, officerDeclDate: officerDeclDate?.toISOString() || "",
     };
 
+    if (kgidDuplicate) {
+      showToast("This KGID already exists. Please use a unique KGID number.", "error");
+      setErrors(prev => ({ ...prev, kgid: "This KGID already exists" }));
+      return;
+    }
+
     setSubmitting(true);
     try {
       if (isEditMode) {
@@ -561,8 +567,15 @@ const EmployeeCreate: React.FC = () => {
         setFormStep("submitted");
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
-    } catch (err) {
-      showToast("Failed to save employee. Please try again.", "error");
+    } catch (err: any) {
+      const msg = err?.message || "";
+      if (msg.toLowerCase().includes("kgid") && (msg.toLowerCase().includes("exist") || msg.toLowerCase().includes("duplicate"))) {
+        setKgidDuplicate(true);
+        setErrors(prev => ({ ...prev, kgid: "This KGID already exists in the system" }));
+        showToast("This KGID already exists. Please use a unique KGID number.", "error");
+      } else {
+        showToast("Failed to save employee. Please try again.", "error");
+      }
     } finally {
       setSubmitting(false);
     }
