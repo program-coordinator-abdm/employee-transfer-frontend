@@ -26,13 +26,22 @@ interface FormErrors {
 
 const EMPTY_PAST_SERVICE: () => PastServiceEntry = () => ({
   postHeld: "", postGroup: "", postSubGroup: "", firstPostHeld: "",
+  institutionType: "", hfrId: "",
   institution: "", district: "", taluk: "", cityTownVillage: "",
   fromDate: "", toDate: "", tenure: "",
 });
 
 const EMPTY_EDUCATION: () => EducationFormEntry = () => ({
-  level: "", institution: "", yearOfPassing: "", gradePercentage: "", documentProof: "",
+  level: "", institution: "", yearOfPassing: "", gradePercentage: "", documentProof: "", specialization: "",
 });
+
+const INSTITUTION_TYPES = [
+  "SC", "PHC", "CHC", "Taluk General Hospital", "Sub District Hospital",
+  "District Hospital", "MCH/W&C", "Taluk Health Office", "DHO Office",
+  "PO Office", "DJD", "Directorate", "Commissionerate",
+  "Community Based Facility", "Others",
+];
+const HFR_ELIGIBLE_TYPES = ["SC", "PHC", "CHC", "Taluk General Hospital", "Sub District Hospital", "District Hospital"];
 
 const EDUCATION_LEVELS = ["10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "Paramedical", "PhD", "Others"];
 
@@ -86,6 +95,8 @@ const EmployeeCreate: React.FC = () => {
   const [currentFirstPostHeld, setCurrentFirstPostHeld] = useState("");
   const [currentPostSubGroup, setCurrentPostSubGroup] = useState("");
   const [currentInstitution, setCurrentInstitution] = useState("");
+  const [currentInstitutionType, setCurrentInstitutionType] = useState("");
+  const [currentHfrId, setCurrentHfrId] = useState("");
   const [currentDistrict, setCurrentDistrict] = useState("");
   const [currentTaluk, setCurrentTaluk] = useState("");
   const [currentCityTownVillage, setCurrentCityTownVillage] = useState("");
@@ -94,6 +105,7 @@ const EmployeeCreate: React.FC = () => {
   const [currentWorkingSince, setCurrentWorkingSince] = useState<Date>();
   const [currentZone, setCurrentZone] = useState("");
   const [currentAreaType, setCurrentAreaType] = useState("");
+  const [cltCompletionDate, setCltCompletionDate] = useState<Date>();
 
   // Spouse working details
   const [spouseDesignation, setSpouseDesignation] = useState("");
@@ -178,9 +190,12 @@ const EmployeeCreate: React.FC = () => {
       setCurrentPostHeld(existing.currentPostHeld); setCurrentPostGroup(existing.currentPostGroup);
       setCurrentPostSubGroup(existing.currentPostSubGroup); setCurrentFirstPostHeld(existing.currentFirstPostHeld || "");
       setCurrentInstitution(existing.currentInstitution);
+      if (existing.currentInstitutionType) setCurrentInstitutionType(existing.currentInstitutionType);
+      if (existing.currentHfrId) setCurrentHfrId(existing.currentHfrId);
       setCurrentDistrict(existing.currentDistrict); setCurrentTaluk(existing.currentTaluk);
       setCurrentCityTownVillage(existing.currentCityTownVillage);
       setCurrentWorkingSince(new Date(existing.currentWorkingSince));
+      if (existing.cltCompletionDate) setCltCompletionDate(new Date(existing.cltCompletionDate));
       setPastServices(existing.pastServices);
       setPastFromDates(existing.pastServices.map(s => s.fromDate ? new Date(s.fromDate) : undefined));
       setPastToDates(existing.pastServices.map(s => s.toDate ? new Date(s.toDate) : undefined));
@@ -453,11 +468,13 @@ const EmployeeCreate: React.FC = () => {
       gender, probationaryPeriod, probationaryPeriodDoc,
       probationDeclarationDate: probationDeclarationDate?.toISOString() || "",
       dateOfBirth: dateOfBirth!.toISOString(),
-      cltCompleted, cltCompletedDoc, isDoctorNursePharmacist, hprId, hfrId,
+      cltCompleted, cltCompletedDoc, cltCompletionDate: cltCompletionDate?.toISOString() || "",
+      isDoctorNursePharmacist, hprId, hfrId,
       address, pinCode, email, phoneNumber, telephoneNumber,
       officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
       currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
-      currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
+      currentInstitution, currentInstitutionType, currentHfrId,
+      currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: currentWorkingSince!.toISOString(),
       currentAreaType,
       pastServices, educationDetails,
@@ -806,10 +823,6 @@ const EmployeeCreate: React.FC = () => {
                   <label className="input-label">HPR ID</label>
                   <input value={hprId} onChange={(e) => setHprId(e.target.value)} className="input-field" placeholder="Enter HPR ID" />
                 </div>
-                <div>
-                  <label className="input-label">HFR ID</label>
-                  <input value={hfrId} onChange={(e) => setHfrId(e.target.value)} className="input-field" placeholder="Enter HFR ID" />
-                </div>
               </div>
             )}
           </Card>
@@ -987,7 +1000,7 @@ const EmployeeCreate: React.FC = () => {
             <SectionTitle number="4" title="Service & Personal Details" />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="input-label">Date of Entry into Service <span className="text-destructive">*</span></label>
+                <label className="input-label">Date of Entry into Service (Regular only) <span className="text-destructive">*</span></label>
                 <DatePickerField value={dateOfEntry} onChange={(d) => { setDateOfEntry(d); clearError("dateOfEntry"); }} placeholder="Select date" disabled={(d) => d > new Date()} />
                 <FieldError error={errors.dateOfEntry} />
               </div>
@@ -1045,12 +1058,23 @@ const EmployeeCreate: React.FC = () => {
                   <span className="text-sm text-muted-foreground">{cltCompleted ? "Yes" : "No"}</span>
                 </div>
                 {cltCompleted && (
-                  <FileUploadField
-                    value={cltCompletedDoc}
-                    onChange={(name) => setCltCompletedDoc(name)}
-                    label="Upload CLT Document"
-                    required={false}
-                  />
+                  <div className="space-y-3">
+                    <FileUploadField
+                      value={cltCompletedDoc}
+                      onChange={(name) => setCltCompletedDoc(name)}
+                      label="Upload CLT Document"
+                      required={false}
+                    />
+                    <div>
+                      <label className="input-label">CLT Completion Date</label>
+                      <DatePickerField
+                        value={cltCompletionDate}
+                        onChange={(d) => setCltCompletionDate(d)}
+                        placeholder="Select CLT completion date"
+                        disabled={(d) => d > new Date()}
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
@@ -1101,6 +1125,12 @@ const EmployeeCreate: React.FC = () => {
                       />
                       <FieldError error={errors[`edu_${idx}_yearOfPassing`]} />
                     </div>
+                    {(edu.level.includes("UG") || edu.level.includes("PG") || edu.level === "PhD") && (
+                      <div>
+                        <label className="input-label">Specialization</label>
+                        <input value={edu.specialization || ""} onChange={(e) => updateEducation(idx, "specialization", e.target.value)} className="input-field" placeholder="e.g. Cardiology, Computer Science" />
+                      </div>
+                    )}
                   </div>
                   <div className="mt-4">
                     <FileUploadField
@@ -1220,10 +1250,23 @@ const EmployeeCreate: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
+                  <label className="input-label">Type of Institution</label>
+                  <select value={currentInstitutionType} onChange={(e) => { setCurrentInstitutionType(e.target.value); if (!HFR_ELIGIBLE_TYPES.includes(e.target.value)) setCurrentHfrId(""); }} className="input-field">
+                    <option value="">Select Type of Institution</option>
+                    {INSTITUTION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                </div>
+                <div>
                   <label className="input-label">Name of Institution <span className="text-destructive">*</span></label>
                   <input value={currentInstitution} onChange={(e) => { setCurrentInstitution(e.target.value); clearError("currentInstitution"); }} className={`input-field ${errors.currentInstitution ? "border-destructive" : ""}`} placeholder="Institution name" />
                   <FieldError error={errors.currentInstitution} />
                 </div>
+                {HFR_ELIGIBLE_TYPES.includes(currentInstitutionType) && (
+                  <div>
+                    <label className="input-label">HFR ID</label>
+                    <input value={currentHfrId} onChange={(e) => setCurrentHfrId(e.target.value)} className="input-field" placeholder="Enter HFR ID" />
+                  </div>
+                )}
                 <div>
                   <label className="input-label">District <span className="text-destructive">*</span></label>
                   <select value={currentDistrict} onChange={(e) => { setCurrentDistrict(e.target.value); setCurrentTaluk(""); setCurrentCityTownVillage(""); setCurrentVillageOtherMode(false); clearError("currentDistrict"); }} className={`input-field ${errors.currentDistrict ? "border-destructive" : ""}`}>
@@ -1296,7 +1339,7 @@ const EmployeeCreate: React.FC = () => {
                 </div>
               </div>
               <div className="max-w-sm">
-                <label className="input-label">Working in this post since <span className="text-destructive">*</span></label>
+                <label className="input-label">Working in this post since (Regular only) <span className="text-destructive">*</span></label>
                 <DatePickerField value={currentWorkingSince} onChange={(d) => { setCurrentWorkingSince(d); clearError("currentWorkingSince"); }} placeholder="Select date" disabled={(d) => d > new Date()} />
                 <FieldError error={errors.currentWorkingSince} />
               </div>
@@ -1352,10 +1395,23 @@ const EmployeeCreate: React.FC = () => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
+                        <label className="input-label">Type of Institution</label>
+                        <select value={service.institutionType || ""} onChange={(e) => { updatePastService(idx, "institutionType", e.target.value); if (!HFR_ELIGIBLE_TYPES.includes(e.target.value)) updatePastService(idx, "hfrId", ""); }} className="input-field">
+                          <option value="">Select Type of Institution</option>
+                          {INSTITUTION_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                      </div>
+                      <div>
                         <label className="input-label">Name of Institution <span className="text-destructive">*</span></label>
                         <input value={service.institution} onChange={(e) => updatePastService(idx, "institution", e.target.value)} className={`input-field ${errors[`past_${idx}_institution`] ? "border-destructive" : ""}`} placeholder="Institution name" />
                         <FieldError error={errors[`past_${idx}_institution`]} />
                       </div>
+                      {HFR_ELIGIBLE_TYPES.includes(service.institutionType) && (
+                        <div>
+                          <label className="input-label">HFR ID</label>
+                          <input value={service.hfrId || ""} onChange={(e) => updatePastService(idx, "hfrId", e.target.value)} className="input-field" placeholder="Enter HFR ID" />
+                        </div>
+                      )}
                       <div>
                         <label className="input-label">District <span className="text-destructive">*</span></label>
                         <select value={service.district} onChange={(e) => updatePastServiceMulti(idx, { district: e.target.value, taluk: "", cityTownVillage: "" })} className={`input-field ${errors[`past_${idx}_district`] ? "border-destructive" : ""}`}>
@@ -1415,7 +1471,7 @@ const EmployeeCreate: React.FC = () => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
-                        <label className="input-label">From Date <span className="text-destructive">*</span></label>
+                        <label className="input-label">From Date (Regular only) <span className="text-destructive">*</span></label>
                         <DatePickerField value={pastFromDates[idx]} onChange={(d) => updatePastFromDate(idx, d)} placeholder="From" disabled={(d) => d > new Date()} />
                         <FieldError error={errors[`past_${idx}_fromDate`]} />
                       </div>

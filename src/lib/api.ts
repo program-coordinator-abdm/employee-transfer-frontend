@@ -421,6 +421,8 @@ export interface PastServiceEntry {
   postGroup: string;
   postSubGroup: string;
   firstPostHeld: string;
+  institutionType: string;
+  hfrId: string;
   institution: string;
   district: string;
   taluk: string;
@@ -436,6 +438,7 @@ export interface EducationFormEntry {
   yearOfPassing: string;
   gradePercentage: string;
   documentProof: string;
+  specialization: string;
 }
 
 export interface NewEmployee {
@@ -475,8 +478,11 @@ export interface NewEmployee {
   currentDistrict: string;
   currentTaluk: string;
   currentCityTownVillage: string;
+  currentInstitutionType: string;
+  currentHfrId: string;
   currentWorkingSince: string;
   currentAreaType: string;
+  cltCompletionDate: string;
   pastServices: PastServiceEntry[];
   educationDetails: EducationFormEntry[];
   terminallyIll: boolean;
@@ -554,11 +560,14 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     currentPostSubGroup: payload.currentPostSubGroup,
     currentFirstPostHeld: payload.currentFirstPostHeld,
     currentInstitution: payload.currentInstitution,
+    currentInstitutionType: payload.currentInstitutionType,
+    currentHfrId: payload.currentHfrId,
     currentDistrict: payload.currentDistrict,
     currentTaluk: payload.currentTaluk,
     currentCityTownVillage: payload.currentCityTownVillage,
     currentWorkingSince: payload.currentWorkingSince,
     currentAreaType: payload.currentAreaType,
+    cltCompletionDate: payload.cltCompletionDate,
     probationaryPeriod: payload.probationaryPeriod,
     probationaryPeriodDoc: payload.probationaryPeriodDoc,
     probationDeclarationDate: payload.probationDeclarationDate,
@@ -643,11 +652,14 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     currentPostSubGroup: payload.currentPostSubGroup,
     currentFirstPostHeld: payload.currentFirstPostHeld,
     currentInstitution: payload.currentInstitution,
+    currentInstitutionType: payload.currentInstitutionType,
+    currentHfrId: payload.currentHfrId,
     currentDistrict: payload.currentDistrict,
     currentTaluk: payload.currentTaluk,
     currentCityTownVillage: payload.currentCityTownVillage,
     currentWorkingSince: payload.currentWorkingSince,
     currentAreaType: payload.currentAreaType,
+    cltCompletionDate: payload.cltCompletionDate,
     probationaryPeriod: payload.probationaryPeriod,
     probationaryPeriodDoc: payload.probationaryPeriodDoc,
     probationDeclarationDate: payload.probationDeclarationDate,
@@ -735,11 +747,14 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     currentPostSubGroup: raw.currentPostSubGroup ?? "",
     currentFirstPostHeld: raw.currentFirstPostHeld ?? "",
     currentInstitution: raw.currentInstitution ?? "",
+    currentInstitutionType: raw.currentInstitutionType ?? "",
+    currentHfrId: raw.currentHfrId ?? "",
     currentDistrict: raw.currentDistrict ?? "",
     currentTaluk: raw.currentTaluk ?? "",
     currentCityTownVillage: raw.currentCityTownVillage ?? "",
     currentWorkingSince: raw.currentWorkingSince ?? "",
     currentAreaType: raw.currentAreaType ?? "",
+    cltCompletionDate: raw.cltCompletionDate ?? "",
     pastServices: raw.pastServices ?? [],
     educationDetails: raw.educationDetails ?? [],
     terminallyIll: raw.terminallyIll ?? false,
