@@ -506,6 +506,11 @@ export interface NewEmployee {
   promotionRejectedDate: string;
   pgBond: boolean;
   pgBondDoc: string;
+  pgBondCompletionDate: string;
+  recruitmentType: string;
+  contractRegularised: boolean;
+  contractRegularisedDoc: string;
+  pastServiceDocs: string[];
   empDeclAgreed: boolean;
   empDeclName: string;
   empDeclDate: string;
@@ -583,6 +588,11 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     promotionRejectedDate: payload.promotionRejectedDate,
     pgBond: payload.pgBond,
     pgBondDoc: payload.pgBondDoc,
+    pgBondCompletionDate: payload.pgBondCompletionDate,
+    recruitmentType: payload.recruitmentType,
+    contractRegularised: payload.contractRegularised,
+    contractRegularisedDoc: payload.contractRegularisedDoc,
+    pastServiceDocs: payload.pastServiceDocs,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
     empDeclDate: payload.empDeclDate,
@@ -666,6 +676,11 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     promotionRejectedDate: payload.promotionRejectedDate,
     pgBond: payload.pgBond,
     pgBondDoc: payload.pgBondDoc,
+    pgBondCompletionDate: payload.pgBondCompletionDate,
+    recruitmentType: payload.recruitmentType,
+    contractRegularised: payload.contractRegularised,
+    contractRegularisedDoc: payload.contractRegularisedDoc,
+    pastServiceDocs: payload.pastServiceDocs,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
     empDeclDate: payload.empDeclDate,
@@ -751,6 +766,11 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     promotionRejectedDate: raw.promotionRejectedDate ?? "",
     pgBond: raw.pgBond ?? false,
     pgBondDoc: raw.pgBondDoc ?? "",
+    pgBondCompletionDate: raw.pgBondCompletionDate ?? "",
+    recruitmentType: raw.recruitmentType ?? "",
+    contractRegularised: raw.contractRegularised ?? false,
+    contractRegularisedDoc: raw.contractRegularisedDoc ?? "",
+    pastServiceDocs: raw.pastServiceDocs ?? [],
     empDeclAgreed: raw.empDeclAgreed ?? false,
     empDeclName: raw.empDeclName ?? "",
     empDeclDate: raw.empDeclDate ?? "",

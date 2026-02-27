@@ -132,6 +132,11 @@ const EmployeeCreate: React.FC = () => {
   const [promotionRejectedDate, setPromotionRejectedDate] = useState<Date>();
   const [pgBond, setPgBond] = useState(false);
   const [pgBondDoc, setPgBondDoc] = useState("");
+  const [pgBondCompletionDate, setPgBondCompletionDate] = useState<Date>();
+  const [recruitmentType, setRecruitmentType] = useState("");
+  const [contractRegularised, setContractRegularised] = useState(false);
+  const [contractRegularisedDoc, setContractRegularisedDoc] = useState("");
+  const [pastServiceDocs, setPastServiceDocs] = useState<string[]>([""]);
 
   // NGO Benefits
   const [ngoBenefits, setNgoBenefits] = useState(false);
@@ -198,6 +203,11 @@ const EmployeeCreate: React.FC = () => {
       if (existing.promotionRejectedDate) setPromotionRejectedDate(new Date(existing.promotionRejectedDate));
       if (existing.pgBond !== undefined) setPgBond(existing.pgBond);
       if (existing.pgBondDoc) setPgBondDoc(existing.pgBondDoc);
+      if (existing.pgBondCompletionDate) setPgBondCompletionDate(new Date(existing.pgBondCompletionDate));
+      if (existing.recruitmentType) setRecruitmentType(existing.recruitmentType);
+      if (existing.contractRegularised !== undefined) setContractRegularised(existing.contractRegularised);
+      if (existing.contractRegularisedDoc) setContractRegularisedDoc(existing.contractRegularisedDoc);
+      if (existing.pastServiceDocs && existing.pastServiceDocs.length > 0) setPastServiceDocs(existing.pastServiceDocs);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
       if (existing.ngoBenefitsDoc !== undefined) setNgoBenefitsDoc(existing.ngoBenefitsDoc);
       if (existing.educationDetails && existing.educationDetails.length > 0) setEducationDetails(existing.educationDetails);
@@ -263,6 +273,7 @@ const EmployeeCreate: React.FC = () => {
     setPastToDates([...pastToDates, undefined]);
     setPastZones([...pastZones, ""]);
     setPastVillageOtherModes([...pastVillageOtherModes, false]);
+    setPastServiceDocs([...pastServiceDocs, ""]);
   };
 
   const removePastService = (idx: number) => {
@@ -271,6 +282,7 @@ const EmployeeCreate: React.FC = () => {
     setPastToDates(pastToDates.filter((_, i) => i !== idx));
     setPastZones(pastZones.filter((_, i) => i !== idx));
     setPastVillageOtherModes(pastVillageOtherModes.filter((_, i) => i !== idx));
+    setPastServiceDocs(pastServiceDocs.filter((_, i) => i !== idx));
   };
 
   const updatePastService = (idx: number, field: keyof PastServiceEntry, value: string) => {
@@ -412,7 +424,8 @@ const EmployeeCreate: React.FC = () => {
     currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
     currentWorkingSince, currentAreaType, pastServices, educationDetails,
     timeboundApplicable, timeboundCategory, timeboundYears, timeboundDoc,
-    timeboundDate, promotionRejected, promotionRejectedDate, pgBond, pgBondDoc,
+    timeboundDate, promotionRejected, promotionRejectedDate, pgBond, pgBondDoc, pgBondCompletionDate,
+    recruitmentType, contractRegularised, contractRegularisedDoc,
     terminallyIll, terminallyIllDoc,
     pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
     retiringWithinTwoYears, retiringWithinTwoYearsDoc,
@@ -452,6 +465,11 @@ const EmployeeCreate: React.FC = () => {
       promotionRejectedDate: promotionRejectedDate?.toISOString() || "",
       pgBond,
       pgBondDoc,
+      pgBondCompletionDate: pgBondCompletionDate?.toISOString() || "",
+      recruitmentType,
+      contractRegularised,
+      contractRegularisedDoc,
+      pastServiceDocs,
       terminallyIll, terminallyIllDoc,
       pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
       retiringWithinTwoYears, retiringWithinTwoYearsDoc,
@@ -537,6 +555,15 @@ const EmployeeCreate: React.FC = () => {
       if (emp.timeboundDoc) tbPdfRows.push(["Document", emp.timeboundDoc]);
       if (emp.timeboundDate) tbPdfRows.push(["Date", fmt(emp.timeboundDate)]);
     }
+    if (emp.timeboundApplicable && emp.timeboundCategory === "Doctors" && emp.recruitmentType) {
+      tbPdfRows.push(["Type of Recruitment", emp.recruitmentType]);
+      if (emp.recruitmentType === "Contract Regularised") {
+        tbPdfRows.push(["Contract Regularised", emp.contractRegularised ? "Yes" : "No"]);
+        if (emp.contractRegularised && emp.contractRegularisedDoc) {
+          tbPdfRows.push(["Regularisation Document", emp.contractRegularisedDoc]);
+        }
+      }
+    }
     tbPdfRows.push(["Promotion Rejected", emp.promotionRejected ? "Yes" : "No"]);
     if (emp.promotionRejected && emp.promotionRejectedDate) {
       tbPdfRows.push(["Promotion Rejected Date", fmt(emp.promotionRejectedDate)]);
@@ -544,6 +571,9 @@ const EmployeeCreate: React.FC = () => {
     tbPdfRows.push(["PG Bond", emp.pgBond ? "Yes" : "No"]);
     if (emp.pgBond && emp.pgBondDoc) {
       tbPdfRows.push(["PG Bond Certificate", emp.pgBondDoc]);
+    }
+    if (emp.pgBond && emp.pgBondCompletionDate) {
+      tbPdfRows.push(["PG Bond Completion Date", fmt(emp.pgBondCompletionDate)]);
     }
     addSection("3. Timebound", tbPdfRows);
     addSection("4. Service & Personal Details", [
@@ -589,6 +619,9 @@ const EmployeeCreate: React.FC = () => {
         rows.push([`#${i + 1} District`, ps.district]);
         rows.push([`#${i + 1} From – To`, `${fmt(ps.fromDate)} — ${fmt(ps.toDate)}`]);
         rows.push([`#${i + 1} Tenure`, ps.tenure]);
+        if (emp.pastServiceDocs && emp.pastServiceDocs[i]) {
+          rows.push([`#${i + 1} Joining Document`, emp.pastServiceDocs[i]]);
+        }
       });
       addSection("8. Past Service Details", rows);
     }
@@ -788,16 +821,16 @@ const EmployeeCreate: React.FC = () => {
                 <div className="flex items-center justify-between gap-4">
                   <Label className="text-sm font-medium leading-snug">Is Timebound applicable?</Label>
                   <div className="flex items-center gap-2 shrink-0">
-                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); setPromotionRejected(false); setPromotionRejectedDate(undefined); setPgBond(false); setPgBondDoc(""); } }} />
+                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); setPromotionRejected(false); setPromotionRejectedDate(undefined); setPgBond(false); setPgBondDoc(""); setPgBondCompletionDate(undefined); setRecruitmentType(""); setContractRegularised(false); setContractRegularisedDoc(""); } }} />
                     <span className="text-sm text-muted-foreground w-8">{timeboundApplicable ? "Yes" : "No"}</span>
                   </div>
                 </div>
                 {timeboundApplicable && (
                   <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="input-label">Category <span className="text-destructive">*</span></label>
-                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); }} className="input-field">
+                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); if (e.target.value !== "Doctors") { setRecruitmentType(""); setContractRegularised(false); setContractRegularisedDoc(""); } }} className="input-field">
                           <option value="">Select Category</option>
                           <option value="Doctors">Doctors</option>
                           <option value="Others">Others</option>
@@ -824,6 +857,42 @@ const EmployeeCreate: React.FC = () => {
                         </select>
                       </div>
                     </div>
+                    {timeboundCategory === "Doctors" && (
+                      <div className="p-4 rounded-lg border border-border bg-muted/10 space-y-4">
+                        <label className="input-label">Type of Recruitment <span className="text-destructive">*</span></label>
+                        <div className="flex flex-col gap-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="recruitmentType" value="Direct Recruitment (KPSC)" checked={recruitmentType === "Direct Recruitment (KPSC)"} onChange={() => { setRecruitmentType("Direct Recruitment (KPSC)"); setContractRegularised(false); setContractRegularisedDoc(""); }} className="accent-primary" />
+                            <span className="text-sm font-medium text-foreground">Direct Recruitment (KPSC)</span>
+                          </label>
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="recruitmentType" value="Contract Regularised" checked={recruitmentType === "Contract Regularised"} onChange={() => setRecruitmentType("Contract Regularised")} className="accent-primary" />
+                            <span className="text-sm font-medium text-foreground">Contract Regularised</span>
+                          </label>
+                          {recruitmentType === "Contract Regularised" && (
+                            <div className="ml-6 space-y-3">
+                              <div className="flex items-center gap-3">
+                                <Label className="text-sm">Regularised?</Label>
+                                <Switch checked={contractRegularised} onCheckedChange={(v) => { setContractRegularised(v); if (!v) setContractRegularisedDoc(""); }} />
+                                <span className="text-sm text-muted-foreground">{contractRegularised ? "Yes" : "No"}</span>
+                              </div>
+                              {contractRegularised && (
+                                <FileUploadField
+                                  value={contractRegularisedDoc}
+                                  onChange={(name) => setContractRegularisedDoc(name)}
+                                  label="Upload Regularisation Document"
+                                  required={false}
+                                />
+                              )}
+                            </div>
+                          )}
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="recruitmentType" value="CG Grounds" checked={recruitmentType === "CG Grounds"} onChange={() => { setRecruitmentType("CG Grounds"); setContractRegularised(false); setContractRegularisedDoc(""); }} className="accent-primary" />
+                            <span className="text-sm font-medium text-foreground">CG Grounds</span>
+                          </label>
+                        </div>
+                      </div>
+                    )}
                     <FileUploadField
                       value={timeboundDoc}
                       onChange={(name) => setTimeboundDoc(name)}
@@ -870,17 +939,28 @@ const EmployeeCreate: React.FC = () => {
                 <div className="flex items-center justify-between gap-4">
                   <Label className="text-sm font-medium leading-snug">PG Bond?</Label>
                   <div className="flex items-center gap-2 shrink-0">
-                    <Switch checked={pgBond} onCheckedChange={(v) => { setPgBond(v); if (!v) setPgBondDoc(""); }} />
+                    <Switch checked={pgBond} onCheckedChange={(v) => { setPgBond(v); if (!v) { setPgBondDoc(""); setPgBondCompletionDate(undefined); } }} />
                     <span className="text-sm text-muted-foreground w-8">{pgBond ? "Yes" : "No"}</span>
                   </div>
                 </div>
                 {pgBond && (
-                  <FileUploadField
-                    value={pgBondDoc}
-                    onChange={(name) => setPgBondDoc(name)}
-                    label="Upload Completion Certificate"
-                    required={false}
-                  />
+                  <div className="space-y-4">
+                    <FileUploadField
+                      value={pgBondDoc}
+                      onChange={(name) => setPgBondDoc(name)}
+                      label="Upload Completion Certificate"
+                      required={false}
+                    />
+                    <div>
+                      <label className="input-label">Date of Completion</label>
+                      <DatePickerField
+                        value={pgBondCompletionDate}
+                        onChange={(d) => setPgBondCompletionDate(d)}
+                        placeholder="Select completion date"
+                        disabled={(d) => d > new Date()}
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
@@ -1348,6 +1428,15 @@ const EmployeeCreate: React.FC = () => {
                           </label>
                         ))}
                       </div>
+                    </div>
+                    <div className="mt-4">
+                      <FileUploadField
+                        value={pastServiceDocs[idx] || ""}
+                        onChange={(name) => { const nd = [...pastServiceDocs]; nd[idx] = name; setPastServiceDocs(nd); }}
+                        label="Upload Joining CTC / Movement Order / SR Copy related to joining in the post"
+                        required={false}
+                        hint="Upload joining CTC, movement order or SR copy. Max file size: 5 MB."
+                      />
                     </div>
                   </div>
                 </div>
