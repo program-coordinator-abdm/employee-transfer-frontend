@@ -510,10 +510,20 @@ export interface NewEmployee {
   timeboundDate: string;
   timebound6Years: boolean;
   timebound6YearsDoc: string;
+  timebound6YearsDate: string;
   timebound13Years: boolean;
   timebound13YearsDoc: string;
+  timebound13YearsDate: string;
   timebound20Years: boolean;
   timebound20YearsDoc: string;
+  timebound20YearsDate: string;
+  timebound10Years: boolean;
+  timebound10YearsDoc: string;
+  timebound10YearsDate: string;
+  timebound15Years: boolean;
+  timebound15YearsDoc: string;
+  timebound15YearsDate: string;
+  currentServiceDoc: string;
   promotionRejected: boolean;
   promotionRejectedDate: string;
   promotionRejectedDesignation: string;
@@ -615,10 +625,20 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     contractJoiningDate: payload.contractJoiningDate,
     timebound6Years: payload.timebound6Years,
     timebound6YearsDoc: payload.timebound6YearsDoc,
+    timebound6YearsDate: payload.timebound6YearsDate,
     timebound13Years: payload.timebound13Years,
     timebound13YearsDoc: payload.timebound13YearsDoc,
+    timebound13YearsDate: payload.timebound13YearsDate,
     timebound20Years: payload.timebound20Years,
     timebound20YearsDoc: payload.timebound20YearsDoc,
+    timebound20YearsDate: payload.timebound20YearsDate,
+    timebound10Years: payload.timebound10Years,
+    timebound10YearsDoc: payload.timebound10YearsDoc,
+    timebound10YearsDate: payload.timebound10YearsDate,
+    timebound15Years: payload.timebound15Years,
+    timebound15YearsDoc: payload.timebound15YearsDoc,
+    timebound15YearsDate: payload.timebound15YearsDate,
+    currentServiceDoc: payload.currentServiceDoc,
     pastServiceDocs: payload.pastServiceDocs,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
@@ -715,10 +735,20 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     contractJoiningDate: payload.contractJoiningDate,
     timebound6Years: payload.timebound6Years,
     timebound6YearsDoc: payload.timebound6YearsDoc,
+    timebound6YearsDate: payload.timebound6YearsDate,
     timebound13Years: payload.timebound13Years,
     timebound13YearsDoc: payload.timebound13YearsDoc,
+    timebound13YearsDate: payload.timebound13YearsDate,
     timebound20Years: payload.timebound20Years,
     timebound20YearsDoc: payload.timebound20YearsDoc,
+    timebound20YearsDate: payload.timebound20YearsDate,
+    timebound10Years: payload.timebound10Years,
+    timebound10YearsDoc: payload.timebound10YearsDoc,
+    timebound10YearsDate: payload.timebound10YearsDate,
+    timebound15Years: payload.timebound15Years,
+    timebound15YearsDoc: payload.timebound15YearsDoc,
+    timebound15YearsDate: payload.timebound15YearsDate,
+    currentServiceDoc: payload.currentServiceDoc,
     pastServiceDocs: payload.pastServiceDocs,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
@@ -817,10 +847,20 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     contractJoiningDate: raw.contractJoiningDate ?? "",
     timebound6Years: raw.timebound6Years ?? false,
     timebound6YearsDoc: raw.timebound6YearsDoc ?? "",
+    timebound6YearsDate: raw.timebound6YearsDate ?? "",
     timebound13Years: raw.timebound13Years ?? false,
     timebound13YearsDoc: raw.timebound13YearsDoc ?? "",
+    timebound13YearsDate: raw.timebound13YearsDate ?? "",
     timebound20Years: raw.timebound20Years ?? false,
     timebound20YearsDoc: raw.timebound20YearsDoc ?? "",
+    timebound20YearsDate: raw.timebound20YearsDate ?? "",
+    timebound10Years: raw.timebound10Years ?? false,
+    timebound10YearsDoc: raw.timebound10YearsDoc ?? "",
+    timebound10YearsDate: raw.timebound10YearsDate ?? "",
+    timebound15Years: raw.timebound15Years ?? false,
+    timebound15YearsDoc: raw.timebound15YearsDoc ?? "",
+    timebound15YearsDate: raw.timebound15YearsDate ?? "",
+    currentServiceDoc: raw.currentServiceDoc ?? "",
     pastServiceDocs: raw.pastServiceDocs ?? [],
     empDeclAgreed: raw.empDeclAgreed ?? false,
     empDeclName: raw.empDeclName ?? "",
