@@ -510,6 +510,7 @@ export interface NewEmployee {
   recruitmentType: string;
   contractRegularised: boolean;
   contractRegularisedDoc: string;
+  contractRegularisedDate: string;
   pastServiceDocs: string[];
   empDeclAgreed: boolean;
   empDeclName: string;
@@ -592,6 +593,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     recruitmentType: payload.recruitmentType,
     contractRegularised: payload.contractRegularised,
     contractRegularisedDoc: payload.contractRegularisedDoc,
+    contractRegularisedDate: payload.contractRegularisedDate,
     pastServiceDocs: payload.pastServiceDocs,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
@@ -680,6 +682,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     recruitmentType: payload.recruitmentType,
     contractRegularised: payload.contractRegularised,
     contractRegularisedDoc: payload.contractRegularisedDoc,
+    contractRegularisedDate: payload.contractRegularisedDate,
     pastServiceDocs: payload.pastServiceDocs,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
@@ -770,6 +773,7 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     recruitmentType: raw.recruitmentType ?? "",
     contractRegularised: raw.contractRegularised ?? false,
     contractRegularisedDoc: raw.contractRegularisedDoc ?? "",
+    contractRegularisedDate: raw.contractRegularisedDate ?? "",
     pastServiceDocs: raw.pastServiceDocs ?? [],
     empDeclAgreed: raw.empDeclAgreed ?? false,
     empDeclName: raw.empDeclName ?? "",

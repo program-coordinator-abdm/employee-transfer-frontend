@@ -119,6 +119,7 @@ export interface FormPreviewData {
   recruitmentType: string;
   contractRegularised: boolean;
   contractRegularisedDoc: string;
+  contractRegularisedDate?: string;
 }
 
 interface FormPreviewProps {
@@ -181,8 +182,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       tbPdfRows.push(["Type of Recruitment", data.recruitmentType]);
       if (data.recruitmentType === "Contract Regularised") {
         tbPdfRows.push(["Contract Regularised", data.contractRegularised ? "Yes" : "No"]);
-        if (data.contractRegularised && data.contractRegularisedDoc) {
-          tbPdfRows.push(["Regularisation Document", data.contractRegularisedDoc]);
+        if (data.contractRegularised) {
+          if (data.contractRegularisedDate) tbPdfRows.push(["Date of Joining", fmt(data.contractRegularisedDate)]);
+          if (data.contractRegularisedDoc) tbPdfRows.push(["Regularisation Document", data.contractRegularisedDoc]);
         }
       }
     }
@@ -336,6 +338,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
               {data.recruitmentType === "Contract Regularised" && (
                 <>
                   <Field label="Contract Regularised" value={data.contractRegularised ? "Yes" : "No"} />
+                  {data.contractRegularised && data.contractRegularisedDate && (
+                    <Field label="Date of Joining" value={fmt(data.contractRegularisedDate)} />
+                  )}
                   {data.contractRegularised && data.contractRegularisedDoc && (
                     <Field label="Regularisation Document" value={data.contractRegularisedDoc} />
                   )}
