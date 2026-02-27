@@ -508,8 +508,15 @@ export interface NewEmployee {
   timeboundYears: string;
   timeboundDoc: string;
   timeboundDate: string;
+  timebound6Years: boolean;
+  timebound6YearsDoc: string;
+  timebound13Years: boolean;
+  timebound13YearsDoc: string;
+  timebound20Years: boolean;
+  timebound20YearsDoc: string;
   promotionRejected: boolean;
   promotionRejectedDate: string;
+  promotionRejectedDesignation: string;
   pgBond: boolean;
   pgBondDoc: string;
   pgBondCompletionDate: string;
@@ -517,6 +524,7 @@ export interface NewEmployee {
   contractRegularised: boolean;
   contractRegularisedDoc: string;
   contractRegularisedDate: string;
+  contractJoiningDate: string;
   pastServiceDocs: string[];
   empDeclAgreed: boolean;
   empDeclName: string;
@@ -596,6 +604,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     timeboundDate: payload.timeboundDate,
     promotionRejected: payload.promotionRejected,
     promotionRejectedDate: payload.promotionRejectedDate,
+    promotionRejectedDesignation: payload.promotionRejectedDesignation,
     pgBond: payload.pgBond,
     pgBondDoc: payload.pgBondDoc,
     pgBondCompletionDate: payload.pgBondCompletionDate,
@@ -603,6 +612,13 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     contractRegularised: payload.contractRegularised,
     contractRegularisedDoc: payload.contractRegularisedDoc,
     contractRegularisedDate: payload.contractRegularisedDate,
+    contractJoiningDate: payload.contractJoiningDate,
+    timebound6Years: payload.timebound6Years,
+    timebound6YearsDoc: payload.timebound6YearsDoc,
+    timebound13Years: payload.timebound13Years,
+    timebound13YearsDoc: payload.timebound13YearsDoc,
+    timebound20Years: payload.timebound20Years,
+    timebound20YearsDoc: payload.timebound20YearsDoc,
     pastServiceDocs: payload.pastServiceDocs,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
@@ -688,6 +704,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     timeboundDate: payload.timeboundDate,
     promotionRejected: payload.promotionRejected,
     promotionRejectedDate: payload.promotionRejectedDate,
+    promotionRejectedDesignation: payload.promotionRejectedDesignation,
     pgBond: payload.pgBond,
     pgBondDoc: payload.pgBondDoc,
     pgBondCompletionDate: payload.pgBondCompletionDate,
@@ -695,6 +712,13 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     contractRegularised: payload.contractRegularised,
     contractRegularisedDoc: payload.contractRegularisedDoc,
     contractRegularisedDate: payload.contractRegularisedDate,
+    contractJoiningDate: payload.contractJoiningDate,
+    timebound6Years: payload.timebound6Years,
+    timebound6YearsDoc: payload.timebound6YearsDoc,
+    timebound13Years: payload.timebound13Years,
+    timebound13YearsDoc: payload.timebound13YearsDoc,
+    timebound20Years: payload.timebound20Years,
+    timebound20YearsDoc: payload.timebound20YearsDoc,
     pastServiceDocs: payload.pastServiceDocs,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
@@ -782,6 +806,7 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     timeboundDate: raw.timeboundDate ?? "",
     promotionRejected: raw.promotionRejected ?? false,
     promotionRejectedDate: raw.promotionRejectedDate ?? "",
+    promotionRejectedDesignation: raw.promotionRejectedDesignation ?? "",
     pgBond: raw.pgBond ?? false,
     pgBondDoc: raw.pgBondDoc ?? "",
     pgBondCompletionDate: raw.pgBondCompletionDate ?? "",
@@ -789,6 +814,13 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     contractRegularised: raw.contractRegularised ?? false,
     contractRegularisedDoc: raw.contractRegularisedDoc ?? "",
     contractRegularisedDate: raw.contractRegularisedDate ?? "",
+    contractJoiningDate: raw.contractJoiningDate ?? "",
+    timebound6Years: raw.timebound6Years ?? false,
+    timebound6YearsDoc: raw.timebound6YearsDoc ?? "",
+    timebound13Years: raw.timebound13Years ?? false,
+    timebound13YearsDoc: raw.timebound13YearsDoc ?? "",
+    timebound20Years: raw.timebound20Years ?? false,
+    timebound20YearsDoc: raw.timebound20YearsDoc ?? "",
     pastServiceDocs: raw.pastServiceDocs ?? [],
     empDeclAgreed: raw.empDeclAgreed ?? false,
     empDeclName: raw.empDeclName ?? "",
@@ -804,6 +836,11 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
 export const getNewEmployeeById = async (id: string): Promise<NewEmployee> => {
   const raw = await apiClient<any>(`/employees/${id}`);
   return mapBackendToNewEmployee(raw);
+};
+
+// Delete employee by ID (Admin only)
+export const deleteEmployeeById = async (id: string): Promise<void> => {
+  await apiClient<void>(`/employees/${id}`, { method: "DELETE" });
 };
 
 // Get all new-format employees (paginates through all pages)

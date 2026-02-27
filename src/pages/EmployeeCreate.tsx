@@ -142,6 +142,7 @@ const EmployeeCreate: React.FC = () => {
   const [timeboundDate, setTimeboundDate] = useState<Date>();
   const [promotionRejected, setPromotionRejected] = useState(false);
   const [promotionRejectedDate, setPromotionRejectedDate] = useState<Date>();
+  const [promotionRejectedDesignation, setPromotionRejectedDesignation] = useState("");
   const [pgBond, setPgBond] = useState(false);
   const [pgBondDoc, setPgBondDoc] = useState("");
   const [pgBondCompletionDate, setPgBondCompletionDate] = useState<Date>();
@@ -149,7 +150,15 @@ const EmployeeCreate: React.FC = () => {
   const [contractRegularised, setContractRegularised] = useState(false);
   const [contractRegularisedDoc, setContractRegularisedDoc] = useState("");
   const [contractRegularisedDate, setContractRegularisedDate] = useState<Date>();
+  const [contractJoiningDate, setContractJoiningDate] = useState<Date>();
   const [pastServiceDocs, setPastServiceDocs] = useState<string[]>([""]);
+  // Timebound doctor checkboxes
+  const [timebound6Years, setTimebound6Years] = useState(false);
+  const [timebound6YearsDoc, setTimebound6YearsDoc] = useState("");
+  const [timebound13Years, setTimebound13Years] = useState(false);
+  const [timebound13YearsDoc, setTimebound13YearsDoc] = useState("");
+  const [timebound20Years, setTimebound20Years] = useState(false);
+  const [timebound20YearsDoc, setTimebound20YearsDoc] = useState("");
 
   // NGO Benefits
   const [ngoBenefits, setNgoBenefits] = useState(false);
@@ -217,6 +226,7 @@ const EmployeeCreate: React.FC = () => {
       if (existing.timeboundDate) setTimeboundDate(new Date(existing.timeboundDate));
       if (existing.promotionRejected !== undefined) setPromotionRejected(existing.promotionRejected);
       if (existing.promotionRejectedDate) setPromotionRejectedDate(new Date(existing.promotionRejectedDate));
+      if (existing.promotionRejectedDesignation) setPromotionRejectedDesignation(existing.promotionRejectedDesignation);
       if (existing.pgBond !== undefined) setPgBond(existing.pgBond);
       if (existing.pgBondDoc) setPgBondDoc(existing.pgBondDoc);
       if (existing.pgBondCompletionDate) setPgBondCompletionDate(new Date(existing.pgBondCompletionDate));
@@ -224,6 +234,13 @@ const EmployeeCreate: React.FC = () => {
       if (existing.contractRegularised !== undefined) setContractRegularised(existing.contractRegularised);
       if (existing.contractRegularisedDoc) setContractRegularisedDoc(existing.contractRegularisedDoc);
       if (existing.contractRegularisedDate) setContractRegularisedDate(new Date(existing.contractRegularisedDate));
+      if (existing.contractJoiningDate) setContractJoiningDate(new Date(existing.contractJoiningDate));
+      if (existing.timebound6Years !== undefined) setTimebound6Years(existing.timebound6Years);
+      if (existing.timebound6YearsDoc) setTimebound6YearsDoc(existing.timebound6YearsDoc);
+      if (existing.timebound13Years !== undefined) setTimebound13Years(existing.timebound13Years);
+      if (existing.timebound13YearsDoc) setTimebound13YearsDoc(existing.timebound13YearsDoc);
+      if (existing.timebound20Years !== undefined) setTimebound20Years(existing.timebound20Years);
+      if (existing.timebound20YearsDoc) setTimebound20YearsDoc(existing.timebound20YearsDoc);
       if (existing.pastServiceDocs && existing.pastServiceDocs.length > 0) setPastServiceDocs(existing.pastServiceDocs);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
       if (existing.ngoBenefitsDoc !== undefined) setNgoBenefitsDoc(existing.ngoBenefitsDoc);
@@ -480,8 +497,12 @@ const EmployeeCreate: React.FC = () => {
       pastServices, educationDetails,
       timeboundApplicable, timeboundCategory, timeboundYears, timeboundDoc,
       timeboundDate: timeboundDate?.toISOString() || "",
+      timebound6Years, timebound6YearsDoc,
+      timebound13Years, timebound13YearsDoc,
+      timebound20Years, timebound20YearsDoc,
       promotionRejected,
       promotionRejectedDate: promotionRejectedDate?.toISOString() || "",
+      promotionRejectedDesignation,
       pgBond,
       pgBondDoc,
       pgBondCompletionDate: pgBondCompletionDate?.toISOString() || "",
@@ -489,6 +510,7 @@ const EmployeeCreate: React.FC = () => {
       contractRegularised,
       contractRegularisedDoc,
       contractRegularisedDate: contractRegularisedDate?.toISOString() || "",
+      contractJoiningDate: contractJoiningDate?.toISOString() || "",
       pastServiceDocs,
       terminallyIll, terminallyIllDoc,
       pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
@@ -777,6 +799,62 @@ const EmployeeCreate: React.FC = () => {
                 <FieldError error={errors.name} />
               </div>
             </div>
+            {/* Type of Recruitment (common for all employees) */}
+            <Separator className="my-5" />
+            <div className="p-4 rounded-lg border border-border bg-muted/20 space-y-4">
+              <label className="input-label">Type of Recruitment</label>
+              <div className="flex flex-col gap-3">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="recruitmentType" value="Direct Recruitment (KPSC)" checked={recruitmentType === "Direct Recruitment (KPSC)"} onChange={() => { setRecruitmentType("Direct Recruitment (KPSC)"); setContractRegularised(false); setContractRegularisedDoc(""); setContractJoiningDate(undefined); }} className="accent-primary" />
+                  <span className="text-sm font-medium text-foreground">Direct Recruitment (KPSC)</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="recruitmentType" value="Contract Regularised" checked={recruitmentType === "Contract Regularised"} onChange={() => setRecruitmentType("Contract Regularised")} className="accent-primary" />
+                  <span className="text-sm font-medium text-foreground">Contract Regularised</span>
+                </label>
+                {recruitmentType === "Contract Regularised" && (
+                  <div className="ml-6 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <Label className="text-sm">Regularised?</Label>
+                      <Switch checked={contractRegularised} onCheckedChange={(v) => { setContractRegularised(v); if (!v) { setContractRegularisedDoc(""); setContractRegularisedDate(undefined); setContractJoiningDate(undefined); } }} />
+                      <span className="text-sm text-muted-foreground">{contractRegularised ? "Yes" : "No"}</span>
+                    </div>
+                    {contractRegularised && (
+                      <>
+                        <div>
+                          <label className="input-label">Date of Joining into Contract Service</label>
+                          <DatePickerField
+                            value={contractJoiningDate}
+                            onChange={(d) => setContractJoiningDate(d)}
+                            placeholder="Select date of joining into contract service"
+                            disabled={(d) => d > new Date()}
+                          />
+                        </div>
+                        <div>
+                          <label className="input-label">Date of Regularisation</label>
+                          <DatePickerField
+                            value={contractRegularisedDate}
+                            onChange={(d) => setContractRegularisedDate(d)}
+                            placeholder="Select regularisation date"
+                            disabled={(d) => d > new Date()}
+                          />
+                        </div>
+                        <FileUploadField
+                          value={contractRegularisedDoc}
+                          onChange={(name) => setContractRegularisedDoc(name)}
+                          label="Upload Regularisation Document"
+                          required={false}
+                        />
+                      </>
+                    )}
+                  </div>
+                )}
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" name="recruitmentType" value="CG Grounds" checked={recruitmentType === "CG Grounds"} onChange={() => { setRecruitmentType("CG Grounds"); setContractRegularised(false); setContractRegularisedDoc(""); setContractJoiningDate(undefined); }} className="accent-primary" />
+                  <span className="text-sm font-medium text-foreground">CG Grounds</span>
+                </label>
+              </div>
+            </div>
           </Card>
           </div>
 
@@ -837,7 +915,7 @@ const EmployeeCreate: React.FC = () => {
                 <div className="flex items-center justify-between gap-4">
                   <Label className="text-sm font-medium leading-snug">Is Timebound applicable?</Label>
                   <div className="flex items-center gap-2 shrink-0">
-                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); setPromotionRejected(false); setPromotionRejectedDate(undefined); setPgBond(false); setPgBondDoc(""); setPgBondCompletionDate(undefined); setRecruitmentType(""); setContractRegularised(false); setContractRegularisedDoc(""); } }} />
+                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); setPromotionRejected(false); setPromotionRejectedDate(undefined); setPromotionRejectedDesignation(""); setPgBond(false); setPgBondDoc(""); setPgBondCompletionDate(undefined); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound20Years(false); setTimebound20YearsDoc(""); } }} />
                     <span className="text-sm text-muted-foreground w-8">{timeboundApplicable ? "Yes" : "No"}</span>
                   </div>
                 </div>
@@ -846,78 +924,50 @@ const EmployeeCreate: React.FC = () => {
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="input-label">Category <span className="text-destructive">*</span></label>
-                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); if (e.target.value !== "Doctors") { setRecruitmentType(""); setContractRegularised(false); setContractRegularisedDoc(""); } }} className="input-field">
+                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound20Years(false); setTimebound20YearsDoc(""); }} className="input-field">
                           <option value="">Select Category</option>
                           <option value="Doctors">Doctors</option>
                           <option value="Others">Others</option>
                         </select>
                       </div>
-                      <div>
-                        <label className="input-label">Years <span className="text-destructive">*</span></label>
-                        <select value={timeboundYears} onChange={(e) => setTimeboundYears(e.target.value)} className="input-field" disabled={!timeboundCategory}>
-                          <option value="">{timeboundCategory ? "Select Years" : "Select Category first"}</option>
-                          {timeboundCategory === "Doctors" && (
-                            <>
-                              <option value="6">6 Years</option>
-                              <option value="13">13 Years</option>
-                              <option value="20">20 Years</option>
-                            </>
-                          )}
-                          {timeboundCategory === "Others" && (
-                            <>
-                              <option value="10">10 Years</option>
-                              <option value="15">15 Years</option>
-                              <option value="20">20 Years</option>
-                            </>
-                          )}
-                        </select>
-                      </div>
+                      {timeboundCategory === "Others" && (
+                        <div>
+                          <label className="input-label">Years <span className="text-destructive">*</span></label>
+                          <select value={timeboundYears} onChange={(e) => setTimeboundYears(e.target.value)} className="input-field">
+                            <option value="">Select Years</option>
+                            <option value="10">10 Years</option>
+                            <option value="15">15 Years</option>
+                            <option value="20">20 Years</option>
+                          </select>
+                        </div>
+                      )}
                     </div>
                     {timeboundCategory === "Doctors" && (
                       <div className="p-4 rounded-lg border border-border bg-muted/10 space-y-4">
-                        <label className="input-label">Type of Recruitment <span className="text-destructive">*</span></label>
-                        <div className="flex flex-col gap-3">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="recruitmentType" value="Direct Recruitment (KPSC)" checked={recruitmentType === "Direct Recruitment (KPSC)"} onChange={() => { setRecruitmentType("Direct Recruitment (KPSC)"); setContractRegularised(false); setContractRegularisedDoc(""); }} className="accent-primary" />
-                            <span className="text-sm font-medium text-foreground">Direct Recruitment (KPSC)</span>
-                          </label>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="recruitmentType" value="Contract Regularised" checked={recruitmentType === "Contract Regularised"} onChange={() => setRecruitmentType("Contract Regularised")} className="accent-primary" />
-                            <span className="text-sm font-medium text-foreground">Contract Regularised</span>
-                          </label>
-                          {recruitmentType === "Contract Regularised" && (
-                            <div className="ml-6 space-y-3">
-                              <div className="flex items-center gap-3">
-                                <Label className="text-sm">Regularised?</Label>
-                                <Switch checked={contractRegularised} onCheckedChange={(v) => { setContractRegularised(v); if (!v) { setContractRegularisedDoc(""); setContractRegularisedDate(undefined); } }} />
-                                <span className="text-sm text-muted-foreground">{contractRegularised ? "Yes" : "No"}</span>
+                        <label className="input-label">Select applicable timebound years</label>
+                        <p className="text-xs text-muted-foreground">Tick each applicable year and upload supporting document</p>
+                        {[
+                          { label: "6 Years", checked: timebound6Years, setChecked: setTimebound6Years, doc: timebound6YearsDoc, setDoc: setTimebound6YearsDoc },
+                          { label: "13 Years", checked: timebound13Years, setChecked: setTimebound13Years, doc: timebound13YearsDoc, setDoc: setTimebound13YearsDoc },
+                          { label: "20 Years", checked: timebound20Years, setChecked: setTimebound20Years, doc: timebound20YearsDoc, setDoc: setTimebound20YearsDoc },
+                        ].map((item) => (
+                          <div key={item.label} className="space-y-2">
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input type="checkbox" checked={item.checked} onChange={(e) => { item.setChecked(e.target.checked); if (!e.target.checked) item.setDoc(""); }} className="accent-primary w-4 h-4" />
+                              <span className="text-sm font-medium text-foreground">{item.label}</span>
+                            </label>
+                            {item.checked && (
+                              <div className="ml-7">
+                                <FileUploadField
+                                  value={item.doc}
+                                  onChange={(name) => item.setDoc(name)}
+                                  label={`Upload ${item.label} Document`}
+                                  required={false}
+                                />
                               </div>
-              {contractRegularised && (
-                                <>
-                                  <div>
-                                    <label className="input-label">Date of Joining</label>
-                                    <DatePickerField
-                                      value={contractRegularisedDate}
-                                      onChange={(d) => setContractRegularisedDate(d)}
-                                      placeholder="Select date of joining"
-                                      disabled={(d) => d > new Date()}
-                                    />
-                                  </div>
-                                  <FileUploadField
-                                    value={contractRegularisedDoc}
-                                    onChange={(name) => setContractRegularisedDoc(name)}
-                                    label="Upload Regularisation Document"
-                                    required={false}
-                                  />
-                                </>
-                              )}
-                            </div>
-                          )}
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" name="recruitmentType" value="CG Grounds" checked={recruitmentType === "CG Grounds"} onChange={() => { setRecruitmentType("CG Grounds"); setContractRegularised(false); setContractRegularisedDoc(""); }} className="accent-primary" />
-                            <span className="text-sm font-medium text-foreground">CG Grounds</span>
-                          </label>
-                        </div>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     )}
                     <FileUploadField
@@ -944,19 +994,25 @@ const EmployeeCreate: React.FC = () => {
                 <div className="flex items-center justify-between gap-4">
                   <Label className="text-sm font-medium leading-snug">Any promotion rejected?</Label>
                   <div className="flex items-center gap-2 shrink-0">
-                    <Switch checked={promotionRejected} onCheckedChange={(v) => { setPromotionRejected(v); if (!v) setPromotionRejectedDate(undefined); }} />
+                    <Switch checked={promotionRejected} onCheckedChange={(v) => { setPromotionRejected(v); if (!v) { setPromotionRejectedDate(undefined); setPromotionRejectedDesignation(""); } }} />
                     <span className="text-sm text-muted-foreground w-8">{promotionRejected ? "Yes" : "No"}</span>
                   </div>
                 </div>
                 {promotionRejected && (
-                  <div>
-                    <label className="input-label">Promotion Rejected Date</label>
-                    <DatePickerField
-                      value={promotionRejectedDate}
-                      onChange={(d) => setPromotionRejectedDate(d)}
-                      placeholder="Select date"
-                      disabled={(d) => d > new Date()}
-                    />
+                  <div className="space-y-3">
+                    <div>
+                      <label className="input-label">Rejected Designation Name</label>
+                      <input value={promotionRejectedDesignation} onChange={(e) => setPromotionRejectedDesignation(e.target.value)} className="input-field" placeholder="Enter rejected designation name" />
+                    </div>
+                    <div>
+                      <label className="input-label">Promotion Rejected Date</label>
+                      <DatePickerField
+                        value={promotionRejectedDate}
+                        onChange={(d) => setPromotionRejectedDate(d)}
+                        placeholder="Select date"
+                        disabled={(d) => d > new Date()}
+                      />
+                    </div>
                   </div>
                 )}
               </div>

@@ -342,17 +342,24 @@ const Categories: React.FC = () => {
   const activeFilter = useMemo(() => {
     for (const group of GROUP_CONFIGS) {
       const sub = subSelections[group.key];
-      if (sub) return { groupKey: group.key, position: sub, category: selections[group.key] || "" };
+      if (sub) return { groupKey: group.key, position: sub, category: selections[group.key] || "", filterType: "position" as const };
       const sel = selections[group.key];
-      if (sel && !SUB_OPTIONS[sel]) return { groupKey: group.key, position: sel, category: sel };
+      if (sel) return { groupKey: group.key, position: sel, category: sel, filterType: "group" as const };
     }
     return null;
   }, [selections, subSelections]);
 
   const filteredEmployees = useMemo(() => {
     if (!activeFilter) return [];
+    if (activeFilter.filterType === "position") {
+      return allEmployees.filter((emp) => {
+        return emp.designation === activeFilter.position || emp.currentPostHeld === activeFilter.position;
+      });
+    }
+    // Group-level filter: match any position in the selected group's list
+    const positionsInGroup = SUB_OPTIONS[activeFilter.position] || [];
     return allEmployees.filter((emp) => {
-      return emp.designation === activeFilter.position || emp.currentPostHeld === activeFilter.position;
+      return positionsInGroup.includes(emp.designation) || positionsInGroup.includes(emp.currentPostHeld);
     });
   }, [allEmployees, activeFilter]);
 
