@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Pencil, Download, Printer, Loader2 } from "lucide-react";
+import { ArrowLeft, Pencil, Download, Printer, Loader2, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -9,8 +9,19 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { getNewEmployeeById, type NewEmployee } from "@/lib/api";
+import { getNewEmployeeById, deleteEmployeeById, type NewEmployee } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const fmt = (iso: string) => {
   try { return format(new Date(iso), "dd MMM yyyy"); } catch { return iso; }
@@ -38,6 +49,7 @@ const EmployeeView: React.FC = () => {
   const [emp, setEmp] = useState<NewEmployee | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -47,6 +59,18 @@ const EmployeeView: React.FC = () => {
       .catch(() => setError("Failed to load employee data"))
       .finally(() => setLoading(false));
   }, [id]);
+
+  const handleDelete = async () => {
+    if (!id) return;
+    setDeleting(true);
+    try {
+      await deleteEmployeeById(id);
+      navigate("/employee-list");
+    } catch (err) {
+      setError("Failed to delete employee");
+      setDeleting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -110,6 +134,7 @@ const EmployeeView: React.FC = () => {
       ["Date of Entry", fmtPdf(emp.dateOfEntry)],
       ["Date of Birth", fmtPdf(emp.dateOfBirth)],
       ["Gender", emp.gender],
+      ["Type of Recruitment", emp.recruitmentType || "—"],
       ["Probationary Period Completion document", emp.probationaryPeriod ? `Yes — ${emp.probationaryPeriodDoc}` : "No"],
     ]);
     addSection("2. Personal Address", [
@@ -185,7 +210,7 @@ const EmployeeView: React.FC = () => {
               <h1 className="text-2xl font-bold text-foreground">{emp.name}</h1>
               <p className="text-sm text-muted-foreground font-mono">KGID: {emp.kgid}</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Button variant="outline" size="sm" onClick={handleDownloadPDF} className="flex items-center gap-2">
                 <Download className="w-4 h-4" /> Download PDF
               </Button>
@@ -193,9 +218,32 @@ const EmployeeView: React.FC = () => {
                 <Printer className="w-4 h-4" /> Print
               </Button>
               {isAdmin && (
-                <Button variant="outline" size="sm" onClick={() => navigate(`/employee/edit/${emp.id}`)} className="flex items-center gap-2">
-                  <Pencil className="w-4 h-4" /> Edit Details
-                </Button>
+                <>
+                  <Button variant="outline" size="sm" onClick={() => navigate(`/employee/edit/${emp.id}`)} className="flex items-center gap-2">
+                    <Pencil className="w-4 h-4" /> Edit Details
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="sm" className="flex items-center gap-2" disabled={deleting}>
+                        <Trash2 className="w-4 h-4" /> {deleting ? "Deleting..." : "Delete"}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Employee Record</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to permanently delete the record for <strong>{emp.name}</strong> (KGID: {emp.kgid})? This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                          Delete Permanently
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
               )}
               <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">{emp.designationGroup}</Badge>
             </div>
@@ -209,6 +257,7 @@ const EmployeeView: React.FC = () => {
             <Field label="Date of Entry into Service (Regular post only)" value={fmt(emp.dateOfEntry)} />
             <Field label="Date of Birth" value={fmt(emp.dateOfBirth)} />
             <Field label="Gender" value={emp.gender} />
+            <Field label="Type of Recruitment" value={emp.recruitmentType || "—"} />
             <Field label="Probationary Period Completion document" value={
               emp.probationaryPeriod ? <span className="font-medium">Yes {emp.probationaryPeriodDoc && `— ${emp.probationaryPeriodDoc}`}</span> : "No"
             } />
