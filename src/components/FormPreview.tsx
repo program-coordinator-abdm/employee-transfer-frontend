@@ -115,6 +115,10 @@ export interface FormPreviewData {
   promotionRejectedDate?: Date;
   pgBond: boolean;
   pgBondDoc: string;
+  pgBondCompletionDate?: Date;
+  recruitmentType: string;
+  contractRegularised: boolean;
+  contractRegularisedDoc: string;
 }
 
 interface FormPreviewProps {
@@ -173,6 +177,15 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       if (data.timeboundDoc) tbPdfRows.push(["Document", data.timeboundDoc]);
       if (data.timeboundDate) tbPdfRows.push(["Date", fmt(data.timeboundDate)]);
     }
+    if (data.timeboundApplicable && data.timeboundCategory === "Doctors" && data.recruitmentType) {
+      tbPdfRows.push(["Type of Recruitment", data.recruitmentType]);
+      if (data.recruitmentType === "Contract Regularised") {
+        tbPdfRows.push(["Contract Regularised", data.contractRegularised ? "Yes" : "No"]);
+        if (data.contractRegularised && data.contractRegularisedDoc) {
+          tbPdfRows.push(["Regularisation Document", data.contractRegularisedDoc]);
+        }
+      }
+    }
     tbPdfRows.push(["Promotion Rejected", data.promotionRejected ? "Yes" : "No"]);
     if (data.promotionRejected && data.promotionRejectedDate) {
       tbPdfRows.push(["Promotion Rejected Date", fmt(data.promotionRejectedDate)]);
@@ -180,6 +193,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
     tbPdfRows.push(["PG Bond", data.pgBond ? "Yes" : "No"]);
     if (data.pgBond && data.pgBondDoc) {
       tbPdfRows.push(["PG Bond Certificate", data.pgBondDoc]);
+    }
+    if (data.pgBond && data.pgBondCompletionDate) {
+      tbPdfRows.push(["PG Bond Completion Date", fmt(data.pgBondCompletionDate)]);
     }
     addSection("3. Timebound", tbPdfRows);
 
@@ -314,6 +330,17 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
               {data.timeboundYears && <Field label="Years" value={data.timeboundYears} />}
               {data.timeboundDoc && <Field label="Document" value={data.timeboundDoc} />}
               {data.timeboundDate && <Field label="Date" value={fmt(data.timeboundDate)} />}
+              {data.timeboundCategory === "Doctors" && data.recruitmentType && (
+                <Field label="Type of Recruitment" value={data.recruitmentType} />
+              )}
+              {data.recruitmentType === "Contract Regularised" && (
+                <>
+                  <Field label="Contract Regularised" value={data.contractRegularised ? "Yes" : "No"} />
+                  {data.contractRegularised && data.contractRegularisedDoc && (
+                    <Field label="Regularisation Document" value={data.contractRegularisedDoc} />
+                  )}
+                </>
+              )}
             </div>
           )}
           <Field label="Promotion Rejected" value={data.promotionRejected ? "Yes" : "No"} />
@@ -323,6 +350,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           <Field label="PG Bond" value={data.pgBond ? "Yes" : "No"} />
           {data.pgBond && data.pgBondDoc && (
             <Field label="PG Bond Certificate" value={data.pgBondDoc} />
+          )}
+          {data.pgBond && data.pgBondCompletionDate && (
+            <Field label="PG Bond Completion Date" value={fmt(data.pgBondCompletionDate)} />
           )}
         </div>
       </PreviewSection>
