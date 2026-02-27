@@ -136,6 +136,7 @@ const EmployeeCreate: React.FC = () => {
   const [recruitmentType, setRecruitmentType] = useState("");
   const [contractRegularised, setContractRegularised] = useState(false);
   const [contractRegularisedDoc, setContractRegularisedDoc] = useState("");
+  const [contractRegularisedDate, setContractRegularisedDate] = useState<Date>();
   const [pastServiceDocs, setPastServiceDocs] = useState<string[]>([""]);
 
   // NGO Benefits
@@ -207,6 +208,7 @@ const EmployeeCreate: React.FC = () => {
       if (existing.recruitmentType) setRecruitmentType(existing.recruitmentType);
       if (existing.contractRegularised !== undefined) setContractRegularised(existing.contractRegularised);
       if (existing.contractRegularisedDoc) setContractRegularisedDoc(existing.contractRegularisedDoc);
+      if (existing.contractRegularisedDate) setContractRegularisedDate(new Date(existing.contractRegularisedDate));
       if (existing.pastServiceDocs && existing.pastServiceDocs.length > 0) setPastServiceDocs(existing.pastServiceDocs);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
       if (existing.ngoBenefitsDoc !== undefined) setNgoBenefitsDoc(existing.ngoBenefitsDoc);
@@ -469,6 +471,7 @@ const EmployeeCreate: React.FC = () => {
       recruitmentType,
       contractRegularised,
       contractRegularisedDoc,
+      contractRegularisedDate: contractRegularisedDate?.toISOString() || "",
       pastServiceDocs,
       terminallyIll, terminallyIllDoc,
       pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
@@ -873,16 +876,27 @@ const EmployeeCreate: React.FC = () => {
                             <div className="ml-6 space-y-3">
                               <div className="flex items-center gap-3">
                                 <Label className="text-sm">Regularised?</Label>
-                                <Switch checked={contractRegularised} onCheckedChange={(v) => { setContractRegularised(v); if (!v) setContractRegularisedDoc(""); }} />
+                                <Switch checked={contractRegularised} onCheckedChange={(v) => { setContractRegularised(v); if (!v) { setContractRegularisedDoc(""); setContractRegularisedDate(undefined); } }} />
                                 <span className="text-sm text-muted-foreground">{contractRegularised ? "Yes" : "No"}</span>
                               </div>
-                              {contractRegularised && (
-                                <FileUploadField
-                                  value={contractRegularisedDoc}
-                                  onChange={(name) => setContractRegularisedDoc(name)}
-                                  label="Upload Regularisation Document"
-                                  required={false}
-                                />
+              {contractRegularised && (
+                                <>
+                                  <div>
+                                    <label className="input-label">Date of Joining</label>
+                                    <DatePickerField
+                                      value={contractRegularisedDate}
+                                      onChange={(d) => setContractRegularisedDate(d)}
+                                      placeholder="Select date of joining"
+                                      disabled={(d) => d > new Date()}
+                                    />
+                                  </div>
+                                  <FileUploadField
+                                    value={contractRegularisedDoc}
+                                    onChange={(name) => setContractRegularisedDoc(name)}
+                                    label="Upload Regularisation Document"
+                                    required={false}
+                                  />
+                                </>
                               )}
                             </div>
                           )}
