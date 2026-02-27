@@ -394,16 +394,16 @@ const Categories: React.FC = () => {
         </Card>
 
         {/* View Employees link + KGID Search */}
-        {allEmployees.length > 0 && (
-          <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <Button variant="outline" onClick={() => navigate("/employee-list")} className="gap-2 border-primary/30 text-primary hover:bg-primary/10">
-              <Users className="w-4 h-4" /> View All Employees ({allEmployees.length})
-            </Button>
+        <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <Button variant="outline" onClick={() => navigate("/employee-list")} className="gap-2 border-primary/30 text-primary hover:bg-primary/10">
+            <Users className="w-4 h-4" /> View All Employees {allEmployees.length > 0 ? `(${allEmployees.length})` : ""}
+          </Button>
+          {allEmployees.length > 0 && (
             <div className="w-full sm:w-72">
               <KGIDSearch onSelect={(emp) => navigate(`/employee-view/${emp.id}`)} employees={allEmployees} placeholder="Quick search by KGID..." />
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-foreground mb-1">Staff Categories</h1>
