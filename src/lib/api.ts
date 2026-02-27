@@ -502,6 +502,10 @@ export interface NewEmployee {
   timeboundYears: string;
   timeboundDoc: string;
   timeboundDate: string;
+  promotionRejected: boolean;
+  promotionRejectedDate: string;
+  pgBond: boolean;
+  pgBondDoc: string;
   empDeclAgreed: boolean;
   empDeclName: string;
   empDeclDate: string;
@@ -575,6 +579,10 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     timeboundYears: payload.timeboundYears,
     timeboundDoc: payload.timeboundDoc,
     timeboundDate: payload.timeboundDate,
+    promotionRejected: payload.promotionRejected,
+    promotionRejectedDate: payload.promotionRejectedDate,
+    pgBond: payload.pgBond,
+    pgBondDoc: payload.pgBondDoc,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
     empDeclDate: payload.empDeclDate,
@@ -654,6 +662,10 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     timeboundYears: payload.timeboundYears,
     timeboundDoc: payload.timeboundDoc,
     timeboundDate: payload.timeboundDate,
+    promotionRejected: payload.promotionRejected,
+    promotionRejectedDate: payload.promotionRejectedDate,
+    pgBond: payload.pgBond,
+    pgBondDoc: payload.pgBondDoc,
     empDeclAgreed: payload.empDeclAgreed,
     empDeclName: payload.empDeclName,
     empDeclDate: payload.empDeclDate,
@@ -735,6 +747,10 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     timeboundYears: raw.timeboundYears ?? "",
     timeboundDoc: raw.timeboundDoc ?? "",
     timeboundDate: raw.timeboundDate ?? "",
+    promotionRejected: raw.promotionRejected ?? false,
+    promotionRejectedDate: raw.promotionRejectedDate ?? "",
+    pgBond: raw.pgBond ?? false,
+    pgBondDoc: raw.pgBondDoc ?? "",
     empDeclAgreed: raw.empDeclAgreed ?? false,
     empDeclName: raw.empDeclName ?? "",
     empDeclDate: raw.empDeclDate ?? "",

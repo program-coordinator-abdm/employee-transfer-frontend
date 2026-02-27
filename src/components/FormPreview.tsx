@@ -111,6 +111,10 @@ export interface FormPreviewData {
   timeboundYears: string;
   timeboundDoc: string;
   timeboundDate?: Date;
+  promotionRejected: boolean;
+  promotionRejectedDate?: Date;
+  pgBond: boolean;
+  pgBondDoc: string;
 }
 
 interface FormPreviewProps {
@@ -168,6 +172,14 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       if (data.timeboundYears) tbPdfRows.push(["Years", data.timeboundYears]);
       if (data.timeboundDoc) tbPdfRows.push(["Document", data.timeboundDoc]);
       if (data.timeboundDate) tbPdfRows.push(["Date", fmt(data.timeboundDate)]);
+    }
+    tbPdfRows.push(["Promotion Rejected", data.promotionRejected ? "Yes" : "No"]);
+    if (data.promotionRejected && data.promotionRejectedDate) {
+      tbPdfRows.push(["Promotion Rejected Date", fmt(data.promotionRejectedDate)]);
+    }
+    tbPdfRows.push(["PG Bond", data.pgBond ? "Yes" : "No"]);
+    if (data.pgBond && data.pgBondDoc) {
+      tbPdfRows.push(["PG Bond Certificate", data.pgBondDoc]);
     }
     addSection("3. Timebound", tbPdfRows);
 
@@ -303,6 +315,14 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
               {data.timeboundDoc && <Field label="Document" value={data.timeboundDoc} />}
               {data.timeboundDate && <Field label="Date" value={fmt(data.timeboundDate)} />}
             </div>
+          )}
+          <Field label="Promotion Rejected" value={data.promotionRejected ? "Yes" : "No"} />
+          {data.promotionRejected && data.promotionRejectedDate && (
+            <Field label="Promotion Rejected Date" value={fmt(data.promotionRejectedDate)} />
+          )}
+          <Field label="PG Bond" value={data.pgBond ? "Yes" : "No"} />
+          {data.pgBond && data.pgBondDoc && (
+            <Field label="PG Bond Certificate" value={data.pgBondDoc} />
           )}
         </div>
       </PreviewSection>
