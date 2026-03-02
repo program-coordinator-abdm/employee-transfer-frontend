@@ -278,8 +278,8 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
     ];
     addSection("10. Special Conditions", conditions);
 
-    addSection("11. Elected NGO Members Details", [
-      ["Elected NGO Member", data.ngoBenefits ? `Yes — ${data.ngoBenefitsDoc}` : "No"],
+    addSection("11. Karnataka State Govt Employee Association Elected Members", [
+      ["Elected Association Member", data.ngoBenefits ? `Yes — ${data.ngoBenefitsDoc}` : "No"],
     ]);
 
     doc.save(`Employee_Preview_${data.kgid || "draft"}.pdf`);
@@ -398,8 +398,8 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       </PreviewSection>
 
       {/* Section 5 */}
-      <PreviewSection title="Communication Address" number="6" onEdit={() => onEdit(6)}>
-        <h4 className="text-xs font-semibold text-primary uppercase tracking-wide mb-3">Personal</h4>
+      <PreviewSection title="Personal Address" number="6" onEdit={() => onEdit(6)}>
+        <h4 className="text-xs font-semibold text-primary uppercase tracking-wide mb-3">Permanent Address (as per SR)</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <Field label="Address" value={data.address} />
           <Field label="Pin Code" value={data.pinCode} />
@@ -408,7 +408,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           {data.telephoneNumber && <Field label="Telephone" value={data.telephoneNumber} />}
         </div>
         <Separator className="my-4" />
-        <h4 className="text-xs font-semibold text-primary uppercase tracking-wide mb-3">Office</h4>
+        <h4 className="text-xs font-semibold text-primary uppercase tracking-wide mb-3">Current Address</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Address" value={data.officeAddress} />
           <Field label="Pin Code" value={data.officePinCode} />
@@ -487,9 +487,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       </PreviewSection>
 
       {/* Section 11 */}
-      <PreviewSection title="Elected NGO Members Details" number="11" onEdit={() => onEdit(11)}>
-        <p className="text-sm text-muted-foreground mb-3">Details related to elected NGO membership</p>
-        <Field label="Are you an elected NGO member?" value={boolLabel(data.ngoBenefits, data.ngoBenefitsDoc)} />
+      <PreviewSection title="Karnataka State Govt Employee Association Elected Members" number="11" onEdit={() => onEdit(11)}>
+        <p className="text-sm text-muted-foreground mb-3">Details related to elected Karnataka State Government Employee Association membership</p>
+        <Field label="Are you an elected Karnataka State Government Employee Association member?" value={boolLabel(data.ngoBenefits, data.ngoBenefitsDoc)} />
       </PreviewSection>
 
       {/* Proceed */}

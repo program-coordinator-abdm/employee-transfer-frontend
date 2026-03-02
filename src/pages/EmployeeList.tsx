@@ -288,7 +288,7 @@ const EmployeeList: React.FC = () => {
       </main>
 
       <footer className="py-4 text-center text-sm text-muted-foreground border-t border-border">
-        © 2024 Government of Karnataka. All rights reserved.
+        © 2026 Government of Karnataka. All rights reserved.
       </footer>
     </div>
   );

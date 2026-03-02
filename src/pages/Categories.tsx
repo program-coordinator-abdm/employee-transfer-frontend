@@ -34,7 +34,7 @@ const JRO_LRO_POSITIONS: string[] = [
   "Micro Biologist",
   "Bio Chemist",
   "Psychiatrist",
-  "TB",
+  "Tuberculosis/Chest Medicine",
   "General Medicine",
   "General Surgeon + Burns Ward (5)",
   "Obstetrics and Gynaecologist (OBG)",
@@ -46,7 +46,15 @@ const JRO_LRO_POSITIONS: string[] = [
   "Skin Specialist / Dermatologist + LEP-2",
   "Radiologist",
   "Other (Public Health Manager, Epidemiologist-2 MLCD-4)",
-  "Cardiologist / Neurosurgeon / Plastic Surgeon / General Duty Medical Officers / SMO / DCMO / CMO / Dental Health Officers",
+  "Cardiologist",
+  "Neurosurgeon",
+  "Plastic Surgeon",
+  "General Duty Medical Officer",
+  "SMO",
+  "DCMO",
+  "CMO",
+  "Dental Health Officer",
+  "Psychiatry",
 ];
 
 const GROUP_B_POSITIONS: string[] = [
@@ -616,7 +624,7 @@ const Categories: React.FC = () => {
       </main>
 
       <footer className="py-4 text-center text-sm text-muted-foreground border-t border-border">
-        © 2024 Government of Karnataka. All rights reserved.
+        © 2026 Government of Karnataka. All rights reserved.
       </footer>
     </div>
   );
