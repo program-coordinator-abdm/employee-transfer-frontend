@@ -529,7 +529,14 @@ export interface NewEmployee {
   timebound15Years: boolean;
   timebound15YearsDoc: string;
   timebound15YearsDate: string;
+  timebound25Years: boolean;
+  timebound25YearsDoc: string;
+  timebound25YearsDate: string;
+  timebound30Years: boolean;
+  timebound30YearsDoc: string;
+  timebound30YearsDate: string;
   currentServiceDoc: string;
+  directRecruitmentMode: string;
   promotionRejected: boolean;
   promotionRejectedDate: string;
   promotionRejectedDesignation: string;
@@ -866,7 +873,14 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     timebound15Years: raw.timebound15Years ?? false,
     timebound15YearsDoc: raw.timebound15YearsDoc ?? "",
     timebound15YearsDate: raw.timebound15YearsDate ?? "",
+    timebound25Years: raw.timebound25Years ?? false,
+    timebound25YearsDoc: raw.timebound25YearsDoc ?? "",
+    timebound25YearsDate: raw.timebound25YearsDate ?? "",
+    timebound30Years: raw.timebound30Years ?? false,
+    timebound30YearsDoc: raw.timebound30YearsDoc ?? "",
+    timebound30YearsDate: raw.timebound30YearsDate ?? "",
     currentServiceDoc: raw.currentServiceDoc ?? "",
+    directRecruitmentMode: raw.directRecruitmentMode ?? "",
     pastServiceDocs: raw.pastServiceDocs ?? [],
     empDeclAgreed: raw.empDeclAgreed ?? false,
     empDeclName: raw.empDeclName ?? "",

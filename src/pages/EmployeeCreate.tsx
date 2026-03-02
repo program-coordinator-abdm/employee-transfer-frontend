@@ -36,14 +36,15 @@ const EMPTY_EDUCATION: () => EducationFormEntry = () => ({
 });
 
 const INSTITUTION_TYPES = [
-  "SC", "PHC", "CHC", "Taluk General Hospital", "Sub District Hospital",
-  "District Hospital", "MCH/W&C", "Taluk Health Office", "DHO Office",
+  "SC", "PHC/UPHC", "CHC", "Taluk General Hospital", "Sub Division Hospital",
+  "District Hospital", "District Level Hospitals", "MCH/W&C", "Prisons Hospitals", "AD Office",
+  "Taluk Health Office", "DHO Office",
   "PO Office", "DJD", "Directorate", "Commissionerate",
   "Community Based Facility", "Others",
 ];
-const HFR_ELIGIBLE_TYPES = ["SC", "PHC", "CHC", "Taluk General Hospital", "Sub District Hospital", "District Hospital"];
+const HFR_ELIGIBLE_TYPES = ["SC", "PHC/UPHC", "CHC", "Taluk General Hospital", "Sub Division Hospital", "District Hospital", "District Level Hospitals", "MCH/W&C", "Prisons Hospitals"];
 
-const EDUCATION_LEVELS = ["10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "Paramedical", "PhD", "Others"];
+const EDUCATION_LEVELS = ["Unschooled/UnEducated", "10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "Paramedical", "PhD", "Others"];
 
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -147,6 +148,7 @@ const EmployeeCreate: React.FC = () => {
   const [pgBondDoc, setPgBondDoc] = useState("");
   const [pgBondCompletionDate, setPgBondCompletionDate] = useState<Date>();
   const [recruitmentType, setRecruitmentType] = useState("");
+  const [directRecruitmentMode, setDirectRecruitmentMode] = useState("");
   const [contractRegularised, setContractRegularised] = useState(false);
   const [contractRegularisedDoc, setContractRegularisedDoc] = useState("");
   const [contractRegularisedDate, setContractRegularisedDate] = useState<Date>();
@@ -171,8 +173,13 @@ const EmployeeCreate: React.FC = () => {
   const [timebound15YearsDate, setTimebound15YearsDate] = useState("");
   // Current service joining document
   const [currentServiceDoc, setCurrentServiceDoc] = useState("");
-
-  // NGO Benefits
+  // Timebound others 25 & 30 years
+  const [timebound25Years, setTimebound25Years] = useState(false);
+  const [timebound25YearsDoc, setTimebound25YearsDoc] = useState("");
+  const [timebound25YearsDate, setTimebound25YearsDate] = useState("");
+  const [timebound30Years, setTimebound30Years] = useState(false);
+  const [timebound30YearsDoc, setTimebound30YearsDoc] = useState("");
+  const [timebound30YearsDate, setTimebound30YearsDate] = useState("");
   const [ngoBenefits, setNgoBenefits] = useState(false);
   const [ngoBenefitsDoc, setNgoBenefitsDoc] = useState("");
 
@@ -243,6 +250,7 @@ const EmployeeCreate: React.FC = () => {
       if (existing.pgBondDoc) setPgBondDoc(existing.pgBondDoc);
       if (existing.pgBondCompletionDate) setPgBondCompletionDate(new Date(existing.pgBondCompletionDate));
       if (existing.recruitmentType) setRecruitmentType(existing.recruitmentType);
+      if (existing.directRecruitmentMode) setDirectRecruitmentMode(existing.directRecruitmentMode);
       if (existing.contractRegularised !== undefined) setContractRegularised(existing.contractRegularised);
       if (existing.contractRegularisedDoc) setContractRegularisedDoc(existing.contractRegularisedDoc);
       if (existing.contractRegularisedDate) setContractRegularisedDate(new Date(existing.contractRegularisedDate));
@@ -262,6 +270,12 @@ const EmployeeCreate: React.FC = () => {
       if (existing.timebound15Years !== undefined) setTimebound15Years(existing.timebound15Years);
       if (existing.timebound15YearsDoc) setTimebound15YearsDoc(existing.timebound15YearsDoc);
       if (existing.timebound15YearsDate) setTimebound15YearsDate(existing.timebound15YearsDate);
+      if (existing.timebound25Years !== undefined) setTimebound25Years(existing.timebound25Years);
+      if (existing.timebound25YearsDoc) setTimebound25YearsDoc(existing.timebound25YearsDoc);
+      if (existing.timebound25YearsDate) setTimebound25YearsDate(existing.timebound25YearsDate);
+      if (existing.timebound30Years !== undefined) setTimebound30Years(existing.timebound30Years);
+      if (existing.timebound30YearsDoc) setTimebound30YearsDoc(existing.timebound30YearsDoc);
+      if (existing.timebound30YearsDate) setTimebound30YearsDate(existing.timebound30YearsDate);
       if (existing.currentServiceDoc) setCurrentServiceDoc(existing.currentServiceDoc);
       if (existing.pastServiceDocs && existing.pastServiceDocs.length > 0) setPastServiceDocs(existing.pastServiceDocs);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
@@ -411,12 +425,17 @@ const EmployeeCreate: React.FC = () => {
     if (spouseGovtServant && !spouseGovtServantDoc) errs.spouseGovtServantDoc = "Documentary proof is required";
     if (probationaryPeriod && !probationaryPeriodDoc) errs.probationaryPeriodDoc = "Documentary proof is required";
     if (ngoBenefits && !ngoBenefitsDoc) errs.ngoBenefitsDoc = "Documentary proof is required";
+    if (isDoctorNursePharmacist && !hprId.trim()) errs.hprId = "HPR ID is required when Doctor/Nurse/Pharmacist is selected";
+    if (recruitmentType === "Direct Recruitment" && !directRecruitmentMode) errs.directRecruitmentMode = "Please select a recruitment mode (KPSC, DRC, or SRC)";
+    if (cltCompleted && !cltCompletedDoc) errs.cltCompletedDoc = "CLT document is required";
+    if (HFR_ELIGIBLE_TYPES.includes(currentInstitutionType) && !currentHfrId.trim()) errs.currentHfrId = "HFR ID is required for this institution type";
 
     educationDetails.forEach((e, i) => {
       if (!e.level) errs[`edu_${i}_level`] = "Education level is required";
-      if (!e.institution) errs[`edu_${i}_institution`] = "Institution name is required";
-      if (!e.yearOfPassing) errs[`edu_${i}_yearOfPassing`] = "Date of passing is required";
-      
+      if (e.level && e.level !== "Unschooled/UnEducated") {
+        if (!e.institution) errs[`edu_${i}_institution`] = "Institution name is required";
+        if (!e.yearOfPassing) errs[`edu_${i}_yearOfPassing`] = "Date of passing is required";
+      }
     });
 
     pastServices.forEach((s, i) => {
@@ -524,7 +543,10 @@ const EmployeeCreate: React.FC = () => {
       timebound20Years, timebound20YearsDoc, timebound20YearsDate,
       timebound10Years, timebound10YearsDoc, timebound10YearsDate,
       timebound15Years, timebound15YearsDoc, timebound15YearsDate,
+      timebound25Years, timebound25YearsDoc, timebound25YearsDate,
+      timebound30Years, timebound30YearsDoc, timebound30YearsDate,
       currentServiceDoc,
+      directRecruitmentMode,
       promotionRejected,
       promotionRejectedDate: promotionRejectedDate?.toISOString() || "",
       promotionRejectedDesignation,
@@ -723,8 +745,8 @@ const EmployeeCreate: React.FC = () => {
       ["Disability 40%+", emp.childSpouseDisability ? `Yes — ${emp.childSpouseDisabilityDoc}` : "No"],
       ["Widow/Divorcee with child < 12", emp.divorceeWidowWithChild ? `Yes — ${emp.divorceeWidowWithChildDoc}` : "No"],
     ]);
-    addSection("11. Elected NGO Members Details", [
-      ["Elected NGO Member", emp.ngoBenefits ? `Yes — ${emp.ngoBenefitsDoc}` : "No"],
+    addSection("11. Karnataka State Govt Employee Association Elected Members", [
+      ["Elected Association Member", emp.ngoBenefits ? `Yes — ${emp.ngoBenefitsDoc}` : "No"],
     ]);
     addSection("12. Declarations", [
       ["Employee Declaration", emp.empDeclAgreed ? "Agreed" : "Not Agreed"],
@@ -843,11 +865,26 @@ const EmployeeCreate: React.FC = () => {
               <label className="input-label">Type of Recruitment</label>
               <div className="flex flex-col gap-3">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="recruitmentType" value="Direct Recruitment (KPSC)" checked={recruitmentType === "Direct Recruitment (KPSC)"} onChange={() => { setRecruitmentType("Direct Recruitment (KPSC)"); setContractRegularised(false); setContractRegularisedDoc(""); setContractJoiningDate(undefined); }} className="accent-primary" />
-                  <span className="text-sm font-medium text-foreground">Direct Recruitment (KPSC)</span>
+                  <input type="radio" name="recruitmentType" value="Direct Recruitment" checked={recruitmentType === "Direct Recruitment"} onChange={() => { setRecruitmentType("Direct Recruitment"); setContractRegularised(false); setContractRegularisedDoc(""); setContractJoiningDate(undefined); }} className="accent-primary" />
+                  <span className="text-sm font-medium text-foreground">Direct Recruitment</span>
                 </label>
+                {recruitmentType === "Direct Recruitment" && (
+                  <div className="ml-6 space-y-2">
+                    <label className="input-label">Select Recruitment Mode <span className="text-destructive">*</span></label>
+                    <div className="flex gap-4">
+                      {["KPSC", "DRC", "SRC"].map((mode) => (
+                        <label key={mode} className="flex items-center gap-1.5 cursor-pointer">
+                          <input type="radio" name="directRecruitmentMode" value={mode} checked={directRecruitmentMode === mode} onChange={() => setDirectRecruitmentMode(mode)} className="accent-primary" />
+                          <span className="text-sm font-medium text-foreground">{mode}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <FieldError error={errors.directRecruitmentMode} />
+                  </div>
+                )}
+
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="recruitmentType" value="Contract Regularised" checked={recruitmentType === "Contract Regularised"} onChange={() => setRecruitmentType("Contract Regularised")} className="accent-primary" />
+                  <input type="radio" name="recruitmentType" value="Contract Regularised" checked={recruitmentType === "Contract Regularised"} onChange={() => { setRecruitmentType("Contract Regularised"); setDirectRecruitmentMode(""); }} className="accent-primary" />
                   <span className="text-sm font-medium text-foreground">Contract Regularised</span>
                 </label>
                 {recruitmentType === "Contract Regularised" && (
@@ -888,7 +925,7 @@ const EmployeeCreate: React.FC = () => {
                   </div>
                 )}
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="recruitmentType" value="CG Grounds" checked={recruitmentType === "CG Grounds"} onChange={() => { setRecruitmentType("CG Grounds"); setContractRegularised(false); setContractRegularisedDoc(""); setContractJoiningDate(undefined); }} className="accent-primary" />
+                  <input type="radio" name="recruitmentType" value="CG Grounds" checked={recruitmentType === "CG Grounds"} onChange={() => { setRecruitmentType("CG Grounds"); setContractRegularised(false); setContractRegularisedDoc(""); setContractJoiningDate(undefined); setDirectRecruitmentMode(""); }} className="accent-primary" />
                   <span className="text-sm font-medium text-foreground">CG Grounds</span>
                 </label>
               </div>
@@ -936,8 +973,9 @@ const EmployeeCreate: React.FC = () => {
             {isDoctorNursePharmacist && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
                 <div>
-                  <label className="input-label">HPR ID</label>
-                  <input value={hprId} onChange={(e) => setHprId(e.target.value)} className="input-field" placeholder="Enter HPR ID" />
+                  <label className="input-label">HPR ID {isDoctorNursePharmacist && <span className="text-destructive">*</span>}</label>
+                  <input value={hprId} onChange={(e) => { setHprId(e.target.value); clearError("hprId"); }} className={`input-field ${errors.hprId ? "border-destructive" : ""}`} placeholder="Enter HPR ID" />
+                  <FieldError error={errors.hprId} />
                 </div>
               </div>
             )}
@@ -953,7 +991,7 @@ const EmployeeCreate: React.FC = () => {
                 <div className="flex items-center justify-between gap-4">
                   <Label className="text-sm font-medium leading-snug">Is Timebound applicable?</Label>
                   <div className="flex items-center gap-2 shrink-0">
-                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); setPromotionRejected(false); setPromotionRejectedDate(undefined); setPromotionRejectedDesignation(""); setPgBond(false); setPgBondDoc(""); setPgBondCompletionDate(undefined); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(""); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(""); setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(""); setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(""); setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(""); } }} />
+                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); setPromotionRejected(false); setPromotionRejectedDate(undefined); setPromotionRejectedDesignation(""); setPgBond(false); setPgBondDoc(""); setPgBondCompletionDate(undefined); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(""); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(""); setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(""); setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(""); setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(""); setTimebound25Years(false); setTimebound25YearsDoc(""); setTimebound25YearsDate(""); setTimebound30Years(false); setTimebound30YearsDoc(""); setTimebound30YearsDate(""); } }} />
                     <span className="text-sm text-muted-foreground w-8">{timeboundApplicable ? "Yes" : "No"}</span>
                   </div>
                 </div>
@@ -962,7 +1000,7 @@ const EmployeeCreate: React.FC = () => {
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="input-label">Category <span className="text-destructive">*</span></label>
-                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(""); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(""); setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(""); setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(""); setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(""); }} className="input-field">
+                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(""); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(""); setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(""); setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(""); setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(""); setTimebound25Years(false); setTimebound25YearsDoc(""); setTimebound25YearsDate(""); setTimebound30Years(false); setTimebound30YearsDoc(""); setTimebound30YearsDate(""); }} className="input-field">
                           <option value="">Select Category</option>
                           <option value="Doctors">Doctors</option>
                           <option value="Others">Others</option>
@@ -1021,6 +1059,8 @@ const EmployeeCreate: React.FC = () => {
                           { label: "10 Years", checked: timebound10Years, setChecked: setTimebound10Years, doc: timebound10YearsDoc, setDoc: setTimebound10YearsDoc, date: timebound10YearsDate, setDate: setTimebound10YearsDate },
                           { label: "15 Years", checked: timebound15Years, setChecked: setTimebound15Years, doc: timebound15YearsDoc, setDoc: setTimebound15YearsDoc, date: timebound15YearsDate, setDate: setTimebound15YearsDate },
                           { label: "20 Years", checked: timebound20Years, setChecked: setTimebound20Years, doc: timebound20YearsDoc, setDoc: setTimebound20YearsDoc, date: timebound20YearsDate, setDate: setTimebound20YearsDate },
+                          { label: "25 Years", checked: timebound25Years, setChecked: setTimebound25Years, doc: timebound25YearsDoc, setDoc: setTimebound25YearsDoc, date: timebound25YearsDate, setDate: setTimebound25YearsDate },
+                          { label: "30 Years", checked: timebound30Years, setChecked: setTimebound30Years, doc: timebound30YearsDoc, setDoc: setTimebound30YearsDoc, date: timebound30YearsDate, setDate: setTimebound30YearsDate },
                         ].map((item) => (
                           <div key={item.label} className="space-y-2">
                             <label className="flex items-center gap-3 cursor-pointer">
@@ -1187,11 +1227,13 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 {cltCompleted && (
                   <div className="space-y-3">
+                    <p className="text-xs text-amber-600 font-medium mb-1">Note: Add Completion marks card</p>
                     <FileUploadField
                       value={cltCompletedDoc}
-                      onChange={(name) => setCltCompletedDoc(name)}
+                      onChange={(name) => { setCltCompletedDoc(name); clearError("cltCompletedDoc"); }}
                       label="Upload CLT Document"
-                      required={false}
+                      required={true}
+                      error={errors.cltCompletedDoc}
                     />
                     <div>
                       <label className="input-label">CLT Completion Date</label>
@@ -1234,25 +1276,29 @@ const EmployeeCreate: React.FC = () => {
                       </select>
                       <FieldError error={errors[`edu_${idx}_level`]} />
                     </div>
-                    <div>
-                      <label className="input-label">Name of Institution <span className="text-destructive">*</span></label>
-                      <input value={edu.institution} onChange={(e) => { updateEducation(idx, "institution", e.target.value); clearError(`edu_${idx}_institution`); }} className={`input-field ${errors[`edu_${idx}_institution`] ? "border-destructive" : ""}`} placeholder="Institution / School / College name" />
-                      <FieldError error={errors[`edu_${idx}_institution`]} />
-                    </div>
-                    <div>
-                      <label className="input-label">Date of Passing <span className="text-destructive">*</span></label>
-                      <DatePickerField
-                        value={edu.yearOfPassing ? new Date(edu.yearOfPassing) : undefined}
-                        onChange={(d) => {
-                          const dateStr = d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` : "";
-                          updateEducation(idx, "yearOfPassing", dateStr);
-                          clearError(`edu_${idx}_yearOfPassing`);
-                        }}
-                        placeholder="Select date of passing"
-                        disabled={(d) => d > new Date()}
-                      />
-                      <FieldError error={errors[`edu_${idx}_yearOfPassing`]} />
-                    </div>
+                    {edu.level !== "Unschooled/UnEducated" && (
+                      <div>
+                        <label className="input-label">Name of Institution <span className="text-destructive">*</span></label>
+                        <input value={edu.institution} onChange={(e) => { updateEducation(idx, "institution", e.target.value); clearError(`edu_${idx}_institution`); }} className={`input-field ${errors[`edu_${idx}_institution`] ? "border-destructive" : ""}`} placeholder="Institution / School / College name" />
+                        <FieldError error={errors[`edu_${idx}_institution`]} />
+                      </div>
+                    )}
+                    {edu.level !== "Unschooled/UnEducated" && (
+                      <div>
+                        <label className="input-label">Date of Passing <span className="text-destructive">*</span></label>
+                        <DatePickerField
+                          value={edu.yearOfPassing ? new Date(edu.yearOfPassing) : undefined}
+                          onChange={(d) => {
+                            const dateStr = d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}` : "";
+                            updateEducation(idx, "yearOfPassing", dateStr);
+                            clearError(`edu_${idx}_yearOfPassing`);
+                          }}
+                          placeholder="Select date of passing"
+                          disabled={(d) => d > new Date()}
+                        />
+                        <FieldError error={errors[`edu_${idx}_yearOfPassing`]} />
+                      </div>
+                    )}
                     {(edu.level.includes("UG") || edu.level.includes("PG") || edu.level === "PhD") && (
                       <div>
                         <label className="input-label">Specialization</label>
@@ -1260,15 +1306,17 @@ const EmployeeCreate: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  <div className="mt-4">
-                    <FileUploadField
-                      value={edu.documentProof}
-                      onChange={(name) => { updateEducation(idx, "documentProof", name); }}
-                      label="Upload Certificate / Marksheet"
-                      required={false}
-                      hint="Upload certificate or marksheet. Max file size: 5 MB."
-                    />
-                  </div>
+                  {edu.level !== "Unschooled/UnEducated" && (
+                    <div className="mt-4">
+                      <FileUploadField
+                        value={edu.documentProof}
+                        onChange={(name) => { updateEducation(idx, "documentProof", name); }}
+                        label="Upload Certificate / Marksheet"
+                        required={false}
+                        hint="Upload certificate or marksheet. Max file size: 5 MB."
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
               <Button type="button" variant="outline" onClick={addEducation} className="w-full border-dashed border-2 border-primary/40 text-primary hover:bg-primary/5">
@@ -1281,11 +1329,16 @@ const EmployeeCreate: React.FC = () => {
           {/* 6. Communication Address */}
           <div className={cn(!shouldShowSection(6) && "hidden")} ref={el => { sectionRefs.current[6] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="6" title="Communication Address" />
+            <SectionTitle number="6" title="Personal Address" />
 
             {/* Personal Address */}
-            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Personal Communication Address (Current)</h4>
+            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Permanent Address (as per SR)</h4>
             <div className="space-y-4 mb-6">
+              <div className="flex items-center justify-end">
+                <Button type="button" variant="outline" size="sm" onClick={() => { setOfficeAddress(address); setOfficePinCode(pinCode); setOfficeEmail(email); setOfficePhoneNumber(phoneNumber); setOfficeTelephoneNumber(telephoneNumber); }} className="gap-1.5 text-xs">
+                  Copy Permanent → Current
+                </Button>
+              </div>
               <div>
                 <label className="input-label">Address <span className="text-destructive">*</span></label>
                 <textarea value={address} onChange={(e) => { setAddress(e.target.value); clearError("address"); }} className={`input-field min-h-[80px] resize-y ${errors.address ? "border-destructive" : ""}`} placeholder="Full personal address" />
@@ -1317,7 +1370,7 @@ const EmployeeCreate: React.FC = () => {
             <Separator className="my-5" />
 
             {/* Office Address */}
-            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Office Address</h4>
+            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Current Address</h4>
             <div className="space-y-4">
               <div>
                 <label className="input-label">Address <span className="text-destructive">*</span></label>
@@ -1391,8 +1444,9 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 {HFR_ELIGIBLE_TYPES.includes(currentInstitutionType) && (
                   <div>
-                    <label className="input-label">HFR ID</label>
-                    <input value={currentHfrId} onChange={(e) => setCurrentHfrId(e.target.value)} className="input-field" placeholder="Enter HFR ID" />
+                    <label className="input-label">HFR ID <span className="text-destructive">*</span></label>
+                    <input value={currentHfrId} onChange={(e) => { setCurrentHfrId(e.target.value); clearError("currentHfrId"); }} className={`input-field ${errors.currentHfrId ? "border-destructive" : ""}`} placeholder="Enter HFR ID" />
+                    <FieldError error={errors.currentHfrId} />
                   </div>
                 )}
                 <div>
@@ -1671,7 +1725,7 @@ const EmployeeCreate: React.FC = () => {
             <div className="space-y-5">
               <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
                 <div className="flex items-center justify-between gap-4">
-                  <Label className="text-sm font-medium leading-snug">Medical Officer or the staff being married to an employee of a Central Government or State Government or Aided Institution</Label>
+                  <Label className="text-sm font-medium leading-snug">Any cadre / any officers being married to an employee of a Central Government or State Government or Aided Institution</Label>
                   <div className="flex items-center gap-2 shrink-0">
                     <Switch checked={spouseGovtServant} onCheckedChange={setSpouseGovtServant} />
                     <span className="text-sm text-muted-foreground w-8">{spouseGovtServant ? "Yes" : "No"}</span>
@@ -1855,14 +1909,14 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
-          {/* 11. NGO Benefits for Elected Members */}
+          {/* 11. Karnataka State Government Employee association elected members */}
           <div className={cn(!shouldShowSection(11) && "hidden")} ref={el => { sectionRefs.current[11] = el; }}>
           <Card className="p-6">
-            <SectionTitle number="11" title="Elected NGO Members Details" />
-            <p className="text-sm text-muted-foreground mb-5">Details related to elected NGO membership</p>
+            <SectionTitle number="11" title="Karnataka State Government Employee Association Elected Members" />
+            <p className="text-sm text-muted-foreground mb-5">Details related to elected Karnataka State Government Employee Association membership</p>
             <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
               <div className="flex items-center justify-between gap-4">
-                <Label className="text-sm font-medium leading-snug">Are you an elected NGO member?</Label>
+                <Label className="text-sm font-medium leading-snug">Are you an elected Karnataka State Government Employee Association member?</Label>
                 <div className="flex items-center gap-2 shrink-0">
                   <Switch checked={ngoBenefits} onCheckedChange={setNgoBenefits} />
                   <span className="text-sm text-muted-foreground w-8">{ngoBenefits ? "Yes" : "No"}</span>
