@@ -595,12 +595,34 @@ export interface NewEmployee {
 }
 
 // Sanitize employee payload before sending to backend
-const OPTIONAL_DATE_FIELDS = [
+const ALL_DATE_FIELDS = [
   "contractJoiningDate", "contractRegularisedDate", "cltCompletionDate",
   "pgBondCompletionDate", "probationDeclarationDate", "promotionRejectedDate",
   "timebound6YearsDate", "timebound10YearsDate", "timebound13YearsDate",
   "timebound15YearsDate", "timebound20YearsDate", "timeboundDate",
+  "timebound25YearsDate", "timebound30YearsDate",
+  "dob", "dateOfInitialAppointment", "dateOfEntryIntoService",
+  "currentWorkingSince", "empDeclDate", "officerDeclDate",
+  "promotionRejectedDate",
 ];
+
+function normalizeDateValue(val: any): string | null {
+  if (val === null || val === undefined || val === "") return null;
+  // JS Date object
+  if (val instanceof Date) {
+    return isNaN(val.getTime()) ? null : val.toISOString();
+  }
+  if (typeof val !== "string") return null;
+  const trimmed = val.trim();
+  if (trimmed === "") return null;
+  // DD/MM/YYYY format
+  const ddmmyyyy = trimmed.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (ddmmyyyy) {
+    return `${ddmmyyyy[3]}-${ddmmyyyy[2]}-${ddmmyyyy[1]}`;
+  }
+  // Already ISO or YYYY-MM-DD — return as-is
+  return trimmed;
+}
 
 const OPTIONAL_DOC_FIELDS = [
   "childSpouseDisabilityDoc", "divorceeWidowWithChildDoc", "pregnantOrChildUnderOneDoc",
@@ -634,8 +656,9 @@ function trimStringsInObject<T extends Record<string, any>>(obj: T): T {
 function sanitizeEmployeeBody(body: Record<string, any>): Record<string, any> {
   const sanitized = { ...body };
 
-  for (const field of OPTIONAL_DATE_FIELDS) {
-    if (field in sanitized && sanitized[field] === "") sanitized[field] = null;
+  // Normalize all date fields: Date objects -> ISO, DD/MM/YYYY -> YYYY-MM-DD, empty -> null
+  for (const field of ALL_DATE_FIELDS) {
+    if (field in sanitized) sanitized[field] = normalizeDateValue(sanitized[field]);
   }
   for (const field of OPTIONAL_DOC_FIELDS) {
     if (field in sanitized && sanitized[field] === "") sanitized[field] = null;
