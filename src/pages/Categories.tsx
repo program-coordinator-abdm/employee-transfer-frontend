@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet, XCircle } from "lucide-react";
+import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet, XCircle, ClipboardList } from "lucide-react";
 import KGIDSearch from "@/components/KGIDSearch";
 import { cn } from "@/lib/utils";
 import { getNewEmployees, type NewEmployee } from "@/lib/api";
@@ -412,6 +412,27 @@ const Categories: React.FC = () => {
             <div className="hidden sm:flex items-center gap-2">
               <Button className="btn-primary px-6 py-2.5 text-base font-semibold" onClick={(e) => { e.stopPropagation(); navigate("/employee/new"); }}>
                 <UserPlus className="w-5 h-5 mr-2" /> Add Employee
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Add Vacancies CTA */}
+        <Card
+          className="mb-8 cursor-pointer group border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all duration-200 hover:shadow-lg"
+          onClick={() => navigate("/add-vacancies")}
+        >
+          <div className="p-6 flex items-center gap-5">
+            <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-105 transition-transform">
+              <ClipboardList className="w-7 h-7 text-primary-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg font-bold text-foreground">Add Vacancies</h2>
+              <p className="text-sm text-muted-foreground">Record sanctioned positions, filled posts, and vacancies for institutions</p>
+            </div>
+            <div className="hidden sm:flex items-center gap-2">
+              <Button className="btn-primary px-6 py-2.5 text-base font-semibold" onClick={(e) => { e.stopPropagation(); navigate("/add-vacancies"); }}>
+                <ClipboardList className="w-5 h-5 mr-2" /> Add Vacancies
               </Button>
             </div>
           </div>

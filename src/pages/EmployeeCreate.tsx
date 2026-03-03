@@ -40,7 +40,7 @@ const INSTITUTION_TYPES = [
   "District Hospital", "District Level Hospitals", "MCH/W&C", "Prisons Hospitals", "AD Office",
   "Taluk Health Office", "DHO Office",
   "PO Office", "DJD", "Directorate", "Commissionerate",
-  "Community Based Facility", "Others",
+  "Others",
 ];
 const HFR_ELIGIBLE_TYPES = ["SC", "PHC/UPHC", "CHC", "Taluk General Hospital", "Sub Division Hospital", "District Hospital", "District Level Hospitals", "MCH/W&C", "Prisons Hospitals"];
 
