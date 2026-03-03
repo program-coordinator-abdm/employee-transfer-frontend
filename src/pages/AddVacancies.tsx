@@ -87,15 +87,15 @@ const AddVacancies: React.FC = () => {
     setSubmitting(true);
     try {
       await submitVacancies({
-        institutionType,
+        institutionTypeName: institutionType.trim(),
         institutionName: institutionName.trim(),
-        district,
-        taluk,
-        cityTownVillage: resolvedCity,
-        vacancies: validRows.map((r) => ({
-          designation: r.designation === "__other__" ? r.customDesignation.trim() : r.designation,
-          sanctioned: parseInt(r.sanctioned) || 0,
-          working: parseInt(r.working) || 0,
+        district: district.trim(),
+        taluk: taluk.trim(),
+        cityOrTownOrVillage: resolvedCity.trim(),
+        lines: validRows.map((r) => ({
+          designationName: (r.designation === "__other__" ? r.customDesignation.trim() : r.designation).trim(),
+          sanctionedPositions: parseInt(r.sanctioned) || 0,
+          filled: parseInt(r.working) || 0,
           vacant: calcVacant(r.sanctioned, r.working),
         })),
       });
