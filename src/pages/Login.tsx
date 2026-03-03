@@ -10,7 +10,7 @@ const Login: React.FC = () => {
   const { login, loginDataOfficer } = useAuth();
 
   // Admin state
-  const [adminData, setAdminData] = useState({ email: "", password: "" });
+  const [adminData, setAdminData] = useState({ username: "", password: "" });
   const [adminShowPw, setAdminShowPw] = useState(false);
   const [adminLoading, setAdminLoading] = useState(false);
   const [adminErrors, setAdminErrors] = useState<Record<string, string>>({});
@@ -24,19 +24,17 @@ const Login: React.FC = () => {
   const handleAdminSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs: Record<string, string> = {};
-    if (!adminData.email.trim()) errs.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminData.email)) errs.email = "Enter a valid email";
+    if (!adminData.username.trim()) errs.username = "Username is required";
     if (!adminData.password) errs.password = "Password is required";
-    else if (adminData.password.length < 6) errs.password = "Min 6 characters";
     setAdminErrors(errs);
     if (Object.keys(errs).length) return;
 
     setAdminLoading(true);
     try {
-      await login({ email: adminData.email, password: adminData.password });
+      await login({ username: adminData.username, password: adminData.password });
       navigate("/categories");
-    } catch {
-      setAdminErrors({ form: "Login failed. Check your credentials." });
+    } catch (err: any) {
+      setAdminErrors({ form: err?.message || "Invalid username or password" });
     } finally {
       setAdminLoading(false);
     }
@@ -54,8 +52,8 @@ const Login: React.FC = () => {
     try {
       await loginDataOfficer({ username: doData.username, password: doData.password });
       navigate("/categories");
-    } catch {
-      setDoErrors({ form: "Invalid credentials. Please try again." });
+    } catch (err: any) {
+      setDoErrors({ form: err?.message || "Invalid username or password" });
     } finally {
       setDoLoading(false);
     }
@@ -109,19 +107,19 @@ const Login: React.FC = () => {
 
             <form onSubmit={handleAdminSubmit} className="space-y-4">
               <div>
-                <label htmlFor="admin-email" className="input-label">Email Address</label>
+                <label htmlFor="admin-username" className="input-label">Username</label>
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <input
-                    id="admin-email"
-                    type="email"
-                    value={adminData.email}
-                    onChange={(e) => { setAdminData(p => ({ ...p, email: e.target.value })); setAdminErrors(p => ({ ...p, email: "" })); }}
-                    className={`input-field pl-12 ${adminErrors.email ? "border-danger" : ""}`}
-                    placeholder="Enter your email"
+                    id="admin-username"
+                    type="text"
+                    value={adminData.username}
+                    onChange={(e) => { setAdminData(p => ({ ...p, username: e.target.value })); setAdminErrors(p => ({ ...p, username: "" })); }}
+                    className={`input-field pl-12 ${adminErrors.username ? "border-danger" : ""}`}
+                    placeholder="Enter your username"
                   />
                 </div>
-                {adminErrors.email && <p className="input-error">{adminErrors.email}</p>}
+                {adminErrors.username && <p className="input-error">{adminErrors.username}</p>}
               </div>
               <div>
                 <label htmlFor="admin-password" className="input-label">Password</label>

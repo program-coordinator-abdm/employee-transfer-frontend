@@ -308,14 +308,40 @@ function mapBackendEmployee(e: BackendEmployee): Employee {
 
 // Auth API
 export const login = async (credentials: {
-  username?: string;
-  email?: string;
+  username: string;
   password: string;
 }): Promise<LoginResponse> => {
-  const res = await apiClient<BackendLoginResponse>("/auth/login", {
+  const payload = {
+    username: credentials.username.trim().toLowerCase(),
+    password: credentials.password.trim(),
+  };
+
+  console.log("[login] POST /auth/login payload:", { username: payload.username });
+
+  const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
-    body: JSON.stringify(credentials),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
   });
+
+  console.log("[login] Response status:", response.status);
+
+  if (response.status === 401) {
+    throw new Error("Invalid username or password");
+  }
+
+  if (!response.ok) {
+    let message = `Login failed (${response.status})`;
+    try {
+      const errBody = await response.json();
+      console.log("[login] Error body:", errBody);
+      if (errBody?.message) message = errBody.message;
+    } catch {}
+    throw new Error(message);
+  }
+
+  const res: BackendLoginResponse = await response.json();
+  console.log("[login] Success, user:", res.user?.username);
 
   return {
     token: res.token,

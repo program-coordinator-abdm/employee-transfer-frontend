@@ -16,7 +16,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: { email?: string; username?: string; password: string }) => Promise<void>;
+  login: (credentials: { username: string; password: string }) => Promise<void>;
   loginDataOfficer: (credentials: { username: string; password: string }) => Promise<void>;
   logout: () => void;
 }
@@ -36,8 +36,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsLoading(false);
   }, []);
 
-  const login = async (credentials: { email?: string; username?: string; password: string }) => {
-    const response = await apiLogin(credentials);
+  const login = async (credentials: { username: string; password: string }) => {
+    const response = await apiLogin({ username: credentials.username, password: credentials.password });
     const userWithRole: User = { ...response.user, role: "ADMIN" as UserRole };
     setToken(response.token);
     setUser(userWithRole);
