@@ -589,7 +589,7 @@ const Categories: React.FC = () => {
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <span className="font-mono">KGID: {emp.kgid}</span>
                             <span>•</span>
-                            <span>{emp.designation}</span>
+                            <span>{emp.currentPostHeld || emp.designation || emp.designationGroup || "—"}</span>
                           </div>
                         </div>
                       </div>
