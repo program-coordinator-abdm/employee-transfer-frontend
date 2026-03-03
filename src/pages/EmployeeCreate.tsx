@@ -426,6 +426,20 @@ const EmployeeCreate: React.FC = () => {
     if (probationaryPeriod && !probationaryPeriodDoc) errs.probationaryPeriodDoc = "Documentary proof is required";
     if (ngoBenefits && !ngoBenefitsDoc) errs.ngoBenefitsDoc = "Documentary proof is required";
     if (isDoctorNursePharmacist && !hprId.trim()) errs.hprId = "HPR ID is required when Doctor/Nurse/Pharmacist is selected";
+    if (timeboundApplicable) {
+      if (!timeboundCategory) {
+        errs.timeboundCategory = "Please select a timebound category";
+      } else {
+        const doctorSelected = timebound6Years || timebound13Years || timebound20Years;
+        const othersSelected = timebound10Years || timebound15Years || timebound20Years || timebound25Years || timebound30Years;
+        if (timeboundCategory === "Doctors" && !doctorSelected) {
+          errs.timeboundYearsCheck = "Select at least one applicable timebound year.";
+        }
+        if (timeboundCategory === "Others" && !othersSelected) {
+          errs.timeboundYearsCheck = "Select at least one applicable timebound year.";
+        }
+      }
+    }
     if (recruitmentType === "Direct Recruitment" && !directRecruitmentMode) errs.directRecruitmentMode = "Please select a recruitment mode (KPSC, DRC, or SRC)";
     if (cltCompleted && !cltCompletedDoc) errs.cltCompletedDoc = "CLT document is required";
     if (HFR_ELIGIBLE_TYPES.includes(currentInstitutionType) && !currentHfrId.trim()) errs.currentHfrId = "HFR ID is required for this institution type";
@@ -536,15 +550,32 @@ const EmployeeCreate: React.FC = () => {
       currentWorkingSince: currentWorkingSince!.toISOString(),
       currentAreaType,
       pastServices, educationDetails,
-      timeboundApplicable, timeboundCategory, timeboundYears, timeboundDoc,
-      timeboundDate: timeboundDate?.toISOString() || "",
-      timebound6Years, timebound6YearsDoc, timebound6YearsDate: timebound6YearsDate?.toISOString() || "",
-      timebound13Years, timebound13YearsDoc, timebound13YearsDate: timebound13YearsDate?.toISOString() || "",
-      timebound20Years, timebound20YearsDoc, timebound20YearsDate: timebound20YearsDate?.toISOString() || "",
-      timebound10Years, timebound10YearsDoc, timebound10YearsDate: timebound10YearsDate?.toISOString() || "",
-      timebound15Years, timebound15YearsDoc, timebound15YearsDate: timebound15YearsDate?.toISOString() || "",
-      timebound25Years, timebound25YearsDoc, timebound25YearsDate: timebound25YearsDate?.toISOString() || "",
-      timebound30Years, timebound30YearsDoc, timebound30YearsDate: timebound30YearsDate?.toISOString() || "",
+      timeboundApplicable,
+      timeboundCategory: timeboundApplicable ? timeboundCategory : "",
+      timeboundYears: timeboundApplicable ? timeboundYears : "",
+      timeboundDoc: timeboundApplicable ? timeboundDoc : "",
+      timeboundDate: timeboundApplicable ? (timeboundDate?.toISOString() || "") : "",
+      timebound6Years: timeboundApplicable ? timebound6Years : false,
+      timebound6YearsDoc: timeboundApplicable ? timebound6YearsDoc : "",
+      timebound6YearsDate: timeboundApplicable ? (timebound6YearsDate?.toISOString() || "") : "",
+      timebound13Years: timeboundApplicable ? timebound13Years : false,
+      timebound13YearsDoc: timeboundApplicable ? timebound13YearsDoc : "",
+      timebound13YearsDate: timeboundApplicable ? (timebound13YearsDate?.toISOString() || "") : "",
+      timebound20Years: timeboundApplicable ? timebound20Years : false,
+      timebound20YearsDoc: timeboundApplicable ? timebound20YearsDoc : "",
+      timebound20YearsDate: timeboundApplicable ? (timebound20YearsDate?.toISOString() || "") : "",
+      timebound10Years: timeboundApplicable ? timebound10Years : false,
+      timebound10YearsDoc: timeboundApplicable ? timebound10YearsDoc : "",
+      timebound10YearsDate: timeboundApplicable ? (timebound10YearsDate?.toISOString() || "") : "",
+      timebound15Years: timeboundApplicable ? timebound15Years : false,
+      timebound15YearsDoc: timeboundApplicable ? timebound15YearsDoc : "",
+      timebound15YearsDate: timeboundApplicable ? (timebound15YearsDate?.toISOString() || "") : "",
+      timebound25Years: timeboundApplicable ? timebound25Years : false,
+      timebound25YearsDoc: timeboundApplicable ? timebound25YearsDoc : "",
+      timebound25YearsDate: timeboundApplicable ? (timebound25YearsDate?.toISOString() || "") : "",
+      timebound30Years: timeboundApplicable ? timebound30Years : false,
+      timebound30YearsDoc: timeboundApplicable ? timebound30YearsDoc : "",
+      timebound30YearsDate: timeboundApplicable ? (timebound30YearsDate?.toISOString() || "") : "",
       currentServiceDoc,
       directRecruitmentMode,
       promotionRejected,
@@ -1013,6 +1044,7 @@ const EmployeeCreate: React.FC = () => {
                       <div className="p-4 rounded-lg border border-border bg-muted/10 space-y-4">
                         <label className="input-label">Select applicable timebound years</label>
                         <p className="text-xs text-muted-foreground">Tick each applicable year, enter date and upload supporting document</p>
+                        {errors.timeboundYearsCheck && <p className="text-sm text-destructive font-medium">{errors.timeboundYearsCheck}</p>}
                         {[
                           { label: "6 Years", checked: timebound6Years, setChecked: setTimebound6Years, doc: timebound6YearsDoc, setDoc: setTimebound6YearsDoc, date: timebound6YearsDate, setDate: setTimebound6YearsDate },
                           { label: "13 Years", checked: timebound13Years, setChecked: setTimebound13Years, doc: timebound13YearsDoc, setDoc: setTimebound13YearsDoc, date: timebound13YearsDate, setDate: setTimebound13YearsDate },
@@ -1020,7 +1052,7 @@ const EmployeeCreate: React.FC = () => {
                         ].map((item) => (
                           <div key={item.label} className="space-y-2">
                             <label className="flex items-center gap-3 cursor-pointer">
-                              <input type="checkbox" checked={item.checked} onChange={(e) => { item.setChecked(e.target.checked); if (!e.target.checked) { item.setDoc(""); item.setDate(undefined); } }} className="accent-primary w-4 h-4" />
+                              <input type="checkbox" checked={item.checked} onChange={(e) => { item.setChecked(e.target.checked); if (!e.target.checked) { item.setDoc(""); item.setDate(undefined); } setErrors(prev => { const n = {...prev}; delete n.timeboundYearsCheck; return n; }); }} className="accent-primary w-4 h-4" />
                               <span className="text-sm font-medium text-foreground">{item.label}</span>
                             </label>
                             {item.checked && (
@@ -1050,6 +1082,7 @@ const EmployeeCreate: React.FC = () => {
                       <div className="p-4 rounded-lg border border-border bg-muted/10 space-y-4">
                         <label className="input-label">Select applicable timebound years</label>
                         <p className="text-xs text-muted-foreground">Tick each applicable year, enter date and upload supporting document</p>
+                        {errors.timeboundYearsCheck && <p className="text-sm text-destructive font-medium">{errors.timeboundYearsCheck}</p>}
                         {[
                           { label: "10 Years", checked: timebound10Years, setChecked: setTimebound10Years, doc: timebound10YearsDoc, setDoc: setTimebound10YearsDoc, date: timebound10YearsDate, setDate: setTimebound10YearsDate },
                           { label: "15 Years", checked: timebound15Years, setChecked: setTimebound15Years, doc: timebound15YearsDoc, setDoc: setTimebound15YearsDoc, date: timebound15YearsDate, setDate: setTimebound15YearsDate },
@@ -1059,7 +1092,7 @@ const EmployeeCreate: React.FC = () => {
                         ].map((item) => (
                           <div key={item.label} className="space-y-2">
                             <label className="flex items-center gap-3 cursor-pointer">
-                              <input type="checkbox" checked={item.checked} onChange={(e) => { item.setChecked(e.target.checked); if (!e.target.checked) { item.setDoc(""); item.setDate(undefined); } }} className="accent-primary w-4 h-4" />
+                              <input type="checkbox" checked={item.checked} onChange={(e) => { item.setChecked(e.target.checked); if (!e.target.checked) { item.setDoc(""); item.setDate(undefined); } setErrors(prev => { const n = {...prev}; delete n.timeboundYearsCheck; return n; }); }} className="accent-primary w-4 h-4" />
                               <span className="text-sm font-medium text-foreground">{item.label}</span>
                             </label>
                             {item.checked && (
