@@ -17,6 +17,7 @@ import DataOfficerDashboard from "./pages/DataOfficerDashboard";
 import EmployeeCreate from "./pages/EmployeeCreate";
 import Maintenance from "./pages/Maintenance";
 import AddVacancies from "./pages/AddVacancies";
+import ViewVacancies from "./pages/ViewVacancies";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ const App = () => {
               <Route path="/promotions" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><Promotions /></ProtectedRoute>} />
 
               <Route path="/add-vacancies" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><AddVacancies /></ProtectedRoute>} />
+              <Route path="/vacancies/view" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><ViewVacancies /></ProtectedRoute>} />
 
               {/* Data Officer routes */}
               <Route path="/data-officer" element={<ProtectedRoute allowedRoles={["DATA_OFFICER"]}><DataOfficerDashboard /></ProtectedRoute>} />

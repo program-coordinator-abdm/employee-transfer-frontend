@@ -1065,3 +1065,27 @@ export const submitVacancies = async (payload: VacancyPayload): Promise<any> => 
     body: JSON.stringify(payload),
   });
 };
+
+// --- View Vacancies ---
+export interface VacancyInstitution {
+  institutionKey: string;
+  institutionName: string;
+  institutionTypeName?: string;
+  district: string;
+  taluk: string;
+  cityOrTownOrVillage?: string;
+}
+
+export interface VacancySubmission {
+  id?: string;
+  createdAt: string;
+  lines: VacancyLine[];
+}
+
+export const fetchVacancyInstitutions = async (): Promise<VacancyInstitution[]> => {
+  return apiClient<VacancyInstitution[]>("/api/vacancies/institutions");
+};
+
+export const fetchVacanciesByInstitution = async (institutionKey: string): Promise<VacancySubmission[]> => {
+  return apiClient<VacancySubmission[]>(`/api/vacancies/by-institution?institutionKey=${encodeURIComponent(institutionKey)}`);
+};
