@@ -1053,7 +1053,7 @@ const EmployeeCreate: React.FC = () => {
                             {item.checked && (
                               <div className="ml-7 space-y-3">
                                 <div>
-                                  <label className="input-label">Date</label>
+                                  <label className="input-label">Date <span className="text-destructive">*</span></label>
                                   <DatePickerField
                                     value={item.date}
                                     onChange={(d) => item.setDate(d)}
@@ -1065,7 +1065,7 @@ const EmployeeCreate: React.FC = () => {
                                   value={item.doc}
                                   onChange={(name) => item.setDoc(name)}
                                   label={`Upload ${item.label} Document`}
-                                  required={false}
+                                  required={true}
                                 />
                               </div>
                             )}
@@ -1093,7 +1093,7 @@ const EmployeeCreate: React.FC = () => {
                             {item.checked && (
                               <div className="ml-7 space-y-3">
                                 <div>
-                                  <label className="input-label">Date</label>
+                                  <label className="input-label">Date <span className="text-destructive">*</span></label>
                                   <DatePickerField
                                     value={item.date}
                                     onChange={(d) => item.setDate(d)}
@@ -1105,7 +1105,7 @@ const EmployeeCreate: React.FC = () => {
                                   value={item.doc}
                                   onChange={(name) => item.setDoc(name)}
                                   label={`Upload ${item.label} Document`}
-                                  required={false}
+                                  required={true}
                                 />
                               </div>
                             )}
