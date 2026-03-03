@@ -14,6 +14,7 @@ const ViewVacancies: React.FC = () => {
   const [institutions, setInstitutions] = useState<VacancyInstitution[]>([]);
   const [loadingInst, setLoadingInst] = useState(true);
   const [selectedKey, setSelectedKey] = useState("");
+  const [institution, setInstitution] = useState<VacancyInstitution | null>(null);
   const [submissions, setSubmissions] = useState<VacancySubmission[]>([]);
   const [loadingData, setLoadingData] = useState(false);
   const [error, setError] = useState("");
@@ -29,10 +30,12 @@ const ViewVacancies: React.FC = () => {
     if (!selectedKey) return;
     setLoadingData(true);
     setError("");
+    setInstitution(null);
     setSubmissions([]);
     try {
-      const data = await fetchVacanciesByInstitution(selectedKey);
-      setSubmissions(data);
+      const res = await fetchVacanciesByInstitution(selectedKey);
+      setInstitution(res.institution || null);
+      setSubmissions(Array.isArray(res.submissions) ? res.submissions : []);
     } catch {
       setError("Failed to load vacancy data.");
     } finally {
@@ -40,7 +43,7 @@ const ViewVacancies: React.FC = () => {
     }
   };
 
-  const selectedInst = institutions.find((i) => i.institutionKey === selectedKey);
+  const sortedSubmissions = [...submissions].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   const renderTable = (lines: VacancySubmission["lines"]) => (
     <Table>
@@ -108,15 +111,15 @@ const ViewVacancies: React.FC = () => {
         </Card>
 
         {/* Institution summary */}
-        {selectedInst && submissions.length > 0 && (
+        {institution && (
           <Card className="mb-6 bg-muted/30">
             <CardContent className="p-4">
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 text-sm">
-                <div><span className="text-muted-foreground">Type:</span> <span className="font-medium">{selectedInst.institutionTypeName || "—"}</span></div>
-                <div><span className="text-muted-foreground">Name:</span> <span className="font-medium">{selectedInst.institutionName}</span></div>
-                <div><span className="text-muted-foreground">District:</span> <span className="font-medium">{selectedInst.district}</span></div>
-                <div><span className="text-muted-foreground">Taluk:</span> <span className="font-medium">{selectedInst.taluk}</span></div>
-                <div><span className="text-muted-foreground">City/Town:</span> <span className="font-medium">{selectedInst.cityOrTownOrVillage || "—"}</span></div>
+                <div><span className="text-muted-foreground">Type:</span> <span className="font-medium">{institution.institutionTypeName || "—"}</span></div>
+                <div><span className="text-muted-foreground">Name:</span> <span className="font-medium">{institution.institutionName}</span></div>
+                <div><span className="text-muted-foreground">District:</span> <span className="font-medium">{institution.district}</span></div>
+                <div><span className="text-muted-foreground">Taluk:</span> <span className="font-medium">{institution.taluk}</span></div>
+                <div><span className="text-muted-foreground">City/Town:</span> <span className="font-medium">{institution.cityOrTownOrVillage || "—"}</span></div>
               </div>
             </CardContent>
           </Card>
@@ -132,27 +135,29 @@ const ViewVacancies: React.FC = () => {
           </div>
         )}
 
-        {!loadingData && selectedKey && submissions.length === 0 && !error && (
+        {!loadingData && institution && sortedSubmissions.length === 0 && !error && (
           <Card className="p-8 text-center text-muted-foreground">
             <MapPin className="w-8 h-8 mx-auto mb-2 opacity-50" />
             No vacancy data found for this institution.
           </Card>
         )}
 
-        {!loadingData && submissions.length === 1 && (
+        {!loadingData && sortedSubmissions.length === 1 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-base">
-                Submitted on {new Date(submissions[0].createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                Submitted on {new Date(sortedSubmissions[0].createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
               </CardTitle>
             </CardHeader>
-            <CardContent>{renderTable(submissions[0].lines)}</CardContent>
+            <CardContent>
+              {sortedSubmissions[0].lines.length > 0 ? renderTable(sortedSubmissions[0].lines) : <p className="text-muted-foreground text-sm">No vacancy lines found.</p>}
+            </CardContent>
           </Card>
         )}
 
-        {!loadingData && submissions.length > 1 && (
-          <Accordion type="multiple" defaultValue={[submissions[0].id || "0"]} className="space-y-3">
-            {submissions.map((sub, idx) => (
+        {!loadingData && sortedSubmissions.length > 1 && (
+          <Accordion type="multiple" defaultValue={[sortedSubmissions[0].id || "0"]} className="space-y-3">
+            {sortedSubmissions.map((sub, idx) => (
               <AccordionItem key={sub.id || idx} value={sub.id || String(idx)} className="border rounded-lg overflow-hidden">
                 <AccordionTrigger className="px-4 hover:no-underline">
                   <span className="text-sm font-medium">
@@ -160,7 +165,7 @@ const ViewVacancies: React.FC = () => {
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
-                  {renderTable(sub.lines)}
+                  {sub.lines.length > 0 ? renderTable(sub.lines) : <p className="text-muted-foreground text-sm">No vacancy lines found.</p>}
                 </AccordionContent>
               </AccordionItem>
             ))}

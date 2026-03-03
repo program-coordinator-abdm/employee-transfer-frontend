@@ -1184,6 +1184,11 @@ export const fetchVacancyInstitutions = async (): Promise<VacancyInstitution[]> 
   return apiClient<VacancyInstitution[]>("/vacancies/institutions");
 };
 
-export const fetchVacanciesByInstitution = async (institutionKey: string): Promise<VacancySubmission[]> => {
-  return apiClient<VacancySubmission[]>(`/vacancies/by-institution?institutionKey=${encodeURIComponent(institutionKey)}`);
+export interface VacancyByInstitutionResponse {
+  institution: VacancyInstitution;
+  submissions: VacancySubmission[];
+}
+
+export const fetchVacanciesByInstitution = async (institutionKey: string): Promise<VacancyByInstitutionResponse> => {
+  return apiClient<VacancyByInstitutionResponse>(`/vacancies/by-institution?institutionKey=${encodeURIComponent(institutionKey)}`);
 };
