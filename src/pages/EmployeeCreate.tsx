@@ -157,29 +157,29 @@ const EmployeeCreate: React.FC = () => {
   // Timebound doctor checkboxes
   const [timebound6Years, setTimebound6Years] = useState(false);
   const [timebound6YearsDoc, setTimebound6YearsDoc] = useState("");
-  const [timebound6YearsDate, setTimebound6YearsDate] = useState("");
+  const [timebound6YearsDate, setTimebound6YearsDate] = useState<Date | undefined>();
   const [timebound13Years, setTimebound13Years] = useState(false);
   const [timebound13YearsDoc, setTimebound13YearsDoc] = useState("");
-  const [timebound13YearsDate, setTimebound13YearsDate] = useState("");
+  const [timebound13YearsDate, setTimebound13YearsDate] = useState<Date | undefined>();
   const [timebound20Years, setTimebound20Years] = useState(false);
   const [timebound20YearsDoc, setTimebound20YearsDoc] = useState("");
-  const [timebound20YearsDate, setTimebound20YearsDate] = useState("");
+  const [timebound20YearsDate, setTimebound20YearsDate] = useState<Date | undefined>();
   // Timebound others checkboxes
   const [timebound10Years, setTimebound10Years] = useState(false);
   const [timebound10YearsDoc, setTimebound10YearsDoc] = useState("");
-  const [timebound10YearsDate, setTimebound10YearsDate] = useState("");
+  const [timebound10YearsDate, setTimebound10YearsDate] = useState<Date | undefined>();
   const [timebound15Years, setTimebound15Years] = useState(false);
   const [timebound15YearsDoc, setTimebound15YearsDoc] = useState("");
-  const [timebound15YearsDate, setTimebound15YearsDate] = useState("");
+  const [timebound15YearsDate, setTimebound15YearsDate] = useState<Date | undefined>();
   // Current service joining document
   const [currentServiceDoc, setCurrentServiceDoc] = useState("");
   // Timebound others 25 & 30 years
   const [timebound25Years, setTimebound25Years] = useState(false);
   const [timebound25YearsDoc, setTimebound25YearsDoc] = useState("");
-  const [timebound25YearsDate, setTimebound25YearsDate] = useState("");
+  const [timebound25YearsDate, setTimebound25YearsDate] = useState<Date | undefined>();
   const [timebound30Years, setTimebound30Years] = useState(false);
   const [timebound30YearsDoc, setTimebound30YearsDoc] = useState("");
-  const [timebound30YearsDate, setTimebound30YearsDate] = useState("");
+  const [timebound30YearsDate, setTimebound30YearsDate] = useState<Date | undefined>();
   const [ngoBenefits, setNgoBenefits] = useState(false);
   const [ngoBenefitsDoc, setNgoBenefitsDoc] = useState("");
 
@@ -257,25 +257,25 @@ const EmployeeCreate: React.FC = () => {
       if (existing.contractJoiningDate) setContractJoiningDate(new Date(existing.contractJoiningDate));
       if (existing.timebound6Years !== undefined) setTimebound6Years(existing.timebound6Years);
       if (existing.timebound6YearsDoc) setTimebound6YearsDoc(existing.timebound6YearsDoc);
-      if (existing.timebound6YearsDate) setTimebound6YearsDate(existing.timebound6YearsDate);
+      if (existing.timebound6YearsDate) setTimebound6YearsDate(new Date(existing.timebound6YearsDate));
       if (existing.timebound13Years !== undefined) setTimebound13Years(existing.timebound13Years);
       if (existing.timebound13YearsDoc) setTimebound13YearsDoc(existing.timebound13YearsDoc);
-      if (existing.timebound13YearsDate) setTimebound13YearsDate(existing.timebound13YearsDate);
+      if (existing.timebound13YearsDate) setTimebound13YearsDate(new Date(existing.timebound13YearsDate));
       if (existing.timebound20Years !== undefined) setTimebound20Years(existing.timebound20Years);
       if (existing.timebound20YearsDoc) setTimebound20YearsDoc(existing.timebound20YearsDoc);
-      if (existing.timebound20YearsDate) setTimebound20YearsDate(existing.timebound20YearsDate);
+      if (existing.timebound20YearsDate) setTimebound20YearsDate(new Date(existing.timebound20YearsDate));
       if (existing.timebound10Years !== undefined) setTimebound10Years(existing.timebound10Years);
       if (existing.timebound10YearsDoc) setTimebound10YearsDoc(existing.timebound10YearsDoc);
-      if (existing.timebound10YearsDate) setTimebound10YearsDate(existing.timebound10YearsDate);
+      if (existing.timebound10YearsDate) setTimebound10YearsDate(new Date(existing.timebound10YearsDate));
       if (existing.timebound15Years !== undefined) setTimebound15Years(existing.timebound15Years);
       if (existing.timebound15YearsDoc) setTimebound15YearsDoc(existing.timebound15YearsDoc);
-      if (existing.timebound15YearsDate) setTimebound15YearsDate(existing.timebound15YearsDate);
+      if (existing.timebound15YearsDate) setTimebound15YearsDate(new Date(existing.timebound15YearsDate));
       if (existing.timebound25Years !== undefined) setTimebound25Years(existing.timebound25Years);
       if (existing.timebound25YearsDoc) setTimebound25YearsDoc(existing.timebound25YearsDoc);
-      if (existing.timebound25YearsDate) setTimebound25YearsDate(existing.timebound25YearsDate);
+      if (existing.timebound25YearsDate) setTimebound25YearsDate(new Date(existing.timebound25YearsDate));
       if (existing.timebound30Years !== undefined) setTimebound30Years(existing.timebound30Years);
       if (existing.timebound30YearsDoc) setTimebound30YearsDoc(existing.timebound30YearsDoc);
-      if (existing.timebound30YearsDate) setTimebound30YearsDate(existing.timebound30YearsDate);
+      if (existing.timebound30YearsDate) setTimebound30YearsDate(new Date(existing.timebound30YearsDate));
       if (existing.currentServiceDoc) setCurrentServiceDoc(existing.currentServiceDoc);
       if (existing.pastServiceDocs && existing.pastServiceDocs.length > 0) setPastServiceDocs(existing.pastServiceDocs);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
@@ -538,13 +538,13 @@ const EmployeeCreate: React.FC = () => {
       pastServices, educationDetails,
       timeboundApplicable, timeboundCategory, timeboundYears, timeboundDoc,
       timeboundDate: timeboundDate?.toISOString() || "",
-      timebound6Years, timebound6YearsDoc, timebound6YearsDate,
-      timebound13Years, timebound13YearsDoc, timebound13YearsDate,
-      timebound20Years, timebound20YearsDoc, timebound20YearsDate,
-      timebound10Years, timebound10YearsDoc, timebound10YearsDate,
-      timebound15Years, timebound15YearsDoc, timebound15YearsDate,
-      timebound25Years, timebound25YearsDoc, timebound25YearsDate,
-      timebound30Years, timebound30YearsDoc, timebound30YearsDate,
+      timebound6Years, timebound6YearsDoc, timebound6YearsDate: timebound6YearsDate?.toISOString() || "",
+      timebound13Years, timebound13YearsDoc, timebound13YearsDate: timebound13YearsDate?.toISOString() || "",
+      timebound20Years, timebound20YearsDoc, timebound20YearsDate: timebound20YearsDate?.toISOString() || "",
+      timebound10Years, timebound10YearsDoc, timebound10YearsDate: timebound10YearsDate?.toISOString() || "",
+      timebound15Years, timebound15YearsDoc, timebound15YearsDate: timebound15YearsDate?.toISOString() || "",
+      timebound25Years, timebound25YearsDoc, timebound25YearsDate: timebound25YearsDate?.toISOString() || "",
+      timebound30Years, timebound30YearsDoc, timebound30YearsDate: timebound30YearsDate?.toISOString() || "",
       currentServiceDoc,
       directRecruitmentMode,
       promotionRejected,
@@ -993,7 +993,7 @@ const EmployeeCreate: React.FC = () => {
                 <div className="flex items-center justify-between gap-4">
                   <Label className="text-sm font-medium leading-snug">Is Timebound applicable?</Label>
                   <div className="flex items-center gap-2 shrink-0">
-                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); setPromotionRejected(false); setPromotionRejectedDate(undefined); setPromotionRejectedDesignation(""); setPgBond(false); setPgBondDoc(""); setPgBondCompletionDate(undefined); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(""); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(""); setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(""); setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(""); setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(""); setTimebound25Years(false); setTimebound25YearsDoc(""); setTimebound25YearsDate(""); setTimebound30Years(false); setTimebound30YearsDoc(""); setTimebound30YearsDate(""); } }} />
+                    <Switch checked={timeboundApplicable} onCheckedChange={(v) => { setTimeboundApplicable(v); if (!v) { setTimeboundCategory(""); setTimeboundYears(""); setTimeboundDoc(""); setTimeboundDate(undefined); setPromotionRejected(false); setPromotionRejectedDate(undefined); setPromotionRejectedDesignation(""); setPgBond(false); setPgBondDoc(""); setPgBondCompletionDate(undefined); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(undefined); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(undefined); setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(undefined); setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(undefined); setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(undefined); setTimebound25Years(false); setTimebound25YearsDoc(""); setTimebound25YearsDate(undefined); setTimebound30Years(false); setTimebound30YearsDoc(""); setTimebound30YearsDate(undefined); } }} />
                     <span className="text-sm text-muted-foreground w-8">{timeboundApplicable ? "Yes" : "No"}</span>
                   </div>
                 </div>
@@ -1002,7 +1002,7 @@ const EmployeeCreate: React.FC = () => {
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="input-label">Category <span className="text-destructive">*</span></label>
-                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(""); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(""); setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(""); setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(""); setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(""); setTimebound25Years(false); setTimebound25YearsDoc(""); setTimebound25YearsDate(""); setTimebound30Years(false); setTimebound30YearsDoc(""); setTimebound30YearsDate(""); }} className="input-field">
+                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(undefined); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(undefined); setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(undefined); setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(undefined); setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(undefined); setTimebound25Years(false); setTimebound25YearsDoc(""); setTimebound25YearsDate(undefined); setTimebound30Years(false); setTimebound30YearsDoc(""); setTimebound30YearsDate(undefined); }} className="input-field">
                           <option value="">Select Category</option>
                           <option value="Doctors">Doctors</option>
                           <option value="Others">Others</option>
@@ -1020,25 +1020,18 @@ const EmployeeCreate: React.FC = () => {
                         ].map((item) => (
                           <div key={item.label} className="space-y-2">
                             <label className="flex items-center gap-3 cursor-pointer">
-                              <input type="checkbox" checked={item.checked} onChange={(e) => { item.setChecked(e.target.checked); if (!e.target.checked) { item.setDoc(""); item.setDate(""); } }} className="accent-primary w-4 h-4" />
+                              <input type="checkbox" checked={item.checked} onChange={(e) => { item.setChecked(e.target.checked); if (!e.target.checked) { item.setDoc(""); item.setDate(undefined); } }} className="accent-primary w-4 h-4" />
                               <span className="text-sm font-medium text-foreground">{item.label}</span>
                             </label>
                             {item.checked && (
                               <div className="ml-7 space-y-3">
                                 <div>
-                                  <label className="input-label">Date (dd/mm/yyyy)</label>
-                                  <input
-                                    type="text"
+                                  <label className="input-label">Date</label>
+                                  <DatePickerField
                                     value={item.date}
-                                    onChange={(e) => {
-                                      let v = e.target.value.replace(/[^0-9/]/g, "");
-                                      if (v.length === 2 && !v.includes("/")) v += "/";
-                                      else if (v.length === 5 && v.split("/").length === 2) v += "/";
-                                      if (v.length <= 10) item.setDate(v);
-                                    }}
-                                    className="input-field"
-                                    placeholder="dd/mm/yyyy"
-                                    maxLength={10}
+                                    onChange={(d) => item.setDate(d)}
+                                    placeholder="Select date"
+                                    disabled={(d) => d > new Date()}
                                   />
                                 </div>
                                 <FileUploadField
@@ -1066,25 +1059,18 @@ const EmployeeCreate: React.FC = () => {
                         ].map((item) => (
                           <div key={item.label} className="space-y-2">
                             <label className="flex items-center gap-3 cursor-pointer">
-                              <input type="checkbox" checked={item.checked} onChange={(e) => { item.setChecked(e.target.checked); if (!e.target.checked) { item.setDoc(""); item.setDate(""); } }} className="accent-primary w-4 h-4" />
+                              <input type="checkbox" checked={item.checked} onChange={(e) => { item.setChecked(e.target.checked); if (!e.target.checked) { item.setDoc(""); item.setDate(undefined); } }} className="accent-primary w-4 h-4" />
                               <span className="text-sm font-medium text-foreground">{item.label}</span>
                             </label>
                             {item.checked && (
                               <div className="ml-7 space-y-3">
                                 <div>
-                                  <label className="input-label">Date (dd/mm/yyyy)</label>
-                                  <input
-                                    type="text"
+                                  <label className="input-label">Date</label>
+                                  <DatePickerField
                                     value={item.date}
-                                    onChange={(e) => {
-                                      let v = e.target.value.replace(/[^0-9/]/g, "");
-                                      if (v.length === 2 && !v.includes("/")) v += "/";
-                                      else if (v.length === 5 && v.split("/").length === 2) v += "/";
-                                      if (v.length <= 10) item.setDate(v);
-                                    }}
-                                    className="input-field"
-                                    placeholder="dd/mm/yyyy"
-                                    maxLength={10}
+                                    onChange={(d) => item.setDate(d)}
+                                    placeholder="Select date"
+                                    disabled={(d) => d > new Date()}
                                   />
                                 </div>
                                 <FileUploadField
