@@ -429,15 +429,10 @@ const EmployeeCreate: React.FC = () => {
     if (timeboundApplicable) {
       if (!timeboundCategory) {
         errs.timeboundCategory = "Please select a timebound category";
-      } else {
-        const doctorSelected = timebound6Years || timebound13Years || timebound20Years;
-        const othersSelected = timebound10Years || timebound15Years || timebound20Years || timebound25Years || timebound30Years;
-        if (timeboundCategory === "Doctors" && !doctorSelected) {
-          errs.timeboundYearsCheck = "Select at least one applicable timebound year.";
-        }
-        if (timeboundCategory === "Others" && !othersSelected) {
-          errs.timeboundYearsCheck = "Select at least one applicable timebound year.";
-        }
+      }
+      const anyYearSelected = timebound6Years || timebound10Years || timebound13Years || timebound15Years || timebound20Years || timebound25Years || timebound30Years;
+      if (!anyYearSelected) {
+        errs.timeboundYearsCheck = "Select at least one applicable timebound year.";
       }
     }
     if (recruitmentType === "Direct Recruitment" && !directRecruitmentMode) errs.directRecruitmentMode = "Please select a recruitment mode (KPSC, DRC, or SRC)";
