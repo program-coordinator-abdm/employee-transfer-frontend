@@ -235,7 +235,11 @@ const apiClient = async <T>(
       let message = `API Error: ${response.status}`;
       try {
         const errBody = await response.json();
-        if (errBody?.message) message = errBody.message;
+        // Handle { error: "Validation error", issues: [...] } format
+        if (Array.isArray(errBody?.issues) && errBody.issues.length > 0) {
+          const uniqueMsgs = [...new Set(errBody.issues.map((i: any) => i?.message || String(i)).filter(Boolean))];
+          message = uniqueMsgs.slice(0, 3).join("; ");
+        } else if (errBody?.message) message = errBody.message;
         else if (errBody?.error) message = errBody.error;
         else if (Array.isArray(errBody?.errors) && errBody.errors.length > 0)
           message = errBody.errors[0]?.message || errBody.errors[0] || message;
@@ -624,13 +628,6 @@ function normalizeDateValue(val: any): string | null {
   return trimmed;
 }
 
-const OPTIONAL_DOC_FIELDS = [
-  "childSpouseDisabilityDoc", "divorceeWidowWithChildDoc", "pregnantOrChildUnderOneDoc",
-  "terminallyIllDoc", "retiringWithinTwoYearsDoc", "probationaryPeriodDoc",
-  "pgBondDoc", "cltCompletedDoc", "contractRegularisedDoc", "ngoBenefitsDoc",
-  "timebound6YearsDoc", "timebound10YearsDoc", "timebound13YearsDoc",
-  "timebound15YearsDoc", "timebound20YearsDoc", "timeboundDoc", "currentServiceDoc",
-];
 
 function cleanDocsArray(arr: any): string[] {
   if (!Array.isArray(arr)) return [];
@@ -653,6 +650,12 @@ function trimStringsInObject<T extends Record<string, any>>(obj: T): T {
   return result;
 }
 
+function sanitizeDocValue(val: any): string {
+  if (val === null || val === undefined) return "";
+  if (typeof val === "string") return val;
+  return String(val);
+}
+
 function sanitizeEmployeeBody(body: Record<string, any>): Record<string, any> {
   const sanitized = { ...body };
 
@@ -660,8 +663,12 @@ function sanitizeEmployeeBody(body: Record<string, any>): Record<string, any> {
   for (const field of ALL_DATE_FIELDS) {
     if (field in sanitized) sanitized[field] = normalizeDateValue(sanitized[field]);
   }
-  for (const field of OPTIONAL_DOC_FIELDS) {
-    if (field in sanitized && sanitized[field] === "") sanitized[field] = null;
+
+  // Ensure ALL *Doc fields are always strings (backend rejects null)
+  for (const key of Object.keys(sanitized)) {
+    if (key.endsWith("Doc")) {
+      sanitized[key] = sanitizeDocValue(sanitized[key]);
+    }
   }
 
   if ("pastServiceDocs" in sanitized) {
