@@ -237,6 +237,8 @@ const apiClient = async <T>(
         const errBody = await response.json();
         if (errBody?.message) message = errBody.message;
         else if (errBody?.error) message = errBody.error;
+        else if (Array.isArray(errBody?.errors) && errBody.errors.length > 0)
+          message = errBody.errors[0]?.message || errBody.errors[0] || message;
       } catch {}
       throw new Error(message);
     }
@@ -592,9 +594,75 @@ export interface NewEmployee {
   createdAt?: string;
 }
 
+// Sanitize employee payload before sending to backend
+const OPTIONAL_DATE_FIELDS = [
+  "contractJoiningDate", "contractRegularisedDate", "cltCompletionDate",
+  "pgBondCompletionDate", "probationDeclarationDate", "promotionRejectedDate",
+  "timebound6YearsDate", "timebound10YearsDate", "timebound13YearsDate",
+  "timebound15YearsDate", "timebound20YearsDate", "timeboundDate",
+];
+
+const OPTIONAL_DOC_FIELDS = [
+  "childSpouseDisabilityDoc", "divorceeWidowWithChildDoc", "pregnantOrChildUnderOneDoc",
+  "terminallyIllDoc", "retiringWithinTwoYearsDoc", "probationaryPeriodDoc",
+  "pgBondDoc", "cltCompletedDoc", "contractRegularisedDoc", "ngoBenefitsDoc",
+  "timebound6YearsDoc", "timebound10YearsDoc", "timebound13YearsDoc",
+  "timebound15YearsDoc", "timebound20YearsDoc", "timeboundDoc", "currentServiceDoc",
+];
+
+function cleanDocsArray(arr: any): string[] {
+  if (!Array.isArray(arr)) return [];
+  return arr.filter((v: any) => typeof v === "string" && v.trim() !== "");
+}
+
+function isEmptyRow(row: Record<string, any>): boolean {
+  return Object.values(row).every(
+    (v) => v === null || v === undefined || (typeof v === "string" && v.trim() === "") || (Array.isArray(v) && v.length === 0)
+  );
+}
+
+function trimStringsInObject<T extends Record<string, any>>(obj: T): T {
+  const result = { ...obj };
+  for (const key of Object.keys(result)) {
+    if (typeof result[key] === "string") {
+      (result as any)[key] = result[key].trim();
+    }
+  }
+  return result;
+}
+
+function sanitizeEmployeeBody(body: Record<string, any>): Record<string, any> {
+  const sanitized = { ...body };
+
+  for (const field of OPTIONAL_DATE_FIELDS) {
+    if (field in sanitized && sanitized[field] === "") sanitized[field] = null;
+  }
+  for (const field of OPTIONAL_DOC_FIELDS) {
+    if (field in sanitized && sanitized[field] === "") sanitized[field] = null;
+  }
+
+  if ("pastServiceDocs" in sanitized) {
+    sanitized.pastServiceDocs = cleanDocsArray(sanitized.pastServiceDocs);
+  }
+
+  if (Array.isArray(sanitized.pastServices)) {
+    sanitized.pastServices = sanitized.pastServices
+      .map((r: any) => trimStringsInObject(r))
+      .filter((r: any) => !isEmptyRow(r));
+  }
+
+  if (Array.isArray(sanitized.educationDetails)) {
+    sanitized.educationDetails = sanitized.educationDetails
+      .map((r: any) => trimStringsInObject(r))
+      .filter((r: any) => !isEmptyRow(r));
+  }
+
+  return sanitized;
+}
+
 // Create employee (Data Officer)
 export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdAt">): Promise<NewEmployee> => {
-  const body = {
+  const body = sanitizeEmployeeBody({
     empKgid: payload.kgid,
     empName: payload.name,
     designation: payload.designation,
@@ -695,7 +763,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     officerDeclDate: payload.officerDeclDate,
     pastServices: payload.pastServices,
     educationDetails: payload.educationDetails,
-  };
+  });
   return apiClient<NewEmployee>("/employees", {
     method: "POST",
     body: JSON.stringify(body),
@@ -704,7 +772,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
 
 // Update employee (Admin)
 export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, "id" | "createdAt">): Promise<NewEmployee> => {
-  const body = {
+  const body = sanitizeEmployeeBody({
     empKgid: payload.kgid,
     empName: payload.name,
     designation: payload.designation,
@@ -805,7 +873,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     officerDeclDate: payload.officerDeclDate,
     pastServices: payload.pastServices,
     educationDetails: payload.educationDetails,
-  };
+  });
   return apiClient<NewEmployee>(`/employees/${id}`, {
     method: "PUT",
     body: JSON.stringify(body),
