@@ -1041,3 +1041,27 @@ export const getSearchSuggestions = async (
     return [];
   }
 };
+
+// ===== Vacancy Management =====
+export interface VacancyRow {
+  designation: string;
+  sanctioned: number;
+  working: number;
+  vacant: number;
+}
+
+export interface VacancyPayload {
+  institutionType: string;
+  institutionName: string;
+  district: string;
+  taluk: string;
+  cityTownVillage: string;
+  vacancies: VacancyRow[];
+}
+
+export const submitVacancies = async (payload: VacancyPayload): Promise<any> => {
+  return apiClient<any>("/vacancies", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+};

@@ -5,9 +5,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Save, Loader2 } from "lucide-react";
 import { KARNATAKA_DISTRICTS, ALL_POSITIONS } from "@/lib/positions";
 import { getTaluks, getCities } from "@/lib/karnatakaGeo";
+import { submitVacancies } from "@/lib/api";
+import Toast, { useToastState } from "@/components/Toast";
 
 const INSTITUTION_TYPES = [
   "SC", "PHC/UPHC", "CHC", "Taluk General Hospital", "Sub Division Hospital",
@@ -17,17 +19,24 @@ const INSTITUTION_TYPES = [
   "Others",
 ];
 
-interface VacancyRow {
+interface VacancyRowLocal {
   designation: string;
+  customDesignation: string;
   sanctioned: string;
-  filled: string;
-  vacant: string;
+  working: string;
 }
 
-const emptyRow = (): VacancyRow => ({ designation: "", sanctioned: "", filled: "", vacant: "" });
+const emptyRow = (): VacancyRowLocal => ({ designation: "", customDesignation: "", sanctioned: "", working: "" });
+
+const calcVacant = (sanctioned: string, working: string): number => {
+  const s = parseInt(sanctioned) || 0;
+  const w = parseInt(working) || 0;
+  return Math.max(0, s - w);
+};
 
 const AddVacancies: React.FC = () => {
   const navigate = useNavigate();
+  const { toast, showToast, hideToast } = useToastState();
 
   const [institutionType, setInstitutionType] = useState("");
   const [institutionName, setInstitutionName] = useState("");
@@ -36,20 +45,23 @@ const AddVacancies: React.FC = () => {
   const [cityTownVillage, setCityTownVillage] = useState("");
   const [villageOtherMode, setVillageOtherMode] = useState(false);
   const [villageOtherText, setVillageOtherText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const [rows, setRows] = useState<VacancyRow[]>([emptyRow()]);
+  const [rows, setRows] = useState<VacancyRowLocal[]>([emptyRow()]);
 
   const taluks = district ? getTaluks(district) : [];
   const cities = taluk ? getCities(district, taluk) : [];
+
+  const resolvedCity = villageOtherMode ? villageOtherText.trim() : cityTownVillage;
 
   const isFormComplete =
     institutionType &&
     institutionName.trim() &&
     district &&
     taluk &&
-    (villageOtherMode ? villageOtherText.trim() : cityTownVillage);
+    resolvedCity;
 
-  const updateRow = (idx: number, field: keyof VacancyRow, value: string) => {
+  const updateRow = (idx: number, field: keyof VacancyRowLocal, value: string) => {
     setRows((prev) => prev.map((r, i) => (i === idx ? { ...r, [field]: value } : r)));
   };
 
@@ -60,6 +72,42 @@ const AddVacancies: React.FC = () => {
   };
 
   const designationNames = ALL_POSITIONS.map((p) => p.name);
+
+  const handleSubmit = async () => {
+    const validRows = rows.filter((r) => {
+      const desig = r.designation === "__other__" ? r.customDesignation.trim() : r.designation;
+      return desig && r.sanctioned;
+    });
+
+    if (validRows.length === 0) {
+      showToast("Please add at least one vacancy row with designation and sanctioned positions.", "error");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await submitVacancies({
+        institutionType,
+        institutionName: institutionName.trim(),
+        district,
+        taluk,
+        cityTownVillage: resolvedCity,
+        vacancies: validRows.map((r) => ({
+          designation: r.designation === "__other__" ? r.customDesignation.trim() : r.designation,
+          sanctioned: parseInt(r.sanctioned) || 0,
+          working: parseInt(r.working) || 0,
+          vacant: calcVacant(r.sanctioned, r.working),
+        })),
+      });
+      showToast("Vacancies submitted successfully!", "success");
+      // Reset form
+      setRows([emptyRow()]);
+    } catch (err: any) {
+      showToast(err?.message || "Failed to submit vacancies", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -137,7 +185,7 @@ const AddVacancies: React.FC = () => {
                   <TableRow>
                     <TableHead className="min-w-[200px]">Designation</TableHead>
                     <TableHead className="min-w-[130px]">Sanctioned Positions</TableHead>
-                    <TableHead className="min-w-[100px]">Filled</TableHead>
+                    <TableHead className="min-w-[100px]">Working</TableHead>
                     <TableHead className="min-w-[100px]">Vacant</TableHead>
                     <TableHead className="w-10"></TableHead>
                   </TableRow>
@@ -146,19 +194,36 @@ const AddVacancies: React.FC = () => {
                   {rows.map((row, idx) => (
                     <TableRow key={idx}>
                       <TableCell>
-                        <select value={row.designation} onChange={(e) => updateRow(idx, "designation", e.target.value)} className="input-field w-full text-sm">
-                          <option value="">Select Designation</option>
-                          {designationNames.map((d) => <option key={d} value={d}>{d}</option>)}
-                        </select>
+                        {row.designation === "__other__" ? (
+                          <div className="flex gap-2">
+                            <Input
+                              value={row.customDesignation}
+                              onChange={(e) => updateRow(idx, "customDesignation", e.target.value)}
+                              placeholder="Enter designation"
+                              className="flex-1 text-sm"
+                            />
+                            <Button variant="outline" size="sm" onClick={() => { updateRow(idx, "designation", ""); updateRow(idx, "customDesignation", ""); }}>
+                              Cancel
+                            </Button>
+                          </div>
+                        ) : (
+                          <select value={row.designation} onChange={(e) => updateRow(idx, "designation", e.target.value)} className="input-field w-full text-sm">
+                            <option value="">Select Designation</option>
+                            {designationNames.map((d) => <option key={d} value={d}>{d}</option>)}
+                            <option value="__other__">Others</option>
+                          </select>
+                        )}
                       </TableCell>
                       <TableCell>
                         <Input type="number" min="0" value={row.sanctioned} onChange={(e) => updateRow(idx, "sanctioned", e.target.value)} placeholder="0" />
                       </TableCell>
                       <TableCell>
-                        <Input type="number" min="0" value={row.filled} onChange={(e) => updateRow(idx, "filled", e.target.value)} placeholder="0" />
+                        <Input type="number" min="0" value={row.working} onChange={(e) => updateRow(idx, "working", e.target.value)} placeholder="0" />
                       </TableCell>
                       <TableCell>
-                        <Input type="number" min="0" value={row.vacant} onChange={(e) => updateRow(idx, "vacant", e.target.value)} placeholder="0" />
+                        <div className="flex items-center justify-center h-10 px-3 rounded-md bg-muted text-sm font-medium text-foreground">
+                          {calcVacant(row.sanctioned, row.working)}
+                        </div>
                       </TableCell>
                       <TableCell>
                         {rows.length > 1 && (
@@ -172,9 +237,15 @@ const AddVacancies: React.FC = () => {
                 </TableBody>
               </Table>
             </div>
-            <Button variant="outline" onClick={addRow} className="mt-4 gap-2">
-              <Plus className="w-4 h-4" /> Add Row
-            </Button>
+            <div className="flex items-center gap-3 mt-4">
+              <Button variant="outline" onClick={addRow} className="gap-2">
+                <Plus className="w-4 h-4" /> Add Row
+              </Button>
+              <Button onClick={handleSubmit} disabled={submitting} className="gap-2">
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                {submitting ? "Submitting..." : "Submit Vacancies"}
+              </Button>
+            </div>
           </Card>
         ) : (
           <Card className="p-6 text-center text-muted-foreground">
@@ -186,6 +257,8 @@ const AddVacancies: React.FC = () => {
       <footer className="py-4 text-center text-sm text-muted-foreground border-t border-border">
         © 2026 Government of Karnataka. All rights reserved.
       </footer>
+
+      {toast && <Toast message={toast.message} type={toast.type} isVisible={toast.isVisible} onClose={hideToast} />}
     </div>
   );
 };
