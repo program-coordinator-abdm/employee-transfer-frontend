@@ -327,7 +327,14 @@ export const login = async (credentials: {
   console.log("[login] Response status:", response.status);
 
   if (response.status === 401) {
-    throw new Error("Invalid username or password");
+    let errMsg = "Invalid username or password";
+    try {
+      const errBody = await response.json();
+      console.log("[login] 401 body:", errBody);
+      if (errBody?.error) errMsg = errBody.error;
+      else if (errBody?.message) errMsg = errBody.message;
+    } catch {}
+    throw new Error(errMsg);
   }
 
   if (!response.ok) {
@@ -336,6 +343,7 @@ export const login = async (credentials: {
       const errBody = await response.json();
       console.log("[login] Error body:", errBody);
       if (errBody?.message) message = errBody.message;
+      else if (errBody?.error) message = errBody.error;
     } catch {}
     throw new Error(message);
   }
