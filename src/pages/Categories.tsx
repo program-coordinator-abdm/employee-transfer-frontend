@@ -590,7 +590,6 @@ const Categories: React.FC = () => {
                             <span className="font-mono">KGID: {emp.kgid}</span>
                             <span>•</span>
                             <span>{emp.designation}</span>
-                            <span className="text-primary font-medium">({emp.designationGroup})</span>
                           </div>
                         </div>
                       </div>
