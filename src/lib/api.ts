@@ -467,6 +467,7 @@ export interface PastServiceEntry {
   postGroup: string;
   postSubGroup: string;
   firstPostHeld: string;
+  firstPostHeldOther?: string;
   institutionType: string;
   hfrId: string;
   institution: string;
