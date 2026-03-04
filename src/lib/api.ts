@@ -1105,12 +1105,25 @@ export const fetchEmployeesPaginated = async (
     ...(token && { Authorization: `Bearer ${token}` }),
   };
 
-  const searchParams = new URLSearchParams({
-    page: String(page),
-    limit: String(pageSize),
-  });
   const trimmedSearch = search.trim();
-  if (trimmedSearch) searchParams.set("query", trimmedSearch);
+
+  const buildParams = (
+    paginationKey: "limit" | "pageSize",
+    searchKey: "query" | "search",
+    includeSearchMode: boolean
+  ) => {
+    const qs = new URLSearchParams({
+      page: String(page),
+      [paginationKey]: String(pageSize),
+    });
+
+    if (trimmedSearch) {
+      qs.set(searchKey, trimmedSearch);
+      if (includeSearchMode) qs.set("searchMode", "name");
+    }
+
+    return qs;
+  };
 
   const doFetch = (params: URLSearchParams) =>
     fetch(`${API_BASE_URL}/employees?${params}`, {
@@ -1119,14 +1132,26 @@ export const fetchEmployeesPaginated = async (
       signal,
     });
 
-  let res = await doFetch(searchParams);
+  // Try common backend variants to support recent API contract changes.
+  const attempts: URLSearchParams[] = [
+    buildParams("limit", "query", false),
+    buildParams("limit", "query", true),
+    buildParams("pageSize", "query", false),
+    buildParams("pageSize", "query", true),
+    buildParams("limit", "search", false),
+    buildParams("pageSize", "search", false),
+  ];
 
-  // Backward compatibility: some backend versions require `searchMode` when query is present.
-  if (!res.ok && res.status === 400 && trimmedSearch) {
-    const fallbackParams = new URLSearchParams(searchParams);
-    fallbackParams.set("searchMode", "name");
-    res = await doFetch(fallbackParams);
+  let res: Response | null = null;
+
+  for (const attemptParams of attempts) {
+    res = await doFetch(attemptParams);
+
+    // Stop retrying on success or non-validation errors.
+    if (res.ok || res.status !== 400) break;
   }
+
+  if (!res) throw new Error("API Error: request failed");
 
   if (res.status === 401 || res.status === 403) {
     removeToken();
