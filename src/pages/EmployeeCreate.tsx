@@ -1769,14 +1769,6 @@ const EmployeeCreate: React.FC = () => {
               </Button>
             </div>
 
-            {/* Total Zone Points */}
-            <div className="mt-6 p-4 rounded-xl border-2 border-primary/30 bg-primary/5">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-foreground">Total Zone Points</span>
-                <span className="text-2xl font-bold text-primary">{totalZonePoints}</span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">Auto-calculated from current and past service zone selections</p>
-            </div>
           </Card>
           </div>
 
