@@ -901,7 +901,7 @@ const EmployeeCreate: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="input-label">KGID Number <span className="text-destructive">*</span></label>
-                <input value={kgid} onChange={(e) => { setKgid(e.target.value); clearError("kgid"); }} className={`input-field ${errors.kgid || kgidDuplicate ? "border-destructive" : ""}`} placeholder="e.g. KG123456" />
+                <input value={kgid} onChange={(e) => { setKgid(e.target.value); clearError("kgid"); }} className={`input-field ${errors.kgid || kgidDuplicate ? "border-destructive" : ""}`} placeholder="Enter KGID Number" />
                 {kgidDuplicate && (
                   <p className="text-sm text-destructive mt-1 flex items-center gap-1">
                     ⚠️ This KGID already exists. Please verify before proceeding.
