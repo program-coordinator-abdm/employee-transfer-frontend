@@ -457,9 +457,6 @@ const EmployeeCreate: React.FC = () => {
     if (ngoBenefits && !ngoBenefitsDoc) errs.ngoBenefitsDoc = "Documentary proof is required";
     if (isDoctorNursePharmacist && !hprId.trim()) errs.hprId = "HPR ID is required when Doctor/Nurse/Pharmacist is selected";
     if (timeboundApplicable) {
-      if (!timeboundCategory) {
-        errs.timeboundCategory = "Please select a timebound category";
-      }
       const anyYearSelected = timebound6Years || timebound10Years || timebound13Years || timebound15Years || timebound20Years || timebound25Years || timebound30Years;
       if (!anyYearSelected) {
         errs.timeboundYearsCheck = "Select at least one applicable timebound year.";
