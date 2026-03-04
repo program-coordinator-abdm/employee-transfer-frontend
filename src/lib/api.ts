@@ -380,12 +380,16 @@ export const getEmployees = async (params: {
   const { searchMode = "name", query = "", page = 1, limit = 20, category } = params;
 
   const searchParams = new URLSearchParams({
-    searchMode,
-    query,
     page: page.toString(),
     limit: limit.toString(),
-    ...(category && { category }),
   });
+  if (query) {
+    searchParams.set("searchMode", searchMode);
+    searchParams.set("query", query);
+  }
+  if (category) {
+    searchParams.set("category", category);
+  }
 
   const res = await apiClient<BackendEmployeesResponse>(
     `/employees?${searchParams}`
