@@ -402,6 +402,8 @@ const EmployeeCreate: React.FC = () => {
     if (!name.trim()) errs.name = "Employee Name is required";
     else if (!/^[a-zA-Z\s.]+$/.test(name)) errs.name = "Only alphabetic characters allowed";
     if (!designation) errs.designation = "Designation is required";
+    if (firstPostHeld === "Others" && !firstPostHeldOther.trim()) errs.firstPostHeldOther = "Please enter post held";
+    if (currentFirstPostHeld === "Others" && !currentFirstPostHeldOther.trim()) errs.currentFirstPostHeldOther = "Please enter post held";
     if (!dateOfEntry) errs.dateOfEntry = "Date of entry is required";
     if (!gender) errs.gender = "Gender is required";
     if (!dateOfBirth) errs.dateOfBirth = "Date of birth is required";
@@ -455,6 +457,9 @@ const EmployeeCreate: React.FC = () => {
       if (!s.district) errs[`past_${i}_district`] = "District is required";
       if (!s.fromDate) errs[`past_${i}_fromDate`] = "From date is required";
       if (!s.toDate) errs[`past_${i}_toDate`] = "To date is required";
+      if (s.firstPostHeld === "Others" && !(s.firstPostHeldOther || "").trim()) {
+        errs[`past_${i}_firstPostHeldOther`] = "Please enter post held";
+      }
     });
 
     setErrors(errs);
@@ -526,6 +531,10 @@ const EmployeeCreate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateSections1to7()) {
+      showToast("Please fix required fields before submitting", "error");
+      return;
+    }
     if (!validate()) {
       showToast("Please fill all required fields", "error");
       return;
@@ -533,7 +542,7 @@ const EmployeeCreate: React.FC = () => {
 
     const payload = {
       kgid, name, designation, designationGroup, designationSubGroup,
-      firstPostHeld: firstPostHeld === "Others" ? firstPostHeldOther : firstPostHeld,
+      firstPostHeld: firstPostHeld === "Others" ? firstPostHeldOther.trim() : firstPostHeld,
       dateOfEntry: dateOfEntry!.toISOString(),
       gender, probationaryPeriod, probationaryPeriodDoc,
       probationDeclarationDate: probationDeclarationDate?.toISOString() || "",
@@ -543,14 +552,25 @@ const EmployeeCreate: React.FC = () => {
       address, pinCode, email, phoneNumber, telephoneNumber,
       officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
       currentPostHeld, currentPostGroup, currentPostSubGroup,
-      currentFirstPostHeld: currentFirstPostHeld === "Others" ? currentFirstPostHeldOther : currentFirstPostHeld,
+      currentFirstPostHeld: currentFirstPostHeld === "Others" ? currentFirstPostHeldOther.trim() : currentFirstPostHeld,
       currentInstitution, currentInstitutionType, currentHfrId,
       currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: currentWorkingSince!.toISOString(),
       currentAreaType,
-      pastServices: pastServices.map(s => ({
-        ...s,
-        firstPostHeld: s.firstPostHeld === "Others" ? (s.firstPostHeldOther || "") : s.firstPostHeld,
+      pastServices: pastServices.map((s) => ({
+        postHeld: s.postHeld,
+        postGroup: s.postGroup,
+        postSubGroup: s.postSubGroup,
+        firstPostHeld: s.firstPostHeld === "Others" ? (s.firstPostHeldOther || "").trim() : s.firstPostHeld,
+        institutionType: s.institutionType,
+        hfrId: s.hfrId,
+        institution: s.institution,
+        district: s.district,
+        taluk: s.taluk,
+        cityTownVillage: s.cityTownVillage,
+        fromDate: s.fromDate,
+        toDate: s.toDate,
+        tenure: s.tenure,
       })),
       educationDetails,
       timeboundApplicable,
@@ -998,7 +1018,10 @@ const EmployeeCreate: React.FC = () => {
                 {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
               {firstPostHeld === "Others" && (
-                <input type="text" value={firstPostHeldOther} onChange={(e) => setFirstPostHeldOther(e.target.value)} placeholder="Enter post held..." className="input-field mt-2" />
+                <>
+                  <input type="text" value={firstPostHeldOther} onChange={(e) => { setFirstPostHeldOther(e.target.value); clearError("firstPostHeldOther"); }} placeholder="Enter post held..." className="input-field mt-2" />
+                  <FieldError error={errors.firstPostHeldOther} />
+                </>
               )}
             </div>
             <Separator className="my-5" />
@@ -1456,7 +1479,10 @@ const EmployeeCreate: React.FC = () => {
                   {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
                 {currentFirstPostHeld === "Others" && (
-                  <input type="text" value={currentFirstPostHeldOther} onChange={(e) => setCurrentFirstPostHeldOther(e.target.value)} placeholder="Enter post held..." className="input-field mt-2" />
+                  <>
+                    <input type="text" value={currentFirstPostHeldOther} onChange={(e) => { setCurrentFirstPostHeldOther(e.target.value); clearError("currentFirstPostHeldOther"); }} placeholder="Enter post held..." className="input-field mt-2" />
+                    <FieldError error={errors.currentFirstPostHeldOther} />
+                  </>
                 )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1614,7 +1640,10 @@ const EmployeeCreate: React.FC = () => {
                         {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
                       </select>
                       {service.firstPostHeld === "Others" && (
-                        <input type="text" value={service.firstPostHeldOther || ""} onChange={(e) => updatePastService(idx, "firstPostHeldOther", e.target.value)} placeholder="Enter post held..." className="input-field mt-2" />
+                        <>
+                          <input type="text" value={service.firstPostHeldOther || ""} onChange={(e) => { updatePastService(idx, "firstPostHeldOther", e.target.value); clearError(`past_${idx}_firstPostHeldOther`); }} placeholder="Enter post held..." className="input-field mt-2" />
+                          <FieldError error={errors[`past_${idx}_firstPostHeldOther`]} />
+                        </>
                       )}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
