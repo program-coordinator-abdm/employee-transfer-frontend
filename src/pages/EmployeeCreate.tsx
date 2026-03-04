@@ -768,13 +768,15 @@ const EmployeeCreate: React.FC = () => {
     });
     if (eduRows.length > 0) addSection("5. Education Information", eduRows);
 
-    addSection("6. Communication Address", [
-      ["Personal Address", emp.address], ["Pin Code", emp.pinCode],
+    addSection("6. Permanent Address (as per SR)", [
+      ["Address", emp.address], ["Pin Code", emp.pinCode],
       ["Email", emp.email], ["Phone", emp.phoneNumber],
       ["Telephone", emp.telephoneNumber || "—"],
-      ["Office Address", emp.officeAddress], ["Office Pin Code", emp.officePinCode],
-      ["Office Email", emp.officeEmail], ["Office Phone", emp.officePhoneNumber],
-      ["Office Telephone", emp.officeTelephoneNumber || "—"],
+    ]);
+    addSection("6b. Current Address", [
+      ["Address", emp.officeAddress], ["Pin Code", emp.officePinCode],
+      ["Email", emp.officeEmail], ["Phone", emp.officePhoneNumber],
+      ["Telephone", emp.officeTelephoneNumber || "—"],
     ]);
     addSection("7. Current Working Details", [
       ["Designation", emp.currentPostHeld],

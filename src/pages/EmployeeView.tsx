@@ -210,12 +210,12 @@ const EmployeeView: React.FC = () => {
     }
 
     // 6. Personal & Office Address
-    addSection("6. Personal Address", [
+    addSection("6. Permanent Address (as per SR)", [
       ["Address", emp.address], ["Pin Code", emp.pinCode],
       ["Email", emp.email], ["Phone", emp.phoneNumber],
       ["Telephone", emp.telephoneNumber || "—"],
     ]);
-    addSection("6b. Office Address", [
+    addSection("6b. Current Address", [
       ["Address", emp.officeAddress], ["Pin Code", emp.officePinCode],
       ["Email", emp.officeEmail], ["Phone", emp.officePhoneNumber],
       ["Telephone", emp.officeTelephoneNumber || "—"],

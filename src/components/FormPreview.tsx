@@ -221,17 +221,19 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       return rows.length > 0 ? rows : [["", "No education entries"]];
     })());
 
-    addSection("6. Communication Address", [
-      ["Personal Address", data.address],
+    addSection("6. Permanent Address (as per SR)", [
+      ["Address", data.address],
       ["Pin Code", data.pinCode],
       ["Email", data.email],
       ["Phone", data.phoneNumber],
       ["Telephone", data.telephoneNumber || "—"],
-      ["Office Address", data.officeAddress],
-      ["Office Pin Code", data.officePinCode],
-      ["Office Email", data.officeEmail],
-      ["Office Phone", data.officePhoneNumber],
-      ["Office Telephone", data.officeTelephoneNumber || "—"],
+    ]);
+    addSection("6b. Current Address", [
+      ["Address", data.officeAddress],
+      ["Pin Code", data.officePinCode],
+      ["Email", data.officeEmail],
+      ["Phone", data.officePhoneNumber],
+      ["Telephone", data.officeTelephoneNumber || "—"],
     ]);
 
     addSection("7. Current Working Details", [
