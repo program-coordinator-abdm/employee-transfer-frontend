@@ -20,6 +20,7 @@ const EmployeeList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [csvDownloading, setCsvDownloading] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   // Debounce search input
   useEffect(() => {
@@ -47,12 +48,14 @@ const EmployeeList: React.FC = () => {
           setEmployees(result.employees);
           setTotalPages(result.totalPages);
           setTotalItems(result.total);
+          setError(null);
         }
       } catch (err: any) {
         if (err.name === "AbortError") return;
         if (!cancelled) {
           console.error("[EmployeeList] Fetch failed:", err);
           setError(err.message || "Failed to load employees");
+          // Keep previous employees data visible on transient failures
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -65,7 +68,7 @@ const EmployeeList: React.FC = () => {
       cancelled = true;
       controller.abort();
     };
-  }, [currentPage, debouncedSearch]);
+  }, [currentPage, debouncedSearch, retryKey]);
 
   const handleCSVDownload = useCallback(async () => {
     setCsvDownloading(true);
@@ -170,14 +173,14 @@ const EmployeeList: React.FC = () => {
                 <p className="font-medium">Failed to load employees</p>
                 <p className="text-sm opacity-80">{error}</p>
               </div>
-              <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => p)} className="ml-auto">
+              <Button variant="outline" size="sm" onClick={() => { setError(null); setRetryKey(k => k + 1); }} className="ml-auto">
                 Retry
               </Button>
             </div>
           </Card>
         )}
 
-        {loading ? (
+        {loading && employees.length === 0 ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
