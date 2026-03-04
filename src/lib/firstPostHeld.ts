@@ -21,7 +21,9 @@ export const FIRST_POST_HELD_OPTIONS = [
   "SDA",
   "PHCO",
   "HIO",
-  "Staff Nurse",
+  "Staff Nursing officer / Nursing officer",
+  "Pharmacy Officer / Pharmacist",
   "Driver",
   "Group D",
+  "Others",
 ] as const;

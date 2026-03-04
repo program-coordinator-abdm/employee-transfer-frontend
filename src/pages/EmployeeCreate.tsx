@@ -25,7 +25,7 @@ interface FormErrors {
 }
 
 const EMPTY_PAST_SERVICE: () => PastServiceEntry = () => ({
-  postHeld: "", postGroup: "", postSubGroup: "", firstPostHeld: "",
+  postHeld: "", postGroup: "", postSubGroup: "", firstPostHeld: "", firstPostHeldOther: "",
   institutionType: "", hfrId: "",
   institution: "", district: "", taluk: "", cityTownVillage: "",
   fromDate: "", toDate: "", tenure: "",
@@ -64,6 +64,7 @@ const EmployeeCreate: React.FC = () => {
   const [designationGroup, setDesignationGroup] = useState("");
   const [designationSubGroup, setDesignationSubGroup] = useState("");
   const [firstPostHeld, setFirstPostHeld] = useState("");
+  const [firstPostHeldOther, setFirstPostHeldOther] = useState("");
   const [dateOfEntry, setDateOfEntry] = useState<Date>();
   const [gender, setGender] = useState("");
   const [probationaryPeriod, setProbationaryPeriod] = useState(false);
@@ -94,6 +95,7 @@ const EmployeeCreate: React.FC = () => {
   const [currentPostHeld, setCurrentPostHeld] = useState("");
   const [currentPostGroup, setCurrentPostGroup] = useState("");
   const [currentFirstPostHeld, setCurrentFirstPostHeld] = useState("");
+  const [currentFirstPostHeldOther, setCurrentFirstPostHeldOther] = useState("");
   const [currentPostSubGroup, setCurrentPostSubGroup] = useState("");
   const [currentInstitution, setCurrentInstitution] = useState("");
   const [currentInstitutionType, setCurrentInstitutionType] = useState("");
@@ -530,7 +532,8 @@ const EmployeeCreate: React.FC = () => {
     }
 
     const payload = {
-      kgid, name, designation, designationGroup, designationSubGroup, firstPostHeld,
+      kgid, name, designation, designationGroup, designationSubGroup,
+      firstPostHeld: firstPostHeld === "Others" ? firstPostHeldOther : firstPostHeld,
       dateOfEntry: dateOfEntry!.toISOString(),
       gender, probationaryPeriod, probationaryPeriodDoc,
       probationDeclarationDate: probationDeclarationDate?.toISOString() || "",
@@ -539,12 +542,17 @@ const EmployeeCreate: React.FC = () => {
       isDoctorNursePharmacist, hprId, hfrId,
       address, pinCode, email, phoneNumber, telephoneNumber,
       officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
-      currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
+      currentPostHeld, currentPostGroup, currentPostSubGroup,
+      currentFirstPostHeld: currentFirstPostHeld === "Others" ? currentFirstPostHeldOther : currentFirstPostHeld,
       currentInstitution, currentInstitutionType, currentHfrId,
       currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: currentWorkingSince!.toISOString(),
       currentAreaType,
-      pastServices, educationDetails,
+      pastServices: pastServices.map(s => ({
+        ...s,
+        firstPostHeld: s.firstPostHeld === "Others" ? (s.firstPostHeldOther || "") : s.firstPostHeld,
+      })),
+      educationDetails,
       timeboundApplicable,
       timeboundCategory: timeboundApplicable ? timeboundCategory : "",
       timeboundYears: timeboundApplicable ? timeboundYears : "",
@@ -985,10 +993,13 @@ const EmployeeCreate: React.FC = () => {
             </div>
             <div className="mt-4">
               <label className="input-label">Post Held</label>
-              <select value={firstPostHeld} onChange={(e) => setFirstPostHeld(e.target.value)} className="input-field">
+              <select value={firstPostHeld} onChange={(e) => { setFirstPostHeld(e.target.value); if (e.target.value !== "Others") setFirstPostHeldOther(""); }} className="input-field">
                 <option value="">Select Post Held (Optional)</option>
                 {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
               </select>
+              {firstPostHeld === "Others" && (
+                <input type="text" value={firstPostHeldOther} onChange={(e) => setFirstPostHeldOther(e.target.value)} placeholder="Enter post held..." className="input-field mt-2" />
+              )}
             </div>
             <Separator className="my-5" />
             <div className="flex items-center gap-4">
@@ -1440,10 +1451,13 @@ const EmployeeCreate: React.FC = () => {
               </div>
               <div>
                 <label className="input-label">Post Held</label>
-                <select value={currentFirstPostHeld} onChange={(e) => setCurrentFirstPostHeld(e.target.value)} className="input-field">
+                <select value={currentFirstPostHeld} onChange={(e) => { setCurrentFirstPostHeld(e.target.value); if (e.target.value !== "Others") setCurrentFirstPostHeldOther(""); }} className="input-field">
                   <option value="">Select Post Held (Optional)</option>
                   {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
+                {currentFirstPostHeld === "Others" && (
+                  <input type="text" value={currentFirstPostHeldOther} onChange={(e) => setCurrentFirstPostHeldOther(e.target.value)} placeholder="Enter post held..." className="input-field mt-2" />
+                )}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -1595,10 +1609,13 @@ const EmployeeCreate: React.FC = () => {
                     </div>
                     <div>
                       <label className="input-label">Post Held</label>
-                      <select value={service.firstPostHeld || ""} onChange={(e) => updatePastService(idx, "firstPostHeld", e.target.value)} className="input-field">
+                      <select value={service.firstPostHeld || ""} onChange={(e) => { updatePastService(idx, "firstPostHeld", e.target.value); if (e.target.value !== "Others") updatePastService(idx, "firstPostHeldOther", ""); }} className="input-field">
                         <option value="">Select Post Held (Optional)</option>
                         {FIRST_POST_HELD_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
                       </select>
+                      {service.firstPostHeld === "Others" && (
+                        <input type="text" value={service.firstPostHeldOther || ""} onChange={(e) => updatePastService(idx, "firstPostHeldOther", e.target.value)} placeholder="Enter post held..." className="input-field mt-2" />
+                      )}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
