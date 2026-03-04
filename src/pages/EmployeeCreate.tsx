@@ -378,43 +378,29 @@ const EmployeeCreate: React.FC = () => {
     setEducationDetails(prev => prev.map((e, i) => i === idx ? { ...e, [field]: value } : e));
   };
 
-  // Timebound: derive timeboundYears from checkbox flags
+  // Timebound: derive timeboundYears from all selected checkbox flags (multi-select)
   const deriveTimeboundYears = (): string => {
-    if (timebound6Years) return "6 Years";
-    if (timebound10Years) return "10 Years";
-    if (timebound13Years) return "13 Years";
-    if (timebound15Years) return "15 Years";
-    if (timebound20Years) return "20 Years";
-    if (timebound25Years) return "25 Years";
-    if (timebound30Years) return "30 Years";
-    return "";
+    const selected: string[] = [];
+    if (timebound6Years) selected.push("6 Years");
+    if (timebound10Years) selected.push("10 Years");
+    if (timebound13Years) selected.push("13 Years");
+    if (timebound15Years) selected.push("15 Years");
+    if (timebound20Years) selected.push("20 Years");
+    if (timebound25Years) selected.push("25 Years");
+    if (timebound30Years) selected.push("30 Years");
+    return selected.join(", ");
   };
 
-  // Single-select timebound year handler: uncheck all others
+  // Multi-select timebound year handler: toggle individual checkbox
   const selectTimeboundYear = (year: number, checked: boolean) => {
-    const clearAll = () => {
-      setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(undefined);
-      setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(undefined);
-      setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(undefined);
-      setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(undefined);
-      setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(undefined);
-      setTimebound25Years(false); setTimebound25YearsDoc(""); setTimebound25YearsDate(undefined);
-      setTimebound30Years(false); setTimebound30YearsDoc(""); setTimebound30YearsDate(undefined);
-    };
-    clearAll();
-    if (checked) {
-      switch (year) {
-        case 6: setTimebound6Years(true); break;
-        case 10: setTimebound10Years(true); break;
-        case 13: setTimebound13Years(true); break;
-        case 15: setTimebound15Years(true); break;
-        case 20: setTimebound20Years(true); break;
-        case 25: setTimebound25Years(true); break;
-        case 30: setTimebound30Years(true); break;
-      }
-      setTimeboundYears(`${year} Years`);
-    } else {
-      setTimeboundYears("");
+    switch (year) {
+      case 6: setTimebound6Years(checked); if (!checked) { setTimebound6YearsDoc(""); setTimebound6YearsDate(undefined); } break;
+      case 10: setTimebound10Years(checked); if (!checked) { setTimebound10YearsDoc(""); setTimebound10YearsDate(undefined); } break;
+      case 13: setTimebound13Years(checked); if (!checked) { setTimebound13YearsDoc(""); setTimebound13YearsDate(undefined); } break;
+      case 15: setTimebound15Years(checked); if (!checked) { setTimebound15YearsDoc(""); setTimebound15YearsDate(undefined); } break;
+      case 20: setTimebound20Years(checked); if (!checked) { setTimebound20YearsDoc(""); setTimebound20YearsDate(undefined); } break;
+      case 25: setTimebound25Years(checked); if (!checked) { setTimebound25YearsDoc(""); setTimebound25YearsDate(undefined); } break;
+      case 30: setTimebound30Years(checked); if (!checked) { setTimebound30YearsDoc(""); setTimebound30YearsDate(undefined); } break;
     }
   };
 
