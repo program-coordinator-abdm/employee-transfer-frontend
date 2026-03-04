@@ -456,12 +456,6 @@ const EmployeeCreate: React.FC = () => {
     if (probationaryPeriod && !probationaryPeriodDoc) errs.probationaryPeriodDoc = "Documentary proof is required";
     if (ngoBenefits && !ngoBenefitsDoc) errs.ngoBenefitsDoc = "Documentary proof is required";
     if (isDoctorNursePharmacist && !hprId.trim()) errs.hprId = "HPR ID is required when Doctor/Nurse/Pharmacist is selected";
-    if (timeboundApplicable) {
-      const anyYearSelected = timebound6Years || timebound10Years || timebound13Years || timebound15Years || timebound20Years || timebound25Years || timebound30Years;
-      if (!anyYearSelected) {
-        errs.timeboundYearsCheck = "Select at least one applicable timebound year.";
-      }
-    }
     if (recruitmentType === "Direct Recruitment" && !directRecruitmentMode) errs.directRecruitmentMode = "Please select a recruitment mode (KPSC, DRC, or SRC)";
     if (cltCompleted && !cltCompletedDoc) errs.cltCompletedDoc = "CLT document is required";
     // HFR ID is optional — no validation needed
