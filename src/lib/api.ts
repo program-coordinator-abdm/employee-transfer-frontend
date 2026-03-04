@@ -662,6 +662,17 @@ function sanitizeDocValue(val: any): string {
   return String(val);
 }
 
+// Fields that should remain as booleans
+const BOOLEAN_FIELDS = new Set([
+  "cltCompleted", "isDoctorNursePharmacist", "probationaryPeriod",
+  "terminallyIll", "pregnantOrChildUnderOne", "retiringWithinTwoYears",
+  "childSpouseDisability", "divorceeWidowWithChild", "spouseGovtServant",
+  "ngoBenefits", "timeboundApplicable", "promotionRejected", "pgBond",
+  "contractRegularised", "empDeclAgreed", "officerDeclAgreed",
+  "timebound6Years", "timebound10Years", "timebound13Years",
+  "timebound15Years", "timebound20Years", "timebound25Years", "timebound30Years",
+]);
+
 function sanitizeEmployeeBody(body: Record<string, any>): Record<string, any> {
   const sanitized = { ...body };
 
@@ -674,6 +685,22 @@ function sanitizeEmployeeBody(body: Record<string, any>): Record<string, any> {
   for (const key of Object.keys(sanitized)) {
     if (key.endsWith("Doc")) {
       sanitized[key] = sanitizeDocValue(sanitized[key]);
+    }
+  }
+
+  // Convert empty strings to null for optional non-Doc string fields
+  // (backend may reject "" for optional fields that expect null or a value)
+  for (const key of Object.keys(sanitized)) {
+    const val = sanitized[key];
+    if (key.endsWith("Doc")) continue; // Doc fields stay as strings
+    if (BOOLEAN_FIELDS.has(key)) continue; // booleans stay
+    if (ALL_DATE_FIELDS.includes(key)) continue; // already handled
+    if (Array.isArray(val)) continue; // arrays handled separately
+    if (typeof val === "object" && val !== null) continue;
+    if (typeof val === "number" || typeof val === "boolean") continue;
+    // String field: convert "" to null
+    if (typeof val === "string" && val.trim() === "") {
+      sanitized[key] = null;
     }
   }
 
@@ -807,6 +834,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     pastServices: payload.pastServices,
     educationDetails: payload.educationDetails,
   });
+  console.log("[createEmployee] Request body:", JSON.stringify(body, null, 2));
   return apiClient<NewEmployee>("/employees", {
     method: "POST",
     body: JSON.stringify(body),
