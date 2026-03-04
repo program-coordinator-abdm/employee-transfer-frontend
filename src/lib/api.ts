@@ -1099,68 +1099,42 @@ export const fetchEmployeesPaginated = async (
   const { page = 1, pageSize = 20, search = "" } = params;
   console.log(`[fetchEmployeesPaginated] START page=${page} pageSize=${pageSize} search="${search}"`);
 
-  const token = getToken();
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    ...(token && { Authorization: `Bearer ${token}` }),
-  };
-
   const trimmedSearch = search.trim();
 
-  // Always send page and limit; only add query when non-empty
+  // Keep list query contract simple and explicit
   const queryParams = new URLSearchParams({
     page: String(page),
     limit: String(pageSize),
   });
+
   if (trimmedSearch) {
     queryParams.set("query", trimmedSearch);
+    // Include searchMode only when query is present
+    queryParams.set("searchMode", "name");
   }
 
-  const res = await fetch(`${API_BASE_URL}/employees?${queryParams.toString()}`, {
-    headers,
-    cache: "no-store",
-    signal,
-  });
+  const data = await apiClient<any>(`/employees?${queryParams.toString()}`, { signal });
+  const arr = data?.data || (Array.isArray(data) ? data : []);
 
-  if (res.status === 401 || res.status === 403) {
-    removeToken();
-    removeUser();
-    window.location.href = "/login";
-    throw new Error("Session expired");
-  }
-
-  if (!res.ok) {
-    let message = `API Error: ${res.status}`;
-    try {
-      const errBody = await res.json();
-      if (errBody?.message) message = errBody.message;
-      else if (errBody?.error) message = errBody.error;
-    } catch {}
-    throw new Error(message);
-  }
-
-  const data = await res.json();
-  const arr = data.data || (Array.isArray(data) ? data : []);
-
-  // Lightweight mapping for list — only extract fields the list UI needs
+  // Safe list mapping: do not assume full detail payload exists
   const mapped: NewEmployee[] = arr.map((raw: any) => ({
     ...mapBackendToNewEmployee(raw),
-    name: raw.empName ?? raw.name ?? "",
-    kgid: raw.empKgid ?? raw.kgid ?? "",
-    currentPostHeld: raw.currentPostHeld || raw.designation || "",
-    currentPostGroup: raw.currentPostGroup || raw.designationGroup || "",
+    id: raw?.id ?? "",
+    name: raw?.empName ?? raw?.name ?? "",
+    kgid: raw?.empKgid ?? raw?.kgid ?? "",
+    currentPostHeld: raw?.currentPostHeld || raw?.designation || "",
+    currentPostGroup: raw?.currentPostGroup || raw?.designationGroup || "",
   }));
 
-  // Use backend pagination metadata with safe fallbacks
-  const total = data.total ?? mapped.length;
-  const totalPagesResult = data.totalPages ?? Math.max(1, Math.ceil(total / pageSize));
+  const total = Number(data?.total ?? mapped.length);
+  const totalPagesResult = Number(data?.totalPages ?? Math.max(1, Math.ceil(total / pageSize)));
 
   console.log(`[fetchEmployeesPaginated] END got ${mapped.length} employees, total=${total}, totalPages=${totalPagesResult}`);
 
   return {
     employees: mapped,
     total,
-    page: data.page ?? page,
+    page: Number(data?.page ?? page),
     totalPages: totalPagesResult,
   };
 };
