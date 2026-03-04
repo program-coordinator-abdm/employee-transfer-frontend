@@ -962,7 +962,7 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     officePhoneNumber: raw.officePhoneNumber ?? "",
     officeTelephoneNumber: raw.officeTelephoneNumber ?? "",
     currentPostHeld: raw.currentPostHeld ?? raw.currentDesignation ?? raw.designation ?? "",
-    currentPostGroup: raw.currentPostGroup ?? "",
+    currentPostGroup: raw.currentPostGroup ?? raw.designationGroup ?? "",
     currentPostSubGroup: raw.currentPostSubGroup ?? "",
     currentFirstPostHeld: raw.currentFirstPostHeld ?? "",
     currentInstitution: raw.currentInstitution ?? "",
@@ -1106,14 +1106,17 @@ export const fetchEmployeesPaginated = async (
   };
 
   const trimmedSearch = search.trim();
-  const queryParams = new URLSearchParams();
-  if (trimmedSearch) queryParams.set("query", trimmedSearch);
 
-  const endpoint = queryParams.toString()
-    ? `${API_BASE_URL}/employees?${queryParams.toString()}`
-    : `${API_BASE_URL}/employees`;
+  // Always send page and limit; only add query when non-empty
+  const queryParams = new URLSearchParams({
+    page: String(page),
+    limit: String(pageSize),
+  });
+  if (trimmedSearch) {
+    queryParams.set("query", trimmedSearch);
+  }
 
-  const res = await fetch(endpoint, {
+  const res = await fetch(`${API_BASE_URL}/employees?${queryParams.toString()}`, {
     headers,
     cache: "no-store",
     signal,
@@ -1138,35 +1141,27 @@ export const fetchEmployeesPaginated = async (
 
   const data = await res.json();
   const arr = data.data || (Array.isArray(data) ? data : []);
-  const mapped = arr.map(mapBackendToNewEmployee);
 
-  const normalizedSearch = trimmedSearch.toLowerCase();
-  const filtered = normalizedSearch
-    ? mapped.filter((employee) =>
-        [
-          employee.name,
-          employee.kgid,
-          employee.currentPostHeld,
-          employee.currentPostGroup,
-        ]
-          .filter(Boolean)
-          .some((value) => value.toLowerCase().includes(normalizedSearch))
-      )
-    : mapped;
+  // Lightweight mapping for list — only extract fields the list UI needs
+  const mapped: NewEmployee[] = arr.map((raw: any) => ({
+    ...mapBackendToNewEmployee(raw),
+    name: raw.empName ?? raw.name ?? "",
+    kgid: raw.empKgid ?? raw.kgid ?? "",
+    currentPostHeld: raw.currentPostHeld || raw.designation || "",
+    currentPostGroup: raw.currentPostGroup || raw.designationGroup || "",
+  }));
 
-  const total = filtered.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const safePage = Math.min(Math.max(page, 1), totalPages);
-  const start = (safePage - 1) * pageSize;
-  const paginated = filtered.slice(start, start + pageSize);
+  // Use backend pagination metadata with safe fallbacks
+  const total = data.total ?? mapped.length;
+  const totalPagesResult = data.totalPages ?? Math.max(1, Math.ceil(total / pageSize));
 
-  console.log(`[fetchEmployeesPaginated] END got ${paginated.length} employees, total=${total}`);
+  console.log(`[fetchEmployeesPaginated] END got ${mapped.length} employees, total=${total}, totalPages=${totalPagesResult}`);
 
   return {
-    employees: paginated,
+    employees: mapped,
     total,
-    page: safePage,
-    totalPages,
+    page: data.page ?? page,
+    totalPages: totalPagesResult,
   };
 };
 
