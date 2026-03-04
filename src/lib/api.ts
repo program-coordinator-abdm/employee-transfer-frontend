@@ -1106,52 +1106,18 @@ export const fetchEmployeesPaginated = async (
   };
 
   const trimmedSearch = search.trim();
+  const queryParams = new URLSearchParams();
+  if (trimmedSearch) queryParams.set("query", trimmedSearch);
 
-  const buildParams = (
-    paginationKey: "limit" | "pageSize",
-    searchKey: "query" | "search",
-    includeSearchMode: boolean
-  ) => {
-    const qs = new URLSearchParams({
-      page: String(page),
-      [paginationKey]: String(pageSize),
-    });
+  const endpoint = queryParams.toString()
+    ? `${API_BASE_URL}/employees?${queryParams.toString()}`
+    : `${API_BASE_URL}/employees`;
 
-    if (trimmedSearch) {
-      qs.set(searchKey, trimmedSearch);
-      if (includeSearchMode) qs.set("searchMode", "name");
-    }
-
-    return qs;
-  };
-
-  const doFetch = (params: URLSearchParams) =>
-    fetch(`${API_BASE_URL}/employees?${params}`, {
-      headers,
-      cache: "no-store",
-      signal,
-    });
-
-  // Try common backend variants to support recent API contract changes.
-  const attempts: URLSearchParams[] = [
-    buildParams("limit", "query", false),
-    buildParams("limit", "query", true),
-    buildParams("pageSize", "query", false),
-    buildParams("pageSize", "query", true),
-    buildParams("limit", "search", false),
-    buildParams("pageSize", "search", false),
-  ];
-
-  let res: Response | null = null;
-
-  for (const attemptParams of attempts) {
-    res = await doFetch(attemptParams);
-
-    // Stop retrying on success or non-validation errors.
-    if (res.ok || res.status !== 400) break;
-  }
-
-  if (!res) throw new Error("API Error: request failed");
+  const res = await fetch(endpoint, {
+    headers,
+    cache: "no-store",
+    signal,
+  });
 
   if (res.status === 401 || res.status === 403) {
     removeToken();
@@ -1174,13 +1140,33 @@ export const fetchEmployeesPaginated = async (
   const arr = data.data || (Array.isArray(data) ? data : []);
   const mapped = arr.map(mapBackendToNewEmployee);
 
-  console.log(`[fetchEmployeesPaginated] END got ${mapped.length} employees, total=${data.total ?? mapped.length}`);
+  const normalizedSearch = trimmedSearch.toLowerCase();
+  const filtered = normalizedSearch
+    ? mapped.filter((employee) =>
+        [
+          employee.name,
+          employee.kgid,
+          employee.currentPostHeld,
+          employee.currentPostGroup,
+        ]
+          .filter(Boolean)
+          .some((value) => value.toLowerCase().includes(normalizedSearch))
+      )
+    : mapped;
+
+  const total = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const safePage = Math.min(Math.max(page, 1), totalPages);
+  const start = (safePage - 1) * pageSize;
+  const paginated = filtered.slice(start, start + pageSize);
+
+  console.log(`[fetchEmployeesPaginated] END got ${paginated.length} employees, total=${total}`);
 
   return {
-    employees: mapped,
-    total: data.total ?? mapped.length,
-    page: data.page ?? page,
-    totalPages: data.totalPages ?? Math.ceil((data.total ?? mapped.length) / pageSize),
+    employees: paginated,
+    total,
+    page: safePage,
+    totalPages,
   };
 };
 
