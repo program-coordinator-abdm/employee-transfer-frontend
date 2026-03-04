@@ -380,12 +380,13 @@ export const getEmployees = async (params: {
   const { searchMode = "name", query = "", page = 1, limit = 20, category } = params;
 
   const searchParams = new URLSearchParams({
-    searchMode,
     page: page.toString(),
     limit: limit.toString(),
   });
-  if (query) {
-    searchParams.set("query", query);
+  const trimmedQuery = query.trim();
+  if (trimmedQuery) {
+    searchParams.set("query", trimmedQuery);
+    searchParams.set("searchMode", searchMode);
   }
   if (category) {
     searchParams.set("category", category);
@@ -1107,15 +1108,25 @@ export const fetchEmployeesPaginated = async (
   const searchParams = new URLSearchParams({
     page: String(page),
     limit: String(pageSize),
-    searchMode: "name",
   });
-  if (search.trim()) searchParams.set("query", search.trim());
+  const trimmedSearch = search.trim();
+  if (trimmedSearch) searchParams.set("query", trimmedSearch);
 
-  const res = await fetch(`${API_BASE_URL}/employees?${searchParams}`, {
-    headers,
-    cache: "no-store",
-    signal,
-  });
+  const doFetch = (params: URLSearchParams) =>
+    fetch(`${API_BASE_URL}/employees?${params}`, {
+      headers,
+      cache: "no-store",
+      signal,
+    });
+
+  let res = await doFetch(searchParams);
+
+  // Backward compatibility: some backend versions require `searchMode` when query is present.
+  if (!res.ok && res.status === 400 && trimmedSearch) {
+    const fallbackParams = new URLSearchParams(searchParams);
+    fallbackParams.set("searchMode", "name");
+    res = await doFetch(fallbackParams);
+  }
 
   if (res.status === 401 || res.status === 403) {
     removeToken();
@@ -1123,7 +1134,16 @@ export const fetchEmployeesPaginated = async (
     window.location.href = "/login";
     throw new Error("Session expired");
   }
-  if (!res.ok) throw new Error(`API Error: ${res.status}`);
+
+  if (!res.ok) {
+    let message = `API Error: ${res.status}`;
+    try {
+      const errBody = await res.json();
+      if (errBody?.message) message = errBody.message;
+      else if (errBody?.error) message = errBody.error;
+    } catch {}
+    throw new Error(message);
+  }
 
   const data = await res.json();
   const arr = data.data || (Array.isArray(data) ? data : []);
