@@ -380,11 +380,11 @@ export const getEmployees = async (params: {
   const { searchMode = "name", query = "", page = 1, limit = 20, category } = params;
 
   const searchParams = new URLSearchParams({
+    searchMode,
     page: page.toString(),
     limit: limit.toString(),
   });
   if (query) {
-    searchParams.set("searchMode", searchMode);
     searchParams.set("query", query);
   }
   if (category) {
@@ -1107,6 +1107,7 @@ export const fetchEmployeesPaginated = async (
   const searchParams = new URLSearchParams({
     page: String(page),
     limit: String(pageSize),
+    searchMode: "name",
   });
   if (search.trim()) searchParams.set("query", search.trim());
 
