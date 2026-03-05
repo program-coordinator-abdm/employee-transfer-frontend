@@ -1,3 +1,4 @@
+import { sanitizeEmployeePayload } from "@/lib/dataSanitizer";
 // ===== Backend response shapes =====
 interface BackendUser {
   id: string;
@@ -834,10 +835,11 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     pastServices: payload.pastServices,
     educationDetails: payload.educationDetails,
   });
-  console.log("[createEmployee] Request body:", JSON.stringify(body, null, 2));
+  const finalBody = sanitizeEmployeePayload(body);
+  console.log("[createEmployee] Request body:", JSON.stringify(finalBody, null, 2));
   return apiClient<NewEmployee>("/employees", {
     method: "POST",
-    body: JSON.stringify(body),
+    body: JSON.stringify(finalBody),
   });
 };
 
@@ -952,9 +954,10 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     pastServices: payload.pastServices,
     educationDetails: payload.educationDetails,
   });
+  const finalBody = sanitizeEmployeePayload(body);
   return apiClient<NewEmployee>(`/employees/${id}`, {
     method: "PUT",
-    body: JSON.stringify(body),
+    body: JSON.stringify(finalBody),
   });
 };
 
