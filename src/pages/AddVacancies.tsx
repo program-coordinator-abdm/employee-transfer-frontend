@@ -17,7 +17,7 @@ const INSTITUTION_TYPES = [
   "SC", "PHC/UPHC", "CHC", "Taluk General Hospital", "Sub Division Hospital",
   "District Hospital", "District Level Hospitals", "MCH/W&C", "Prisons Hospitals", "AD Office",
   "Taluk Health Office", "DHO Office",
-  "PO Office", "DJD", "Directorate", "Commissionerate",
+  "PO Office", "DJD", "Directorate", "Commissionerate", "State Level",
   "Others",
 ];
 
