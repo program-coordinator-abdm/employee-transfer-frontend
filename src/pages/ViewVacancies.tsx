@@ -1,23 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, Building2, MapPin, Loader2 } from "lucide-react";
+import { ArrowLeft, Building2, MapPin, Loader2, ChevronsUpDown, Check } from "lucide-react";
 import { fetchVacancyInstitutions, fetchVacanciesByInstitution, type VacancyInstitution, type VacancySubmission } from "@/lib/api";
+import { cn } from "@/lib/utils";
 
 const ViewVacancies: React.FC = () => {
   const navigate = useNavigate();
   const [institutions, setInstitutions] = useState<VacancyInstitution[]>([]);
   const [loadingInst, setLoadingInst] = useState(true);
   const [selectedKey, setSelectedKey] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [popoverOpen, setPopoverOpen] = useState(false);
   const [institution, setInstitution] = useState<VacancyInstitution | null>(null);
   const [submissions, setSubmissions] = useState<VacancySubmission[]>([]);
   const [loadingData, setLoadingData] = useState(false);
   const [error, setError] = useState("");
+
+  const filteredInstitutions = useMemo(() => {
+    if (!searchQuery.trim()) return institutions;
+    const q = searchQuery.toLowerCase();
+    return institutions.filter((inst) =>
+      `${inst.institutionName} ${inst.taluk} ${inst.district} ${inst.institutionTypeName || ""}`.toLowerCase().includes(q)
+    );
+  }, [institutions, searchQuery]);
+
+  const selectedInst = institutions.find((i) => i.institutionKey === selectedKey);
 
   useEffect(() => {
     fetchVacancyInstitutions()
@@ -88,19 +102,63 @@ const ViewVacancies: React.FC = () => {
           <CardContent>
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
-                <Select value={selectedKey} onValueChange={setSelectedKey} disabled={loadingInst}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={loadingInst ? "Loading institutions..." : "Choose an institution"} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {institutions.map((inst) => (
-                      <SelectItem key={inst.institutionKey} value={inst.institutionKey}>
-                        {inst.institutionName} – {inst.taluk} – {inst.district}
-                        {inst.institutionTypeName ? ` (${inst.institutionTypeName})` : ""}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={popoverOpen}
+                      className="w-full justify-between font-normal text-left h-10"
+                      disabled={loadingInst}
+                    >
+                      <span className="truncate">
+                        {selectedInst
+                          ? `${selectedInst.institutionName} – ${selectedInst.taluk} – ${selectedInst.district}${selectedInst.institutionTypeName ? ` (${selectedInst.institutionTypeName})` : ""}`
+                          : loadingInst
+                          ? "Loading institutions..."
+                          : "Choose an institution"}
+                      </span>
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                    <div className="p-2 border-b border-border">
+                      <Input
+                        placeholder="Search institution..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="h-9"
+                        autoFocus
+                      />
+                    </div>
+                    <div className="max-h-60 overflow-y-auto">
+                      {filteredInstitutions.length === 0 ? (
+                        <p className="text-sm text-muted-foreground p-3 text-center">No institutions found.</p>
+                      ) : (
+                        filteredInstitutions.map((inst) => (
+                          <button
+                            key={inst.institutionKey}
+                            className={cn(
+                              "w-full text-left px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground flex items-center gap-2",
+                              selectedKey === inst.institutionKey && "bg-accent"
+                            )}
+                            onClick={() => {
+                              setSelectedKey(inst.institutionKey);
+                              setPopoverOpen(false);
+                              setSearchQuery("");
+                            }}
+                          >
+                            <Check className={cn("h-4 w-4 shrink-0", selectedKey === inst.institutionKey ? "opacity-100" : "opacity-0")} />
+                            <span className="truncate">
+                              {inst.institutionName} – {inst.taluk} – {inst.district}
+                              {inst.institutionTypeName ? ` (${inst.institutionTypeName})` : ""}
+                            </span>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
               <Button onClick={handleView} disabled={!selectedKey || loadingData} className="btn-primary">
                 {loadingData ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
