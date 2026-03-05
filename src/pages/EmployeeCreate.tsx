@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { displayValue } from "@/lib/dataSanitizer";
 import FileUploadField from "@/components/FileUploadField";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2, Upload, Download, Printer, CheckCircle2 } from "lucide-react";
@@ -1081,7 +1082,7 @@ const EmployeeCreate: React.FC = () => {
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="input-label">Category <span className="text-destructive">*</span></label>
-                        <select value={timeboundCategory} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(undefined); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(undefined); setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(undefined); setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(undefined); setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(undefined); setTimebound25Years(false); setTimebound25YearsDoc(""); setTimebound25YearsDate(undefined); setTimebound30Years(false); setTimebound30YearsDoc(""); setTimebound30YearsDate(undefined); }} className="input-field">
+                        <select value={displayValue(timeboundCategory, "string")} onChange={(e) => { setTimeboundCategory(e.target.value); setTimeboundYears(""); setTimebound6Years(false); setTimebound6YearsDoc(""); setTimebound6YearsDate(undefined); setTimebound13Years(false); setTimebound13YearsDoc(""); setTimebound13YearsDate(undefined); setTimebound20Years(false); setTimebound20YearsDoc(""); setTimebound20YearsDate(undefined); setTimebound10Years(false); setTimebound10YearsDoc(""); setTimebound10YearsDate(undefined); setTimebound15Years(false); setTimebound15YearsDoc(""); setTimebound15YearsDate(undefined); setTimebound25Years(false); setTimebound25YearsDoc(""); setTimebound25YearsDate(undefined); setTimebound30Years(false); setTimebound30YearsDoc(""); setTimebound30YearsDate(undefined); }} className="input-field">
                           <option value="">Select Category</option>
                           <option value="Doctors">Doctors</option>
                           <option value="Others">Others</option>
@@ -1183,7 +1184,7 @@ const EmployeeCreate: React.FC = () => {
                   <div className="space-y-3">
                     <div>
                       <label className="input-label">Rejected Designation Name</label>
-                      <input value={promotionRejectedDesignation} onChange={(e) => setPromotionRejectedDesignation(e.target.value)} className="input-field" placeholder="Enter rejected designation name" />
+                      <input value={displayValue(promotionRejectedDesignation, "string")} onChange={(e) => setPromotionRejectedDesignation(e.target.value)} className="input-field" placeholder="Enter rejected designation name" />
                     </div>
                     <div>
                       <label className="input-label">Promotion Rejected Date</label>
@@ -1431,7 +1432,7 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 <div>
                   <label className="input-label">Telephone Number</label>
-                  <input value={telephoneNumber} onChange={(e) => setTelephoneNumber(e.target.value.replace(/\D/g, "").slice(0, 12))} className="input-field" placeholder="With STD code" maxLength={12} />
+                  <input value={displayValue(telephoneNumber, "string")} onChange={(e) => setTelephoneNumber(e.target.value.replace(/\D/g, "").slice(0, 12))} className="input-field" placeholder="With STD code" maxLength={12} />
                 </div>
               </div>
             </div>
@@ -1464,7 +1465,7 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 <div>
                   <label className="input-label">Telephone Number</label>
-                  <input value={officeTelephoneNumber} onChange={(e) => setOfficeTelephoneNumber(e.target.value.replace(/\D/g, "").slice(0, 12))} className="input-field" placeholder="With STD code" maxLength={12} />
+                  <input value={displayValue(officeTelephoneNumber, "string")} onChange={(e) => setOfficeTelephoneNumber(e.target.value.replace(/\D/g, "").slice(0, 12))} className="input-field" placeholder="With STD code" maxLength={12} />
                 </div>
               </div>
             </div>
@@ -1520,7 +1521,7 @@ const EmployeeCreate: React.FC = () => {
                 {HFR_ELIGIBLE_TYPES.includes(currentInstitutionType) && (
                   <div>
                     <label className="input-label">HFR ID <span className="text-destructive">*</span></label>
-                    <input value={currentHfrId} onChange={(e) => { setCurrentHfrId(e.target.value); clearError("currentHfrId"); }} className={`input-field ${errors.currentHfrId ? "border-destructive" : ""}`} placeholder="Enter HFR ID" />
+                    <input value={displayValue(currentHfrId, "string")} onChange={(e) => { setCurrentHfrId(e.target.value); clearError("currentHfrId"); }} className={`input-field ${errors.currentHfrId ? "border-destructive" : ""}`} placeholder="Enter HFR ID" />
                     <FieldError error={errors.currentHfrId} />
                   </div>
                 )}
@@ -1815,21 +1816,21 @@ const EmployeeCreate: React.FC = () => {
                       <div>
                         <label className="input-label">Spouse Designation</label>
                         <PositionDropdown
-                          value={spouseDesignation}
+                          value={displayValue(spouseDesignation, "string")}
                           onChange={(pos) => setSpouseDesignation(pos?.name || "")}
                           placeholder="Select designation..."
                         />
                       </div>
                       <div>
                         <label className="input-label">District</label>
-                        <select value={spouseDistrict} onChange={(e) => { setSpouseDistrict(e.target.value); setSpouseTaluk(""); setSpouseCityTownVillage(""); setSpouseVillageOtherMode(false); }} className="input-field">
+                        <select value={displayValue(spouseDistrict, "string")} onChange={(e) => { setSpouseDistrict(e.target.value); setSpouseTaluk(""); setSpouseCityTownVillage(""); setSpouseVillageOtherMode(false); }} className="input-field">
                           <option value="">Select District</option>
                           {KARNATAKA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
                         </select>
                       </div>
                       <div>
                         <label className="input-label">Taluk</label>
-                        <select value={spouseTaluk} onChange={(e) => { setSpouseTaluk(e.target.value); setSpouseCityTownVillage(""); setSpouseVillageOtherMode(false); }} className="input-field" disabled={!spouseDistrict}>
+                        <select value={displayValue(spouseTaluk, "string")} onChange={(e) => { setSpouseTaluk(e.target.value); setSpouseCityTownVillage(""); setSpouseVillageOtherMode(false); }} className="input-field" disabled={!spouseDistrict}>
                           <option value="">{spouseDistrict ? "Select Taluk" : "Select District first"}</option>
                           {getTaluks(spouseDistrict).map((t) => <option key={t} value={t}>{t}</option>)}
                         </select>
@@ -1841,7 +1842,7 @@ const EmployeeCreate: React.FC = () => {
                           return (
                             <>
                               <select
-                                value={spouseVillageOtherMode ? "__other__" : spouseCityTownVillage}
+                                value={spouseVillageOtherMode ? "__other__" : displayValue(spouseCityTownVillage, "string")}
                                 onChange={(e) => {
                                   if (e.target.value === "__other__") {
                                     setSpouseVillageOtherMode(true);
@@ -1863,7 +1864,7 @@ const EmployeeCreate: React.FC = () => {
                                 <input
                                   id="spouseVillageOther"
                                   type="text"
-                                  value={spouseCityTownVillage}
+                                  value={displayValue(spouseCityTownVillage, "string")}
                                   onChange={(e) => setSpouseCityTownVillage(e.target.value)}
                                   placeholder="Enter village/town name..."
                                   className="input-field mt-2"
