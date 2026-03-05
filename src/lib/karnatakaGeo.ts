@@ -23,7 +23,7 @@ export const KARNATAKA_GEO: Record<string, DistrictData> = {
   "Ballari (Bellary)": {
     taluks: [
       { name: "Ballari", cities: ["Ballari", "Cowl Bazaar", "Cantonment"] },
-      { name: "Hadagali", cities: ["Hadagali", "Hagaribommanahalli"] },
+      
       { name: "Hospet", cities: ["Hosapete", "Kamalapur", "Hampi"] },
       { name: "Kudligi", cities: ["Kudligi", "Hagari"] },
       { name: "Sandur", cities: ["Sandur", "Toranagallu", "Swamyhalli"] },
@@ -126,7 +126,7 @@ export const KARNATAKA_GEO: Record<string, DistrictData> = {
       { name: "Davanagere", cities: ["Davanagere", "Lokikere"] },
       { name: "Channagiri", cities: ["Channagiri", "Santhebennur"] },
       { name: "Harihar", cities: ["Harihar", "Malebennur"] },
-      { name: "Harpanahalli", cities: ["Harpanahalli", "Harapanahalli"] },
+      
       { name: "Honnali", cities: ["Honnali", "Nyamathi"] },
       { name: "Jagalur", cities: ["Jagalur", "Musalimadugu"] },
     ],
@@ -300,6 +300,8 @@ export const KARNATAKA_GEO: Record<string, DistrictData> = {
       { name: "Hagaribommanahalli", cities: ["Hagaribommanahalli", "Kotturu"] },
       { name: "Kudligi", cities: ["Kudligi", "Hagari"] },
       { name: "Kotturu", cities: ["Kotturu", "Mariyammanahalli"] },
+      { name: "Harpanahalli", cities: ["Harpanahalli", "Harapanahalli"] },
+      { name: "Hoovinahadagali", cities: ["Hoovinahadagali"] },
     ],
   },
   "Vijayapura (Bijapur)": {
