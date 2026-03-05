@@ -1681,8 +1681,9 @@ const EmployeeCreate: React.FC = () => {
                       </div>
                       {HFR_ELIGIBLE_TYPES.includes(service.institutionType) && (
                         <div>
-                          <label className="input-label">HFR ID</label>
-                          <input value={service.hfrId || ""} onChange={(e) => updatePastService(idx, "hfrId", e.target.value)} className="input-field" placeholder="Enter HFR ID" />
+                          <label className="input-label">HFR ID <span className="text-destructive">*</span></label>
+                          <input value={service.hfrId || ""} onChange={(e) => updatePastService(idx, "hfrId", e.target.value)} className={`input-field ${errors[`past_${idx}_hfrId`] ? "border-destructive" : ""}`} placeholder="Enter HFR ID" />
+                          <FieldError error={errors[`past_${idx}_hfrId`]} />
                         </div>
                       )}
                       <div>

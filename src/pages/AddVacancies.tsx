@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { ArrowLeft, Plus, Trash2, Save, Loader2 } from "lucide-react";
-import { KARNATAKA_DISTRICTS, ALL_POSITIONS } from "@/lib/positions";
+import { KARNATAKA_DISTRICTS } from "@/lib/positions";
 import { getTaluks, getCities } from "@/lib/karnatakaGeo";
 import { submitVacancies } from "@/lib/api";
 import Toast, { useToastState } from "@/components/Toast";
+import PositionDropdown from "@/components/PositionDropdown";
+import type { PositionInfo } from "@/lib/positions";
 
 const INSTITUTION_TYPES = [
   "SC", "PHC/UPHC", "CHC", "Taluk General Hospital", "Sub Division Hospital",
@@ -71,7 +73,7 @@ const AddVacancies: React.FC = () => {
     if (rows.length > 1) setRows((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const designationNames = ALL_POSITIONS.map((p) => p.name);
+  // designationNames no longer needed — using PositionDropdown
 
   const handleSubmit = async () => {
     const validRows = rows.filter((r) => {
@@ -194,25 +196,19 @@ const AddVacancies: React.FC = () => {
                   {rows.map((row, idx) => (
                     <TableRow key={idx}>
                       <TableCell>
-                        {row.designation === "__other__" ? (
-                          <div className="flex gap-2">
-                            <Input
-                              value={row.customDesignation}
-                              onChange={(e) => updateRow(idx, "customDesignation", e.target.value)}
-                              placeholder="Enter designation"
-                              className="flex-1 text-sm"
-                            />
-                            <Button variant="outline" size="sm" onClick={() => { updateRow(idx, "designation", ""); updateRow(idx, "customDesignation", ""); }}>
-                              Cancel
-                            </Button>
-                          </div>
-                        ) : (
-                          <select value={row.designation} onChange={(e) => updateRow(idx, "designation", e.target.value)} className="input-field w-full text-sm">
-                            <option value="">Select Designation</option>
-                            {designationNames.map((d) => <option key={d} value={d}>{d}</option>)}
-                            <option value="__other__">Others</option>
-                          </select>
-                        )}
+                        <PositionDropdown
+                          value={row.designation === "__other__" ? row.customDesignation : row.designation}
+                          onChange={(pos: PositionInfo | null) => {
+                            if (pos) {
+                              updateRow(idx, "designation", pos.name);
+                              updateRow(idx, "customDesignation", "");
+                            } else {
+                              updateRow(idx, "designation", "");
+                              updateRow(idx, "customDesignation", "");
+                            }
+                          }}
+                          placeholder="Search and select designation..."
+                        />
                       </TableCell>
                       <TableCell>
                         <Input type="number" min="0" value={row.sanctioned} onChange={(e) => updateRow(idx, "sanctioned", e.target.value)} placeholder="0" />
