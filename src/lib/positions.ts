@@ -13,6 +13,12 @@ const LRO_POSITIONS = [
   "Chief Food Analyst",
   "Assistant Director of Pharmacy (Chief Pharmacist)",
   "Health Education Officer",
+  "District Enforcement Officer",
+  "District Project Development Officer",
+  "District Non Communicable Disease Officer",
+  "RCHO / DFWO",
+  "DSO / DVBDCO",
+  "DTO / DLO",
 ];
 
 const JRO_LRO_POSITIONS = [
@@ -74,6 +80,7 @@ const GROUP_B_POSITIONS = [
   "Superintendent of Nursing Grade-1",
   "District Nursing Officer",
   "Deputy District Health Education Officer",
+  "Senior Nursing Officer / Senior Staff Nursing Officer",
 ];
 
 const GROUP_C_POSITIONS = [
@@ -119,6 +126,7 @@ const GROUP_C_POSITIONS = [
   "Senior Pharmacy Officers",
   "Junior Pharmacists",
   "Senior Pharmacists",
+  "Nursing Officer / Staff Nursing Officer",
 ];
 
 const GROUP_D_GRADE1_POSITIONS = [
