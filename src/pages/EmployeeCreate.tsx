@@ -957,14 +957,20 @@ const EmployeeCreate: React.FC = () => {
                 {recruitmentType === "Direct Recruitment" && (
                   <div className="ml-6 space-y-2">
                     <label className="input-label">Select Recruitment Mode <span className="text-destructive">*</span></label>
-                    <div className="flex gap-4">
-                      {["KPSC", "DRC", "SRC"].map((mode) => (
+                    <div className="flex flex-wrap gap-4">
+                      {["KPSC", "DRC", "SRC", "Others"].map((mode) => (
                         <label key={mode} className="flex items-center gap-1.5 cursor-pointer">
-                          <input type="radio" name="directRecruitmentMode" value={mode} checked={directRecruitmentMode === mode} onChange={() => setDirectRecruitmentMode(mode)} className="accent-primary" />
+                          <input type="radio" name="directRecruitmentMode" value={mode} checked={directRecruitmentMode === mode} onChange={() => { setDirectRecruitmentMode(mode); if (mode !== "Others") setDirectRecruitmentOther(""); }} className="accent-primary" />
                           <span className="text-sm font-medium text-foreground">{mode}</span>
                         </label>
                       ))}
                     </div>
+                    {directRecruitmentMode === "Others" && (
+                      <div className="mt-2">
+                        <label className="input-label">Specify Recruitment Mode <span className="text-destructive">*</span></label>
+                        <input value={directRecruitmentOther} onChange={(e) => setDirectRecruitmentOther(e.target.value)} className="input-field" placeholder="Enter recruitment mode" />
+                      </div>
+                    )}
                     <FieldError error={errors.directRecruitmentMode} />
                   </div>
                 )}
