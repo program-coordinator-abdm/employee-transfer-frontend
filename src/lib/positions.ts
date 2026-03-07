@@ -132,6 +132,7 @@ const GROUP_C_POSITIONS = [
   "Junior Pharmacists",
   "Senior Pharmacists",
   "Nursing Officer / Staff Nursing Officer",
+  "Assistant Statistical Officer",
 ];
 
 const GROUP_D_GRADE1_POSITIONS = [
