@@ -1071,6 +1071,7 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     timebound30YearsDate: raw.timebound30YearsDate ?? "",
     currentServiceDoc: raw.currentServiceDoc ?? "",
     directRecruitmentMode: raw.directRecruitmentMode ?? "",
+    directRecruitmentOther: raw.directRecruitmentOther ?? "",
     pastServiceDocs: raw.pastServiceDocs ?? [],
     empDeclAgreed: raw.empDeclAgreed ?? false,
     empDeclName: raw.empDeclName ?? "",
