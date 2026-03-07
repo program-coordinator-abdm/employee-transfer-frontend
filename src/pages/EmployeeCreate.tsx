@@ -45,7 +45,7 @@ const INSTITUTION_TYPES = [
 ];
 const HFR_ELIGIBLE_TYPES = ["SC", "PHC/UPHC", "CHC", "Taluk General Hospital", "Sub Division Hospital", "District Hospital", "District Level Hospitals", "MCH/W&C", "Prisons Hospitals"];
 
-const EDUCATION_LEVELS = ["Unschooled/UnEducated", "10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "Paramedical", "PhD", "Others"];
+const EDUCATION_LEVELS = ["Unschooled/UnEducated", "10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "MBBS", "MD", "Paramedical", "PhD", "Others"];
 
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -72,8 +72,11 @@ const EmployeeCreate: React.FC = () => {
   const [probationaryPeriodDoc, setProbationaryPeriodDoc] = useState("");
   const [probationDeclarationDate, setProbationDeclarationDate] = useState<Date>();
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
-  const [cltCompleted, setCltCompleted] = useState(false);
+   const [cltCompleted, setCltCompleted] = useState(false);
   const [cltCompletedDoc, setCltCompletedDoc] = useState("");
+  const [deptExamCompleted, setDeptExamCompleted] = useState(false);
+  const [deptExamName, setDeptExamName] = useState("");
+  const [deptExamDoc, setDeptExamDoc] = useState("");
   const [isDoctorNursePharmacist, setIsDoctorNursePharmacist] = useState(false);
   const [hprId, setHprId] = useState("");
   const [hfrId, setHfrId] = useState("");
@@ -152,6 +155,7 @@ const EmployeeCreate: React.FC = () => {
   const [pgBondCompletionDate, setPgBondCompletionDate] = useState<Date>();
   const [recruitmentType, setRecruitmentType] = useState("");
   const [directRecruitmentMode, setDirectRecruitmentMode] = useState("");
+  const [directRecruitmentOther, setDirectRecruitmentOther] = useState("");
   const [contractRegularised, setContractRegularised] = useState(false);
   const [contractRegularisedDoc, setContractRegularisedDoc] = useState("");
   const [contractRegularisedDate, setContractRegularisedDate] = useState<Date>();
