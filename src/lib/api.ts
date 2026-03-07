@@ -510,6 +510,9 @@ export interface NewEmployee {
   dateOfBirth: string;
   cltCompleted: boolean;
   cltCompletedDoc: string;
+  deptExamCompleted: boolean;
+  deptExamName: string;
+  deptExamDoc: string;
   isDoctorNursePharmacist: boolean;
   hprId: string;
   hfrId: string;
@@ -584,6 +587,7 @@ export interface NewEmployee {
   timebound30YearsDate: string;
   currentServiceDoc: string;
   directRecruitmentMode: string;
+  directRecruitmentOther: string;
   promotionRejected: boolean;
   promotionRejectedDate: string;
   promotionRejectedDesignation: string;
