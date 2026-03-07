@@ -214,6 +214,9 @@ const EmployeeCreate: React.FC = () => {
       setDateOfBirth(new Date(existing.dateOfBirth));
       if (existing.cltCompleted !== undefined) setCltCompleted(existing.cltCompleted);
       if (existing.cltCompletedDoc) setCltCompletedDoc(existing.cltCompletedDoc);
+      if (existing.deptExamCompleted !== undefined) setDeptExamCompleted(existing.deptExamCompleted);
+      if (existing.deptExamName) setDeptExamName(existing.deptExamName);
+      if (existing.deptExamDoc) setDeptExamDoc(existing.deptExamDoc);
       if (existing.isDoctorNursePharmacist !== undefined) setIsDoctorNursePharmacist(existing.isDoctorNursePharmacist);
       if (existing.hprId) setHprId(existing.hprId);
       if (existing.hfrId) setHfrId(existing.hfrId);
@@ -258,6 +261,7 @@ const EmployeeCreate: React.FC = () => {
       if (existing.pgBondCompletionDate) setPgBondCompletionDate(new Date(existing.pgBondCompletionDate));
       if (existing.recruitmentType) setRecruitmentType(existing.recruitmentType);
       if (existing.directRecruitmentMode) setDirectRecruitmentMode(existing.directRecruitmentMode);
+      if (existing.directRecruitmentOther) setDirectRecruitmentOther(existing.directRecruitmentOther);
       if (existing.contractRegularised !== undefined) setContractRegularised(existing.contractRegularised);
       if (existing.contractRegularisedDoc) setContractRegularisedDoc(existing.contractRegularisedDoc);
       if (existing.contractRegularisedDate) setContractRegularisedDate(new Date(existing.contractRegularisedDate));
