@@ -45,7 +45,7 @@ const INSTITUTION_TYPES = [
 ];
 const HFR_ELIGIBLE_TYPES = ["SC", "PHC/UPHC", "CHC", "Taluk General Hospital", "Sub Division Hospital", "District Hospital", "District Level Hospitals", "MCH/W&C", "Prisons Hospitals"];
 
-const EDUCATION_LEVELS = ["Unschooled/UnEducated", "10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "Paramedical", "PhD", "Others"];
+const EDUCATION_LEVELS = ["Unschooled/UnEducated", "10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "MBBS", "MD", "Paramedical", "PhD", "Others"];
 
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -72,8 +72,11 @@ const EmployeeCreate: React.FC = () => {
   const [probationaryPeriodDoc, setProbationaryPeriodDoc] = useState("");
   const [probationDeclarationDate, setProbationDeclarationDate] = useState<Date>();
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
-  const [cltCompleted, setCltCompleted] = useState(false);
+   const [cltCompleted, setCltCompleted] = useState(false);
   const [cltCompletedDoc, setCltCompletedDoc] = useState("");
+  const [deptExamCompleted, setDeptExamCompleted] = useState(false);
+  const [deptExamName, setDeptExamName] = useState("");
+  const [deptExamDoc, setDeptExamDoc] = useState("");
   const [isDoctorNursePharmacist, setIsDoctorNursePharmacist] = useState(false);
   const [hprId, setHprId] = useState("");
   const [hfrId, setHfrId] = useState("");
@@ -152,6 +155,7 @@ const EmployeeCreate: React.FC = () => {
   const [pgBondCompletionDate, setPgBondCompletionDate] = useState<Date>();
   const [recruitmentType, setRecruitmentType] = useState("");
   const [directRecruitmentMode, setDirectRecruitmentMode] = useState("");
+  const [directRecruitmentOther, setDirectRecruitmentOther] = useState("");
   const [contractRegularised, setContractRegularised] = useState(false);
   const [contractRegularisedDoc, setContractRegularisedDoc] = useState("");
   const [contractRegularisedDate, setContractRegularisedDate] = useState<Date>();
@@ -210,6 +214,9 @@ const EmployeeCreate: React.FC = () => {
       setDateOfBirth(new Date(existing.dateOfBirth));
       if (existing.cltCompleted !== undefined) setCltCompleted(existing.cltCompleted);
       if (existing.cltCompletedDoc) setCltCompletedDoc(existing.cltCompletedDoc);
+      if (existing.deptExamCompleted !== undefined) setDeptExamCompleted(existing.deptExamCompleted);
+      if (existing.deptExamName) setDeptExamName(existing.deptExamName);
+      if (existing.deptExamDoc) setDeptExamDoc(existing.deptExamDoc);
       if (existing.isDoctorNursePharmacist !== undefined) setIsDoctorNursePharmacist(existing.isDoctorNursePharmacist);
       if (existing.hprId) setHprId(existing.hprId);
       if (existing.hfrId) setHfrId(existing.hfrId);
@@ -254,6 +261,7 @@ const EmployeeCreate: React.FC = () => {
       if (existing.pgBondCompletionDate) setPgBondCompletionDate(new Date(existing.pgBondCompletionDate));
       if (existing.recruitmentType) setRecruitmentType(existing.recruitmentType);
       if (existing.directRecruitmentMode) setDirectRecruitmentMode(existing.directRecruitmentMode);
+      if (existing.directRecruitmentOther) setDirectRecruitmentOther(existing.directRecruitmentOther);
       if (existing.contractRegularised !== undefined) setContractRegularised(existing.contractRegularised);
       if (existing.contractRegularisedDoc) setContractRegularisedDoc(existing.contractRegularisedDoc);
       if (existing.contractRegularisedDate) setContractRegularisedDate(new Date(existing.contractRegularisedDate));
@@ -566,6 +574,7 @@ const EmployeeCreate: React.FC = () => {
       probationDeclarationDate: probationDeclarationDate?.toISOString() || "",
       dateOfBirth: dateOfBirth!.toISOString(),
       cltCompleted, cltCompletedDoc, cltCompletionDate: cltCompletionDate?.toISOString() || "",
+      deptExamCompleted, deptExamName: deptExamCompleted ? deptExamName : "", deptExamDoc: deptExamCompleted ? deptExamDoc : "",
       isDoctorNursePharmacist, hprId, hfrId: hfrId.trim() || "NA",
       address, pinCode, email, phoneNumber, telephoneNumber,
       officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
@@ -618,7 +627,8 @@ const EmployeeCreate: React.FC = () => {
       timebound30YearsDoc: timeboundApplicable ? timebound30YearsDoc : "",
       timebound30YearsDate: timeboundApplicable ? (timebound30YearsDate?.toISOString() || "") : "",
       currentServiceDoc,
-      directRecruitmentMode,
+      directRecruitmentMode: directRecruitmentMode === "Others" ? "Others" : directRecruitmentMode,
+      directRecruitmentOther: directRecruitmentMode === "Others" ? directRecruitmentOther : "",
       promotionRejected,
       promotionRejectedDate: promotionRejectedDate?.toISOString() || "",
       promotionRejectedDesignation,
@@ -947,14 +957,20 @@ const EmployeeCreate: React.FC = () => {
                 {recruitmentType === "Direct Recruitment" && (
                   <div className="ml-6 space-y-2">
                     <label className="input-label">Select Recruitment Mode <span className="text-destructive">*</span></label>
-                    <div className="flex gap-4">
-                      {["KPSC", "DRC", "SRC"].map((mode) => (
+                    <div className="flex flex-wrap gap-4">
+                      {["KPSC", "DRC", "SRC", "Others"].map((mode) => (
                         <label key={mode} className="flex items-center gap-1.5 cursor-pointer">
-                          <input type="radio" name="directRecruitmentMode" value={mode} checked={directRecruitmentMode === mode} onChange={() => setDirectRecruitmentMode(mode)} className="accent-primary" />
+                          <input type="radio" name="directRecruitmentMode" value={mode} checked={directRecruitmentMode === mode} onChange={() => { setDirectRecruitmentMode(mode); if (mode !== "Others") setDirectRecruitmentOther(""); }} className="accent-primary" />
                           <span className="text-sm font-medium text-foreground">{mode}</span>
                         </label>
                       ))}
                     </div>
+                    {directRecruitmentMode === "Others" && (
+                      <div className="mt-2">
+                        <label className="input-label">Specify Recruitment Mode <span className="text-destructive">*</span></label>
+                        <input value={directRecruitmentOther} onChange={(e) => setDirectRecruitmentOther(e.target.value)} className="input-field" placeholder="Enter recruitment mode" />
+                      </div>
+                    )}
                     <FieldError error={errors.directRecruitmentMode} />
                   </div>
                 )}
@@ -1317,6 +1333,27 @@ const EmployeeCreate: React.FC = () => {
                   </div>
                 )}
               </div>
+              <div className="flex flex-col gap-3 pt-4">
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="deptExamCompleted" className="text-sm font-medium">Departmental Exam Completion</Label>
+                  <Switch id="deptExamCompleted" checked={deptExamCompleted} onCheckedChange={(v) => { setDeptExamCompleted(v); if (!v) { setDeptExamName(""); setDeptExamDoc(""); } }} />
+                  <span className="text-sm text-muted-foreground">{deptExamCompleted ? "Yes" : "No"}</span>
+                </div>
+                {deptExamCompleted && (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="input-label">Input Name <span className="text-destructive">*</span></label>
+                      <input value={deptExamName} onChange={(e) => setDeptExamName(e.target.value)} className="input-field" placeholder="Enter exam name" />
+                    </div>
+                    <FileUploadField
+                      value={deptExamDoc}
+                      onChange={(name) => setDeptExamDoc(name)}
+                      label="Upload Document"
+                      required={false}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </Card>
           </div>
@@ -1369,7 +1406,7 @@ const EmployeeCreate: React.FC = () => {
                         <FieldError error={errors[`edu_${idx}_yearOfPassing`]} />
                       </div>
                     )}
-                    {(edu.level.includes("UG") || edu.level.includes("PG") || edu.level === "PhD") && (
+                    {(edu.level.includes("UG") || edu.level.includes("PG") || edu.level === "PhD" || edu.level === "MD") && (
                       <div>
                         <label className="input-label">Specialization</label>
                         <input value={edu.specialization || ""} onChange={(e) => updateEducation(idx, "specialization", e.target.value)} className="input-field" placeholder="e.g. Cardiology, Computer Science" />

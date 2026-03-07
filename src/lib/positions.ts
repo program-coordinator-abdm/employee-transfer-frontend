@@ -16,6 +16,8 @@ const LRO_POSITIONS = [
   "RMO",
   "Medical Superintendent",
   "OPD Surgeon",
+  "DTC Principal",
+  "HFWTC Principal",
   "District Enforcement Officer",
   "District Project Development Officer",
   "District Non Communicable Disease Officer",

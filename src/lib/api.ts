@@ -510,6 +510,9 @@ export interface NewEmployee {
   dateOfBirth: string;
   cltCompleted: boolean;
   cltCompletedDoc: string;
+  deptExamCompleted: boolean;
+  deptExamName: string;
+  deptExamDoc: string;
   isDoctorNursePharmacist: boolean;
   hprId: string;
   hfrId: string;
@@ -584,6 +587,7 @@ export interface NewEmployee {
   timebound30YearsDate: string;
   currentServiceDoc: string;
   directRecruitmentMode: string;
+  directRecruitmentOther: string;
   promotionRejected: boolean;
   promotionRejectedDate: string;
   promotionRejectedDesignation: string;
@@ -765,6 +769,9 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     currentWorkingSince: payload.currentWorkingSince,
     currentAreaType: payload.currentAreaType,
     cltCompletionDate: payload.cltCompletionDate,
+    deptExamCompleted: payload.deptExamCompleted,
+    deptExamName: payload.deptExamName,
+    deptExamDoc: payload.deptExamDoc,
     probationaryPeriod: payload.probationaryPeriod,
     probationaryPeriodDoc: payload.probationaryPeriodDoc,
     probationDeclarationDate: payload.probationDeclarationDate,
@@ -799,6 +806,7 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     pgBondCompletionDate: payload.pgBondCompletionDate,
     recruitmentType: payload.recruitmentType,
     directRecruitmentMode: payload.directRecruitmentMode,
+    directRecruitmentOther: payload.directRecruitmentOther,
     contractRegularised: payload.contractRegularised,
     contractRegularisedDoc: payload.contractRegularisedDoc,
     contractRegularisedDate: payload.contractRegularisedDate,
@@ -884,6 +892,9 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     currentWorkingSince: payload.currentWorkingSince,
     currentAreaType: payload.currentAreaType,
     cltCompletionDate: payload.cltCompletionDate,
+    deptExamCompleted: payload.deptExamCompleted,
+    deptExamName: payload.deptExamName,
+    deptExamDoc: payload.deptExamDoc,
     probationaryPeriod: payload.probationaryPeriod,
     probationaryPeriodDoc: payload.probationaryPeriodDoc,
     probationDeclarationDate: payload.probationDeclarationDate,
@@ -918,6 +929,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     pgBondCompletionDate: payload.pgBondCompletionDate,
     recruitmentType: payload.recruitmentType,
     directRecruitmentMode: payload.directRecruitmentMode,
+    directRecruitmentOther: payload.directRecruitmentOther,
     contractRegularised: payload.contractRegularised,
     contractRegularisedDoc: payload.contractRegularisedDoc,
     contractRegularisedDate: payload.contractRegularisedDate,
@@ -975,6 +987,9 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     dateOfBirth: raw.dob ?? raw.dateOfBirth ?? "",
     cltCompleted: raw.cltCompleted ?? false,
     cltCompletedDoc: raw.cltCompletedDoc ?? "",
+    deptExamCompleted: raw.deptExamCompleted ?? false,
+    deptExamName: raw.deptExamName ?? "",
+    deptExamDoc: raw.deptExamDoc ?? "",
     isDoctorNursePharmacist: raw.isDoctorNursePharmacist ?? false,
     hprId: raw.hprId ?? "",
     hfrId: raw.hfrId ?? "",
@@ -1064,6 +1079,7 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     timebound30YearsDate: raw.timebound30YearsDate ?? "",
     currentServiceDoc: raw.currentServiceDoc ?? "",
     directRecruitmentMode: raw.directRecruitmentMode ?? "",
+    directRecruitmentOther: raw.directRecruitmentOther ?? "",
     pastServiceDocs: raw.pastServiceDocs ?? [],
     empDeclAgreed: raw.empDeclAgreed ?? false,
     empDeclName: raw.empDeclName ?? "",
