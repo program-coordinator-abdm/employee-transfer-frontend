@@ -1333,6 +1333,27 @@ const EmployeeCreate: React.FC = () => {
                   </div>
                 )}
               </div>
+              <div className="flex flex-col gap-3 pt-4">
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="deptExamCompleted" className="text-sm font-medium">Departmental Exam Completion</Label>
+                  <Switch id="deptExamCompleted" checked={deptExamCompleted} onCheckedChange={(v) => { setDeptExamCompleted(v); if (!v) { setDeptExamName(""); setDeptExamDoc(""); } }} />
+                  <span className="text-sm text-muted-foreground">{deptExamCompleted ? "Yes" : "No"}</span>
+                </div>
+                {deptExamCompleted && (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="input-label">Input Name <span className="text-destructive">*</span></label>
+                      <input value={deptExamName} onChange={(e) => setDeptExamName(e.target.value)} className="input-field" placeholder="Enter exam name" />
+                    </div>
+                    <FileUploadField
+                      value={deptExamDoc}
+                      onChange={(name) => setDeptExamDoc(name)}
+                      label="Upload Document"
+                      required={false}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </Card>
           </div>
@@ -1385,7 +1406,7 @@ const EmployeeCreate: React.FC = () => {
                         <FieldError error={errors[`edu_${idx}_yearOfPassing`]} />
                       </div>
                     )}
-                    {(edu.level.includes("UG") || edu.level.includes("PG") || edu.level === "PhD") && (
+                    {(edu.level.includes("UG") || edu.level.includes("PG") || edu.level === "PhD" || edu.level === "MD") && (
                       <div>
                         <label className="input-label">Specialization</label>
                         <input value={edu.specialization || ""} onChange={(e) => updateEducation(idx, "specialization", e.target.value)} className="input-field" placeholder="e.g. Cardiology, Computer Science" />
