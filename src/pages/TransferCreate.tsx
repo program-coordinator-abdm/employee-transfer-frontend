@@ -388,7 +388,7 @@ const TransferCreate: React.FC = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <Toast toast={toast} onClose={hideToast} />
+      <Toast message={toast.message} type={toast.type} isVisible={toast.isVisible} onClose={hideToast} />
 
       <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex items-center gap-3 mb-6">
