@@ -13,14 +13,8 @@ export interface TransferWorkDetail {
   workingSince: string;
 }
 
-export interface TransferDeclaration {
-  accepted: boolean;
-  signatureName: string;
-  date: string;
-}
-
 export interface TransferFormData {
-  // Section 1
+  // Section 1: Personal Details
   kgidNumber: string;
   name: string;
   gender: string;
@@ -30,16 +24,16 @@ export interface TransferFormData {
   mailId: string;
   mobileNumber: string;
   residenceNumber: string;
-  // Section 2
+  // Section 2: Current Service Details
   group: string;
   role: string;
   designation: string;
   specialization: string;
   dateOfEntryIntoService: string;
   probationaryPeriodDeclared: string;
-  // Section 3
+  // Section 3: Past Service Details
   workDetails: TransferWorkDetail[];
-  // Section 4
+  // Section 4: Special Conditions
   terminallyIll: boolean;
   terminallyIllDoc: string;
   physicallyChallenged: boolean;
@@ -48,10 +42,9 @@ export interface TransferFormData {
   widowDoc: string;
   spouseInGovtService: boolean;
   spouseInGovtServiceDoc: string;
-  // Section 5
-  employeeDeclaration: TransferDeclaration;
-  headOfOfficeDeclaration: TransferDeclaration;
-  dhoDeclaration: TransferDeclaration;
+  // Section 5: Elected Members
+  ngoBenefits: boolean;
+  ngoBenefitsDoc: string;
 }
 
 export interface TransferRecord {
@@ -155,12 +148,6 @@ export const EMPTY_WORK_DETAIL: () => TransferWorkDetail = () => ({
   workingSince: "",
 });
 
-export const EMPTY_DECLARATION: () => TransferDeclaration = () => ({
-  accepted: false,
-  signatureName: "",
-  date: "",
-});
-
 export const EMPTY_TRANSFER_FORM: () => TransferFormData = () => ({
   kgidNumber: "",
   name: "",
@@ -186,7 +173,6 @@ export const EMPTY_TRANSFER_FORM: () => TransferFormData = () => ({
   widowDoc: "",
   spouseInGovtService: false,
   spouseInGovtServiceDoc: "",
-  employeeDeclaration: EMPTY_DECLARATION(),
-  headOfOfficeDeclaration: EMPTY_DECLARATION(),
-  dhoDeclaration: EMPTY_DECLARATION(),
+  ngoBenefits: false,
+  ngoBenefitsDoc: "",
 });

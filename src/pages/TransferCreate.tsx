@@ -5,8 +5,8 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import DatePickerField from "@/components/DatePickerField";
 import FileUploadField from "@/components/FileUploadField";
 import PositionDropdown from "@/components/PositionDropdown";
@@ -21,7 +21,6 @@ import {
   type TransferWorkDetail,
   EMPTY_WORK_DETAIL,
   EMPTY_TRANSFER_FORM,
-  EMPTY_DECLARATION,
   getTransferById,
   createTransferDraft,
   updateTransfer,
@@ -79,7 +78,6 @@ const TransferCreate: React.FC = () => {
     setFormData((prev) => {
       const wd = [...prev.workDetails];
       wd[idx] = { ...wd[idx], [key]: value };
-      // Reset dependent fields
       if (key === "district") { wd[idx].taluka = ""; wd[idx].cityVillageTown = ""; }
       if (key === "taluka") { wd[idx].cityVillageTown = ""; }
       return { ...prev, workDetails: wd };
@@ -100,11 +98,9 @@ const TransferCreate: React.FC = () => {
     if (file) {
       setPendingFiles((prev) => ({ ...prev, [fieldKey]: file }));
     }
-    // Store fileName in form
     updateField(fieldKey as keyof TransferFormData, fileName as any);
   };
 
-  // Upload pending files, replace fileName with URL
   const uploadPendingFiles = async (): Promise<TransferFormData> => {
     let updatedData = { ...formData };
     for (const [key, file] of Object.entries(pendingFiles)) {
@@ -149,18 +145,8 @@ const TransferCreate: React.FC = () => {
     if (formData.widow && !formData.widowDoc) e.widowDoc = "Document required";
     if (formData.spouseInGovtService && !formData.spouseInGovtServiceDoc) e.spouseInGovtServiceDoc = "Document required";
 
-    if (forSubmit) {
-      // Declarations required for final submit
-      if (!formData.employeeDeclaration.accepted) e["employeeDeclaration.accepted"] = "Declaration must be accepted";
-      if (!formData.employeeDeclaration.signatureName) e["employeeDeclaration.signatureName"] = "Signature required";
-      if (!formData.employeeDeclaration.date) e["employeeDeclaration.date"] = "Date required";
-      if (!formData.headOfOfficeDeclaration.accepted) e["headOfOfficeDeclaration.accepted"] = "Declaration must be accepted";
-      if (!formData.headOfOfficeDeclaration.signatureName) e["headOfOfficeDeclaration.signatureName"] = "Signature required";
-      if (!formData.headOfOfficeDeclaration.date) e["headOfOfficeDeclaration.date"] = "Date required";
-      if (!formData.dhoDeclaration.accepted) e["dhoDeclaration.accepted"] = "Declaration must be accepted";
-      if (!formData.dhoDeclaration.signatureName) e["dhoDeclaration.signatureName"] = "Signature required";
-      if (!formData.dhoDeclaration.date) e["dhoDeclaration.date"] = "Date required";
-    }
+    // Elected members validation
+    if (formData.ngoBenefits && !formData.ngoBenefitsDoc) e.ngoBenefitsDoc = "Document required when elected member";
 
     return e;
   };
@@ -199,7 +185,7 @@ const TransferCreate: React.FC = () => {
     if (Object.keys(e).length > 0) {
       setErrors(e);
       setStep("fill");
-      showToast("Please complete all required fields and declarations", "error");
+      showToast("Please complete all required fields", "error");
       return;
     }
     setSubmitting(true);
@@ -234,54 +220,6 @@ const TransferCreate: React.FC = () => {
   const labelClass = "input-label text-xs font-semibold text-foreground mb-1 block";
   const errorClass = "text-xs text-destructive mt-1";
 
-  const renderDeclarationSection = (
-    title: string,
-    text: string,
-    declKey: "employeeDeclaration" | "headOfOfficeDeclaration" | "dhoDeclaration"
-  ) => {
-    const decl = formData[declKey];
-    return (
-      <div className="bg-muted/20 border border-border rounded-xl p-5 space-y-4">
-        <h4 className="font-semibold text-foreground">{title}</h4>
-        <p className="text-sm text-muted-foreground leading-relaxed">{text}</p>
-        <div className="flex items-start gap-2">
-          <Checkbox
-            id={`${declKey}-accept`}
-            checked={decl.accepted}
-            onCheckedChange={(v) =>
-              updateField(declKey, { ...decl, accepted: !!v })
-            }
-          />
-          <Label htmlFor={`${declKey}-accept`} className="text-sm cursor-pointer">
-            I accept the above declaration
-          </Label>
-        </div>
-        {errors[`${declKey}.accepted`] && <p className={errorClass}>{errors[`${declKey}.accepted`]}</p>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className={labelClass}>Digital Signature (Name) <span className="text-destructive">*</span></label>
-            <input
-              className={inputClass}
-              placeholder="Enter full name"
-              value={decl.signatureName}
-              onChange={(e) => updateField(declKey, { ...decl, signatureName: e.target.value })}
-            />
-            {errors[`${declKey}.signatureName`] && <p className={errorClass}>{errors[`${declKey}.signatureName`]}</p>}
-          </div>
-          <div>
-            <label className={labelClass}>Date <span className="text-destructive">*</span></label>
-            <DatePickerField
-              value={decl.date ? new Date(decl.date) : undefined}
-              onChange={(d) => updateField(declKey, { ...decl, date: d ? d.toISOString() : "" })}
-              placeholder="Select date"
-            />
-            {errors[`${declKey}.date`] && <p className={errorClass}>{errors[`${declKey}.date`]}</p>}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   // ====== PREVIEW MODE ======
   if (step === "preview") {
     return (
@@ -315,7 +253,7 @@ const TransferCreate: React.FC = () => {
             <Separator />
             {/* Section 2 */}
             <div>
-              <h3 className="text-lg font-semibold text-primary mb-3">2. Service Details</h3>
+              <h3 className="text-lg font-semibold text-primary mb-3">2. Current Service Details</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
                 <PreviewField label="Group" value={formData.group} />
                 <PreviewField label="Role" value={formData.role || "—"} />
@@ -328,7 +266,7 @@ const TransferCreate: React.FC = () => {
             <Separator />
             {/* Section 3 */}
             <div>
-              <h3 className="text-lg font-semibold text-primary mb-3">3. Current Work Details</h3>
+              <h3 className="text-lg font-semibold text-primary mb-3">3. Past Service Details</h3>
               {formData.workDetails.map((wd, idx) => (
                 <div key={idx} className="mb-4 bg-muted/20 rounded-lg p-4">
                   <p className="font-medium text-foreground mb-2">Entry {idx + 1}</p>
@@ -357,23 +295,12 @@ const TransferCreate: React.FC = () => {
               </div>
             </div>
             <Separator />
-            {/* Section 5 */}
+            {/* Section 5: Elected Members */}
             <div>
-              <h3 className="text-lg font-semibold text-primary mb-3">5. Declarations</h3>
-              {[
-                { label: "Employee Declaration", decl: formData.employeeDeclaration },
-                { label: "Head of Office Declaration", decl: formData.headOfOfficeDeclaration },
-                { label: "DHO Declaration", decl: formData.dhoDeclaration },
-              ].map(({ label, decl }) => (
-                <div key={label} className="mb-3 bg-muted/20 rounded-lg p-3">
-                  <p className="font-medium text-foreground mb-1">{label}</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
-                    <PreviewField label="Accepted" value={decl.accepted ? "Yes" : "No"} />
-                    <PreviewField label="Signature" value={decl.signatureName || "—"} />
-                    <PreviewField label="Date" value={decl.date ? format(new Date(decl.date), "dd MMM yyyy") : "—"} />
-                  </div>
-                </div>
-              ))}
+              <h3 className="text-lg font-semibold text-primary mb-3">5. Karnataka State Govt Employee Association Elected Members</h3>
+              <div className="grid grid-cols-1 gap-y-2 text-sm">
+                <PreviewField label="Elected Association Member" value={formData.ngoBenefits ? `Yes — ${formData.ngoBenefitsDoc || "Document pending"}` : "No"} />
+              </div>
             </div>
           </Card>
 
@@ -466,9 +393,9 @@ const TransferCreate: React.FC = () => {
             </div>
           </Card>
 
-          {/* SECTION 2: Service Details */}
+          {/* SECTION 2: Current Service Details */}
           <Card className="p-6">
-            <h2 className="text-lg font-bold text-primary mb-4">2. Service Details</h2>
+            <h2 className="text-lg font-bold text-primary mb-4">2. Current Service Details</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>Group <span className="text-destructive">*</span></label>
@@ -526,9 +453,9 @@ const TransferCreate: React.FC = () => {
             </div>
           </Card>
 
-          {/* SECTION 3: Current Work Details */}
+          {/* SECTION 3: Past Service Details */}
           <Card className="p-6">
-            <h2 className="text-lg font-bold text-primary mb-4">3. Current Work Details</h2>
+            <h2 className="text-lg font-bold text-primary mb-4">3. Past Service Details</h2>
             {formData.workDetails.map((wd, idx) => (
               <div key={idx} className="mb-6 bg-muted/10 border border-border rounded-xl p-5">
                 <div className="flex items-center justify-between mb-3">
@@ -635,24 +562,28 @@ const TransferCreate: React.FC = () => {
             </div>
           </Card>
 
-          {/* SECTION 5: Declarations */}
+          {/* SECTION 5: Elected Members */}
           <Card className="p-6">
-            <h2 className="text-lg font-bold text-primary mb-4">5. Declarations</h2>
-            <div className="space-y-6">
-              {renderDeclarationSection(
-                "Declaration 1: Employee Declaration",
-                "I hereby declare that the details provided in this form are true and correct to the best of my knowledge. If false information is provided, I shall be liable for disciplinary action attracting major penalty as per the provisions of the Karnataka Civil Services (Classification, Control and Appeal) Rules, 1957",
-                "employeeDeclaration"
-              )}
-              {renderDeclarationSection(
-                "Declaration 2: Head of Office Declaration",
-                "I have verified the details filled up by the employee with the service records available in this office and have found that the details are true and correct to the best of my knowledge and belief. I am aware that if false declaration is made or false information is provided, I shall be liable for disciplinary action attracting major penalty as per the provisions of the Karnataka Civil Services (Classification, Control and Appeal) Rules, 1957",
-                "headOfOfficeDeclaration"
-              )}
-              {renderDeclarationSection(
-                "Declaration 3: DHO Declaration",
-                "I have verified the details filled up by the employee with the service records available in this office and have found that the details are true and correct to the best of my knowledge and belief. I am aware that if false declaration is made or false information is provided, I shall be liable for disciplinary action attracting major penalty as per the provisions of the Karnataka Civil Services (Classification, Control and Appeal) Rules, 1957",
-                "dhoDeclaration"
+            <h2 className="text-lg font-bold text-primary mb-4">5. Karnataka State Government Employee Association Elected Members</h2>
+            <p className="text-sm text-muted-foreground mb-5">Details related to elected Karnataka State Government Employee Association membership</p>
+            <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
+              <div className="flex items-center justify-between gap-4">
+                <Label className="text-sm font-medium leading-snug">Are you an elected Karnataka State Government Employee Association member?</Label>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Switch checked={formData.ngoBenefits} onCheckedChange={(v) => updateField("ngoBenefits", v)} />
+                  <span className="text-sm text-muted-foreground w-8">{formData.ngoBenefits ? "Yes" : "No"}</span>
+                </div>
+              </div>
+              {formData.ngoBenefits && (
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">ಚುನಾವಣಾ ಅಧಿಕಾರಿಯ ದೃಢೀಕೃತ ಪ್ರಮಾಣಪತ್ರ — Duly certified by the Election Officer</p>
+                  <FileUploadField
+                    value={formData.ngoBenefitsDoc}
+                    onChange={(fileName, file) => handleFileSelect("ngoBenefitsDoc", fileName, file)}
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls,.csv"
+                    error={errors.ngoBenefitsDoc}
+                  />
+                </div>
               )}
             </div>
           </Card>
