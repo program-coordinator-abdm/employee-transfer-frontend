@@ -313,7 +313,7 @@ const SearchableDropdown: React.FC<{
 };
 
 const Categories: React.FC = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const navigate = useNavigate();
   const [selections, setSelections] = useState<Record<string, string>>({});
   const [subSelections, setSubSelections] = useState<Record<string, string>>({});
