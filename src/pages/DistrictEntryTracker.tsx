@@ -65,7 +65,9 @@ const DistrictEntryTracker: React.FC = () => {
       if (!res.ok) throw new Error(`Failed to fetch (${res.status})`);
       const json = await res.json();
       // Accept { data: [...] } or plain array
-      const entries: DistrictEntry[] = Array.isArray(json) ? json : json.data || [];
+      const raw: DistrictEntry[] = Array.isArray(json) ? json : json.data || [];
+      // Strip bracketed suffixes from district names e.g. "Ballari (Bellary)" → "Ballari"
+      const entries = raw.map((d) => ({ ...d, district: d.district.replace(/\s*\(.*?\)\s*$/, '') }));
       setData(entries);
       setError(null);
       setLastUpdated(new Date());
