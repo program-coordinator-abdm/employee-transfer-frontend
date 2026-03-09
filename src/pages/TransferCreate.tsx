@@ -589,10 +589,10 @@ const TransferCreate: React.FC = () => {
             <h2 className="text-lg font-bold text-primary mb-4">4. Special Conditions</h2>
             <div className="space-y-5">
               {([
-                { key: "terminallyIll", docKey: "terminallyIllDoc", label: "Terminally Ill", docLabel: "Upload Medical Certificate" },
-                { key: "physicallyChallenged", docKey: "physicallyChallengedDoc", label: "Physically Challenged", docLabel: "Upload Disability Certificate" },
-                { key: "widow", docKey: "widowDoc", label: "Widow", docLabel: "Upload Supporting Document" },
-                { key: "spouseInGovtService", docKey: "spouseInGovtServiceDoc", label: "Is spouse in government service?", docLabel: "Certificate issued by Department / Head of Office" },
+                { key: "terminallyIll", docKey: "terminallyIllDoc", label: "Officer/Spouse/Children suffering terminally ill which needs treatment outside present working place", docLabel: "Upload Medical Certificate" },
+                { key: "physicallyChallenged", docKey: "physicallyChallengedDoc", label: "Physically Challenged with 40% or more (Officer/Spouse/Children)", docLabel: "Upload Disability Certificate" },
+                { key: "widow", docKey: "widowDoc", label: "Widow/Widower/Divorcee having dependent children below 12 years of age", docLabel: "Upload Supporting Document" },
+                { key: "spouseInGovtService", docKey: "spouseInGovtServiceDoc", label: "Spouse working in Central/State Government or Aided Institutions", docLabel: "Certificate issued by Department / Head of Office" },
               ] as const).map(({ key, docKey, label, docLabel }) => (
                 <div key={key} className="bg-muted/10 border border-border rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
