@@ -480,7 +480,18 @@ const TransferCreate: React.FC = () => {
               </div>
               <div>
                 <label className={labelClass}>Role</label>
-                <input className={inputClass} placeholder="Enter role (optional)" value={formData.role} onChange={(e) => updateField("role", e.target.value)} />
+                {roleOther ? (
+                  <div className="flex gap-2">
+                    <input className={inputClass} placeholder="Enter role manually" value={formData.role} onChange={(e) => updateField("role", e.target.value)} autoFocus />
+                    <Button type="button" variant="outline" size="sm" className="shrink-0 h-12" onClick={() => { setRoleOther(false); updateField("role", ""); }}>Back</Button>
+                  </div>
+                ) : (
+                  <select className={selectClass} value={formData.role} onChange={(e) => { if (e.target.value === "__other__") { setRoleOther(true); updateField("role", ""); } else { updateField("role", e.target.value); } }}>
+                    <option value="">Select Role (optional)</option>
+                    {ALL_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+                    <option value="__other__">Others (Enter manually)</option>
+                  </select>
+                )}
               </div>
               <div className="sm:col-span-2">
                 <label className={labelClass}>Designation <span className="text-destructive">*</span></label>
