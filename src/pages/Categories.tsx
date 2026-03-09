@@ -442,6 +442,29 @@ const Categories: React.FC = () => {
           </div>
         </Card>
 
+        {/* Transfers CTA - Admin only */}
+        {user?.role === "ADMIN" && (
+          <Card
+            className="mb-8 cursor-pointer group border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all duration-200 hover:shadow-lg"
+            onClick={() => navigate("/transfers")}
+          >
+            <div className="p-6 flex items-center gap-5">
+              <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                <ArrowRightLeft className="w-7 h-7 text-primary-foreground" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg font-bold text-foreground">Transfers</h2>
+                <p className="text-sm text-muted-foreground">Create and manage employee transfer applications</p>
+              </div>
+              <div className="hidden sm:flex items-center gap-2">
+                <Button className="btn-primary px-6 py-2.5 text-base font-semibold" onClick={(e) => { e.stopPropagation(); navigate("/transfers"); }}>
+                  <ArrowRightLeft className="w-5 h-5 mr-2" /> Transfers
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+
         {/* View Employees link + KGID Search */}
         <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <Button variant="outline" onClick={() => navigate("/employee-list")} className="gap-2 border-primary/30 text-primary hover:bg-primary/10">
