@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { CATEGORY_ROLE_MAP } from "@/lib/constants";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -32,6 +33,10 @@ const ZONES = ["GBA", "A", "B", "C"];
 const GROUPS = ["A", "B", "C", "D"];
 const GENDERS = ["Male", "Female"];
 
+const ALL_ROLES: string[] = Array.from(
+  new Set(Object.values(CATEGORY_ROLE_MAP).flat())
+).sort();
+
 interface FormErrors {
   [key: string]: string;
 }
@@ -48,6 +53,7 @@ const TransferCreate: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [recordId, setRecordId] = useState<string | null>(editId || null);
+  const [roleOther, setRoleOther] = useState(false);
 
   // Pending file objects for upload on save
   const [pendingFiles, setPendingFiles] = useState<Record<string, File>>({});
@@ -343,11 +349,11 @@ const TransferCreate: React.FC = () => {
             {/* Section 4 */}
             <div>
               <h3 className="text-lg font-semibold text-primary mb-3">4. Special Conditions</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-                <PreviewField label="Terminally Ill" value={formData.terminallyIll ? "Yes" : "No"} />
-                <PreviewField label="Physically Challenged" value={formData.physicallyChallenged ? "Yes" : "No"} />
-                <PreviewField label="Widow" value={formData.widow ? "Yes" : "No"} />
-                <PreviewField label="Spouse in Govt Service" value={formData.spouseInGovtService ? "Yes" : "No"} />
+              <div className="grid grid-cols-1 gap-y-2 text-sm">
+                <PreviewField label="Officer/Spouse/Children suffering terminally ill" value={formData.terminallyIll ? "Yes" : "No"} />
+                <PreviewField label="Physically Challenged with 40% or more" value={formData.physicallyChallenged ? "Yes" : "No"} />
+                <PreviewField label="Widow/Widower/Divorcee having dependent children below 12 years" value={formData.widow ? "Yes" : "No"} />
+                <PreviewField label="Spouse working in Central/State Government or Aided Institutions" value={formData.spouseInGovtService ? "Yes" : "No"} />
               </div>
             </div>
             <Separator />
@@ -474,7 +480,18 @@ const TransferCreate: React.FC = () => {
               </div>
               <div>
                 <label className={labelClass}>Role</label>
-                <input className={inputClass} placeholder="Enter role (optional)" value={formData.role} onChange={(e) => updateField("role", e.target.value)} />
+                {roleOther ? (
+                  <div className="flex gap-2">
+                    <input className={inputClass} placeholder="Enter role manually" value={formData.role} onChange={(e) => updateField("role", e.target.value)} autoFocus />
+                    <Button type="button" variant="outline" size="sm" className="shrink-0 h-12" onClick={() => { setRoleOther(false); updateField("role", ""); }}>Back</Button>
+                  </div>
+                ) : (
+                  <select className={selectClass} value={formData.role} onChange={(e) => { if (e.target.value === "__other__") { setRoleOther(true); updateField("role", ""); } else { updateField("role", e.target.value); } }}>
+                    <option value="">Select Role (optional)</option>
+                    {ALL_ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
+                    <option value="__other__">Others (Enter manually)</option>
+                  </select>
+                )}
               </div>
               <div className="sm:col-span-2">
                 <label className={labelClass}>Designation <span className="text-destructive">*</span></label>
@@ -589,10 +606,10 @@ const TransferCreate: React.FC = () => {
             <h2 className="text-lg font-bold text-primary mb-4">4. Special Conditions</h2>
             <div className="space-y-5">
               {([
-                { key: "terminallyIll", docKey: "terminallyIllDoc", label: "Terminally Ill", docLabel: "Upload Medical Certificate" },
-                { key: "physicallyChallenged", docKey: "physicallyChallengedDoc", label: "Physically Challenged", docLabel: "Upload Disability Certificate" },
-                { key: "widow", docKey: "widowDoc", label: "Widow", docLabel: "Upload Supporting Document" },
-                { key: "spouseInGovtService", docKey: "spouseInGovtServiceDoc", label: "Is spouse in government service?", docLabel: "Certificate issued by Department / Head of Office" },
+                { key: "terminallyIll", docKey: "terminallyIllDoc", label: "Officer/Spouse/Children suffering terminally ill which needs treatment outside present working place", docLabel: "Upload Medical Certificate" },
+                { key: "physicallyChallenged", docKey: "physicallyChallengedDoc", label: "Physically Challenged with 40% or more (Officer/Spouse/Children)", docLabel: "Upload Disability Certificate" },
+                { key: "widow", docKey: "widowDoc", label: "Widow/Widower/Divorcee having dependent children below 12 years of age", docLabel: "Upload Supporting Document" },
+                { key: "spouseInGovtService", docKey: "spouseInGovtServiceDoc", label: "Spouse working in Central/State Government or Aided Institutions", docLabel: "Certificate issued by Department / Head of Office" },
               ] as const).map(({ key, docKey, label, docLabel }) => (
                 <div key={key} className="bg-muted/10 border border-border rounded-xl p-4">
                   <div className="flex items-center gap-3 mb-2">
