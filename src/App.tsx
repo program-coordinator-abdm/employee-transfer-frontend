@@ -53,6 +53,11 @@ const App = () => {
               <Route path="/vacancies/view" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><ViewVacancies /></ProtectedRoute>} />
               <Route path="/reports/district-entries" element={<ProtectedRoute allowedRoles={["ADMIN", "DATA_OFFICER"]}><DistrictEntryTracker /></ProtectedRoute>} />
 
+              {/* Transfer routes - Admin only */}
+              <Route path="/transfers" element={<ProtectedRoute allowedRoles={["ADMIN"]}><TransfersList /></ProtectedRoute>} />
+              <Route path="/transfers/new" element={<ProtectedRoute allowedRoles={["ADMIN"]}><TransferCreate /></ProtectedRoute>} />
+              <Route path="/transfers/edit/:id" element={<ProtectedRoute allowedRoles={["ADMIN"]}><TransferCreate /></ProtectedRoute>} />
+
               {/* Data Officer routes */}
               <Route path="/data-officer" element={<ProtectedRoute allowedRoles={["DATA_OFFICER"]}><DataOfficerDashboard /></ProtectedRoute>} />
 

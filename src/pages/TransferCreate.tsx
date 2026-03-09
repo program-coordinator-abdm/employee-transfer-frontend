@@ -480,8 +480,10 @@ const TransferCreate: React.FC = () => {
                 <label className={labelClass}>Designation <span className="text-destructive">*</span></label>
                 <PositionDropdown
                   value={formData.designation}
-                  group={formData.group ? `Group ${formData.group}` : undefined}
-                  onChange={handleDesignationSelect}
+                  onChange={(pos) => {
+                    if (pos) handleDesignationSelect(pos);
+                    else { updateField("designation", ""); updateField("group", ""); }
+                  }}
                   placeholder="Search & select designation..."
                 />
                 {errors.designation && <p className={errorClass}>{errors.designation}</p>}
