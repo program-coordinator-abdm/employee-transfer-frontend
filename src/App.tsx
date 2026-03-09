@@ -19,6 +19,8 @@ import Maintenance from "./pages/Maintenance";
 import AddVacancies from "./pages/AddVacancies";
 import ViewVacancies from "./pages/ViewVacancies";
 import DistrictEntryTracker from "./pages/DistrictEntryTracker";
+import TransfersList from "./pages/TransfersList";
+import TransferCreate from "./pages/TransferCreate";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
