@@ -148,12 +148,6 @@ export const EMPTY_WORK_DETAIL: () => TransferWorkDetail = () => ({
   workingSince: "",
 });
 
-export const EMPTY_DECLARATION: () => TransferDeclaration = () => ({
-  accepted: false,
-  signatureName: "",
-  date: "",
-});
-
 export const EMPTY_TRANSFER_FORM: () => TransferFormData = () => ({
   kgidNumber: "",
   name: "",
@@ -179,7 +173,6 @@ export const EMPTY_TRANSFER_FORM: () => TransferFormData = () => ({
   widowDoc: "",
   spouseInGovtService: false,
   spouseInGovtServiceDoc: "",
-  employeeDeclaration: EMPTY_DECLARATION(),
-  headOfOfficeDeclaration: EMPTY_DECLARATION(),
-  dhoDeclaration: EMPTY_DECLARATION(),
+  ngoBenefits: false,
+  ngoBenefitsDoc: "",
 });
