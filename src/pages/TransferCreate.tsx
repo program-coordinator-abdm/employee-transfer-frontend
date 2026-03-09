@@ -343,11 +343,11 @@ const TransferCreate: React.FC = () => {
             {/* Section 4 */}
             <div>
               <h3 className="text-lg font-semibold text-primary mb-3">4. Special Conditions</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-                <PreviewField label="Terminally Ill" value={formData.terminallyIll ? "Yes" : "No"} />
-                <PreviewField label="Physically Challenged" value={formData.physicallyChallenged ? "Yes" : "No"} />
-                <PreviewField label="Widow" value={formData.widow ? "Yes" : "No"} />
-                <PreviewField label="Spouse in Govt Service" value={formData.spouseInGovtService ? "Yes" : "No"} />
+              <div className="grid grid-cols-1 gap-y-2 text-sm">
+                <PreviewField label="Officer/Spouse/Children suffering terminally ill" value={formData.terminallyIll ? "Yes" : "No"} />
+                <PreviewField label="Physically Challenged with 40% or more" value={formData.physicallyChallenged ? "Yes" : "No"} />
+                <PreviewField label="Widow/Widower/Divorcee having dependent children below 12 years" value={formData.widow ? "Yes" : "No"} />
+                <PreviewField label="Spouse working in Central/State Government or Aided Institutions" value={formData.spouseInGovtService ? "Yes" : "No"} />
               </div>
             </div>
             <Separator />
