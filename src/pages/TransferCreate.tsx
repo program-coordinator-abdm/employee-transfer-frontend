@@ -33,6 +33,10 @@ const ZONES = ["GBA", "A", "B", "C"];
 const GROUPS = ["A", "B", "C", "D"];
 const GENDERS = ["Male", "Female"];
 
+const ALL_ROLES: string[] = Array.from(
+  new Set(Object.values(CATEGORY_ROLE_MAP).flat())
+).sort();
+
 interface FormErrors {
   [key: string]: string;
 }
