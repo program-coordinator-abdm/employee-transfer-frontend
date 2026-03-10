@@ -394,6 +394,12 @@ const EmployeeView: React.FC = () => {
                 <Field label="Contract Joining Date" value={fmt(emp.contractJoiningDate)} />
               </>
             )}
+            {emp.recruitmentType === "CG Grounds" && emp.cgPost && (
+              <Field label="CG Post" value={emp.cgPost} />
+            )}
+            {emp.recruitmentType === "CG Grounds" && emp.cgDesignation && (
+              <Field label="CG Designation" value={emp.cgDesignation} />
+            )}
           </div>
 
           {/* ══════════════ 2. Designation & Medical IDs ══════════════ */}
