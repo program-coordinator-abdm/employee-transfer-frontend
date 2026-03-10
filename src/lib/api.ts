@@ -600,6 +600,9 @@ export interface NewEmployee {
   contractRegularisedDate: string;
   contractJoiningDate: string;
   pastServiceDocs: string[];
+  remarks: string;
+  cgPost: string;
+  cgDesignation: string;
   empDeclAgreed: boolean;
   empDeclName: string;
   empDeclDate: string;
@@ -1081,6 +1084,9 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     directRecruitmentMode: raw.directRecruitmentMode ?? "",
     directRecruitmentOther: raw.directRecruitmentOther ?? "",
     pastServiceDocs: raw.pastServiceDocs ?? [],
+    remarks: raw.remarks ?? "",
+    cgPost: raw.cgPost ?? "",
+    cgDesignation: raw.cgDesignation ?? "",
     empDeclAgreed: raw.empDeclAgreed ?? false,
     empDeclName: raw.empDeclName ?? "",
     empDeclDate: raw.empDeclDate ?? "",

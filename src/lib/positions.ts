@@ -26,6 +26,8 @@ const LRO_POSITIONS = [
   "DTO / DLO",
   "District Surgeon (DS)",
   "District Health Officer (DHO)",
+  "Taluk Health Officer (THO)",
+  "Programme Officer",
 ];
 
 const JRO_LRO_POSITIONS = [
@@ -56,6 +58,8 @@ const JRO_LRO_POSITIONS = [
   "CMO",
   "Dental Health Officer",
   "Psychiatry",
+  "General Surgeon",
+  "Senior Specialist",
 ];
 
 const GROUP_B_POSITIONS = [
@@ -88,6 +92,8 @@ const GROUP_B_POSITIONS = [
   "District Nursing Officer",
   "Deputy District Health Education Officer",
   "Senior Nursing Officer / Senior Staff Nursing Officer",
+  "Hospital Attendant - Grade - II",
+  "Statistical Officer",
 ];
 
 const GROUP_C_POSITIONS = [
@@ -135,6 +141,13 @@ const GROUP_C_POSITIONS = [
   "Senior Pharmacists",
   "Nursing Officer / Staff Nursing Officer",
   "Assistant Statistical Officer",
+  "Lab Technician",
+  "Typist (CCT)",
+  "Stenographer",
+  "Grade - I and Grade - II officers",
+  "Senior non Medical Supervisor",
+  "ASO",
+  "Cholera Officers",
 ];
 
 const GROUP_D_GRADE1_POSITIONS = [

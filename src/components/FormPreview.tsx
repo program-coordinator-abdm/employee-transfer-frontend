@@ -106,6 +106,9 @@ export interface FormPreviewData {
   spouseCityTownVillage: string;
   ngoBenefits: boolean;
   ngoBenefitsDoc: string;
+  remarks: string;
+  cgPost: string;
+  cgDesignation: string;
   timeboundApplicable: boolean;
   timeboundCategory: string;
   timeboundYears: string;
@@ -192,12 +195,12 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
     if (data.promotionRejected && data.promotionRejectedDate) {
       tbPdfRows.push(["Promotion Rejected Date", fmt(data.promotionRejectedDate)]);
     }
-    tbPdfRows.push(["PG Bond", data.pgBond ? "Yes" : "No"]);
+    tbPdfRows.push(["PG Completion details", data.pgBond ? "Yes" : "No"]);
     if (data.pgBond && data.pgBondDoc) {
-      tbPdfRows.push(["PG Bond Certificate", data.pgBondDoc]);
+      tbPdfRows.push(["PG Completion Certificate", data.pgBondDoc]);
     }
     if (data.pgBond && data.pgBondCompletionDate) {
-      tbPdfRows.push(["PG Bond Completion Date", fmt(data.pgBondCompletionDate)]);
+      tbPdfRows.push(["PG Completion Date", fmt(data.pgBondCompletionDate)]);
     }
     addSection("3. Timebound", tbPdfRows);
 
@@ -228,7 +231,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Phone", data.phoneNumber],
       ["Telephone", data.telephoneNumber || "—"],
     ]);
-    addSection("6b. Current Address", [
+    addSection("6b. Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ", [
       ["Address", data.officeAddress],
       ["Pin Code", data.officePinCode],
       ["Email", data.officeEmail],
@@ -309,6 +312,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Field label="KGID" value={data.kgid} />
           <Field label="Name" value={data.name} />
+          {data.recruitmentType && <Field label="Recruitment Type" value={data.recruitmentType} />}
+          {data.recruitmentType === "CG Grounds" && data.cgPost && <Field label="CG Post" value={data.cgPost} />}
+          {data.recruitmentType === "CG Grounds" && data.cgDesignation && <Field label="CG Designation" value={data.cgDesignation} />}
         </div>
       </PreviewSection>
 
@@ -354,12 +360,12 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           {data.promotionRejected && data.promotionRejectedDate && (
             <Field label="Promotion Rejected Date" value={fmt(data.promotionRejectedDate)} />
           )}
-          <Field label="PG Bond" value={data.pgBond ? "Yes" : "No"} />
+          <Field label="PG Completion details" value={data.pgBond ? "Yes" : "No"} />
           {data.pgBond && data.pgBondDoc && (
-            <Field label="PG Bond Certificate" value={data.pgBondDoc} />
+            <Field label="PG Completion Certificate" value={data.pgBondDoc} />
           )}
           {data.pgBond && data.pgBondCompletionDate && (
-            <Field label="PG Bond Completion Date" value={fmt(data.pgBondCompletionDate)} />
+            <Field label="PG Completion Date" value={fmt(data.pgBondCompletionDate)} />
           )}
         </div>
       </PreviewSection>
@@ -410,7 +416,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           {data.telephoneNumber && <Field label="Telephone" value={data.telephoneNumber} />}
         </div>
         <Separator className="my-4" />
-        <h4 className="text-xs font-semibold text-primary uppercase tracking-wide mb-3">Current Address</h4>
+        <h4 className="text-xs font-semibold text-primary uppercase tracking-wide mb-3">Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Address" value={data.officeAddress} />
           <Field label="Pin Code" value={data.officePinCode} />
@@ -461,6 +467,13 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           </div>
         )}
       </PreviewSection>
+
+      {/* Remarks */}
+      {data.remarks && (
+        <PreviewSection title="Remarks" number="8b" onEdit={() => onEdit(8)}>
+          <p className="text-sm text-foreground">{data.remarks}</p>
+        </PreviewSection>
+      )}
 
       {/* Section 8 - Spouse Working Details */}
       <PreviewSection title="Spouse Working Details" number="9" onEdit={() => onEdit(9)}>

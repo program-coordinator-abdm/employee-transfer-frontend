@@ -45,7 +45,7 @@ const INSTITUTION_TYPES = [
 ];
 const HFR_ELIGIBLE_TYPES = ["SC", "PHC/UPHC", "CHC", "Taluk General Hospital", "Sub Division Hospital", "District Hospital", "District Level Hospitals", "MCH/W&C", "Prisons Hospitals"];
 
-const EDUCATION_LEVELS = ["Unschooled/UnEducated", "10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "MBBS", "MD", "Paramedical", "PhD", "Others"];
+const EDUCATION_LEVELS = ["Unschooled/UnEducated", "10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "GNM", "BSc", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "MBBS", "MD", "Paramedical", "PhD", "Others"];
 
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
@@ -161,6 +161,9 @@ const EmployeeCreate: React.FC = () => {
   const [contractRegularisedDate, setContractRegularisedDate] = useState<Date>();
   const [contractJoiningDate, setContractJoiningDate] = useState<Date>();
   const [pastServiceDocs, setPastServiceDocs] = useState<string[]>([""]);
+  const [remarks, setRemarks] = useState("");
+  const [cgPost, setCgPost] = useState("");
+  const [cgDesignation, setCgDesignation] = useState("");
   // Timebound doctor checkboxes
   const [timebound6Years, setTimebound6Years] = useState(false);
   const [timebound6YearsDoc, setTimebound6YearsDoc] = useState("");
@@ -291,6 +294,9 @@ const EmployeeCreate: React.FC = () => {
       if (existing.pastServiceDocs && existing.pastServiceDocs.length > 0) setPastServiceDocs(existing.pastServiceDocs);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
       if (existing.ngoBenefitsDoc !== undefined) setNgoBenefitsDoc(existing.ngoBenefitsDoc);
+      if (existing.remarks) setRemarks(existing.remarks);
+      if (existing.cgPost) setCgPost(existing.cgPost);
+      if (existing.cgDesignation) setCgDesignation(existing.cgDesignation);
       if (existing.educationDetails && existing.educationDetails.length > 0) setEducationDetails(existing.educationDetails);
       setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
       if (existing.empDeclDate) setEmpDeclDate(new Date(existing.empDeclDate));
@@ -551,6 +557,9 @@ const EmployeeCreate: React.FC = () => {
     spouseGovtServant, spouseGovtServantDoc,
     spouseDesignation, spouseDistrict, spouseTaluk, spouseCityTownVillage,
     ngoBenefits, ngoBenefitsDoc,
+    remarks,
+    cgPost: recruitmentType === "CG Grounds" ? cgPost : "",
+    cgDesignation: recruitmentType === "CG Grounds" ? cgDesignation : "",
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -649,6 +658,9 @@ const EmployeeCreate: React.FC = () => {
       spouseGovtServant, spouseGovtServantDoc,
       spouseDesignation, spouseDistrict, spouseTaluk, spouseCityTownVillage,
       ngoBenefits, ngoBenefitsDoc,
+      remarks,
+      cgPost: recruitmentType === "CG Grounds" ? cgPost : "",
+      cgDesignation: recruitmentType === "CG Grounds" ? cgDesignation : "",
       empDeclAgreed, empDeclName, empDeclDate: empDeclDate?.toISOString() || "",
       officerDeclAgreed, officerDeclName, officerDeclDate: officerDeclDate?.toISOString() || "",
     };
@@ -718,9 +730,15 @@ const EmployeeCreate: React.FC = () => {
       y += 6;
     };
 
-    addSection("1. Basic Information", [
+    const basicRows: [string, string][] = [
       ["KGID", emp.kgid], ["Name", emp.name],
-    ]);
+    ];
+    if (emp.recruitmentType) basicRows.push(["Recruitment Type", emp.recruitmentType]);
+    if (emp.recruitmentType === "CG Grounds") {
+      if (emp.cgPost) basicRows.push(["CG Post", emp.cgPost]);
+      if (emp.cgDesignation) basicRows.push(["CG Designation", emp.cgDesignation]);
+    }
+    addSection("1. Basic Information", basicRows);
     const desigRows: [string, string][] = [
       ["Designation", emp.designation],
       ["Group", `${emp.designationGroup} — ${emp.designationSubGroup}`],
@@ -754,12 +772,12 @@ const EmployeeCreate: React.FC = () => {
     if (emp.promotionRejected && emp.promotionRejectedDate) {
       tbPdfRows.push(["Promotion Rejected Date", fmt(emp.promotionRejectedDate)]);
     }
-    tbPdfRows.push(["PG Bond", emp.pgBond ? "Yes" : "No"]);
+    tbPdfRows.push(["PG Completion details", emp.pgBond ? "Yes" : "No"]);
     if (emp.pgBond && emp.pgBondDoc) {
-      tbPdfRows.push(["PG Bond Certificate", emp.pgBondDoc]);
+      tbPdfRows.push(["PG Completion Certificate", emp.pgBondDoc]);
     }
     if (emp.pgBond && emp.pgBondCompletionDate) {
-      tbPdfRows.push(["PG Bond Completion Date", fmt(emp.pgBondCompletionDate)]);
+      tbPdfRows.push(["PG Completion Date", fmt(emp.pgBondCompletionDate)]);
     }
     addSection("3. Timebound", tbPdfRows);
     addSection("4. Service & Personal Details", [
@@ -784,7 +802,7 @@ const EmployeeCreate: React.FC = () => {
       ["Email", emp.email], ["Phone", emp.phoneNumber],
       ["Telephone", emp.telephoneNumber || "—"],
     ]);
-    addSection("6b. Current Address", [
+    addSection("6b. Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ", [
       ["Address", emp.officeAddress], ["Pin Code", emp.officePinCode],
       ["Email", emp.officeEmail], ["Phone", emp.officePhoneNumber],
       ["Telephone", emp.officeTelephoneNumber || "—"],
@@ -1020,6 +1038,18 @@ const EmployeeCreate: React.FC = () => {
                   <input type="radio" name="recruitmentType" value="CG Grounds" checked={recruitmentType === "CG Grounds"} onChange={() => { setRecruitmentType("CG Grounds"); setContractRegularised(false); setContractRegularisedDoc(""); setContractJoiningDate(undefined); setDirectRecruitmentMode(""); }} className="accent-primary" />
                   <span className="text-sm font-medium text-foreground">CG Grounds</span>
                 </label>
+                {recruitmentType === "CG Grounds" && (
+                  <div className="ml-6 mt-3 space-y-3">
+                    <div>
+                      <label className="input-label">Post</label>
+                      <input type="text" value={cgPost} onChange={(e) => setCgPost(e.target.value)} className="input-field" placeholder="Enter post" />
+                    </div>
+                    <div>
+                      <label className="input-label">Designation</label>
+                      <input type="text" value={cgDesignation} onChange={(e) => setCgDesignation(e.target.value)} className="input-field" placeholder="Enter designation" />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </Card>
@@ -1218,7 +1248,7 @@ const EmployeeCreate: React.FC = () => {
               {/* PG Bond */}
               <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
                 <div className="flex items-center justify-between gap-4">
-                  <Label className="text-sm font-medium leading-snug">PG Bond?</Label>
+                  <Label className="text-sm font-medium leading-snug">PG Completion details?</Label>
                   <div className="flex items-center gap-2 shrink-0">
                     <Switch checked={pgBond} onCheckedChange={(v) => { setPgBond(v); if (!v) { setPgBondDoc(""); setPgBondCompletionDate(undefined); } }} />
                     <span className="text-sm text-muted-foreground w-8">{pgBond ? "Yes" : "No"}</span>
@@ -1418,9 +1448,9 @@ const EmployeeCreate: React.FC = () => {
                       <FileUploadField
                         value={edu.documentProof}
                         onChange={(name) => { updateEducation(idx, "documentProof", name); }}
-                        label="Upload Certificate / Marksheet"
+                        label="Upload Certificate / Marksheet / Convocation Certificate"
                         required={false}
-                        hint="Upload certificate or marksheet. Max file size: 5 MB."
+                        hint="Upload certificate, marksheet, or convocation certificate. Max file size: 5 MB."
                       />
                     </div>
                   )}
@@ -1477,7 +1507,7 @@ const EmployeeCreate: React.FC = () => {
             <Separator className="my-5" />
 
             {/* Office Address */}
-            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Current Address</h4>
+            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ</h4>
             <div className="space-y-4">
               <div>
                 <label className="input-label">Address <span className="text-destructive">*</span></label>
@@ -1827,6 +1857,17 @@ const EmployeeCreate: React.FC = () => {
               </Button>
             </div>
 
+          </Card>
+          </div>
+
+          {/* Remarks Section */}
+          <div className={cn(!shouldShowSection(8) && "hidden")}>
+          <Card className="p-6">
+            <SectionTitle number="8b" title="Remarks" />
+            <div>
+              <label className="input-label">General Remarks (Optional)</label>
+              <textarea value={remarks} onChange={(e) => setRemarks(e.target.value)} className="input-field min-h-[100px] resize-y" placeholder="Enter any general remarks..." />
+            </div>
           </Card>
           </div>
 

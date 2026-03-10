@@ -149,6 +149,10 @@ const EmployeeView: React.FC = () => {
       basicRows.push(["Contract Regularised Date", fmtPdf(emp.contractRegularisedDate)]);
       basicRows.push(["Contract Joining Date", fmtPdf(emp.contractJoiningDate)]);
     }
+    if (emp.recruitmentType === "CG Grounds") {
+      if (emp.cgPost) basicRows.push(["CG Post", emp.cgPost]);
+      if (emp.cgDesignation) basicRows.push(["CG Designation", emp.cgDesignation]);
+    }
     addSection("1. Basic Information", basicRows);
 
     // 2. Designation & Medical IDs
@@ -183,8 +187,8 @@ const EmployeeView: React.FC = () => {
       tbRows.push(["Rejected Designation", emp.promotionRejectedDesignation || "—"]);
       tbRows.push(["Rejected Date", fmtPdf(emp.promotionRejectedDate)]);
     }
-    tbRows.push(["PG Bond", yn(emp.pgBond, emp.pgBondDoc)]);
-    if (emp.pgBond) tbRows.push(["PG Bond Completion Date", fmtPdf(emp.pgBondCompletionDate)]);
+    tbRows.push(["PG Completion details", yn(emp.pgBond, emp.pgBondDoc)]);
+    if (emp.pgBond) tbRows.push(["PG Completion Date", fmtPdf(emp.pgBondCompletionDate)]);
     addSection("3. Timebound", tbRows);
 
     // 4. Service & Personal Details
@@ -215,7 +219,7 @@ const EmployeeView: React.FC = () => {
       ["Email", emp.email], ["Phone", emp.phoneNumber],
       ["Telephone", emp.telephoneNumber || "—"],
     ]);
-    addSection("6b. Current Address", [
+    addSection("6b. Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ", [
       ["Address", emp.officeAddress], ["Pin Code", emp.officePinCode],
       ["Email", emp.officeEmail], ["Phone", emp.officePhoneNumber],
       ["Telephone", emp.officeTelephoneNumber || "—"],
@@ -394,6 +398,12 @@ const EmployeeView: React.FC = () => {
                 <Field label="Contract Joining Date" value={fmt(emp.contractJoiningDate)} />
               </>
             )}
+            {emp.recruitmentType === "CG Grounds" && emp.cgPost && (
+              <Field label="CG Post" value={emp.cgPost} />
+            )}
+            {emp.recruitmentType === "CG Grounds" && emp.cgDesignation && (
+              <Field label="CG Designation" value={emp.cgDesignation} />
+            )}
           </div>
 
           {/* ══════════════ 2. Designation & Medical IDs ══════════════ */}
@@ -433,9 +443,9 @@ const EmployeeView: React.FC = () => {
                 <Field label="Rejected Date" value={fmt(emp.promotionRejectedDate)} />
               </>
             )}
-            <BoolField label="PG Bond" value={emp.pgBond} doc={emp.pgBondDoc} />
+            <BoolField label="PG Completion details" value={emp.pgBond} doc={emp.pgBondDoc} />
             {emp.pgBond && (
-              <Field label="PG Bond Completion Date" value={fmt(emp.pgBondCompletionDate)} />
+              <Field label="PG Completion Date" value={fmt(emp.pgBondCompletionDate)} />
             )}
           </div>
 
@@ -483,7 +493,7 @@ const EmployeeView: React.FC = () => {
             {emp.telephoneNumber && <Field label="Telephone" value={emp.telephoneNumber} />}
           </div>
 
-          <SectionHeading title="Office Address" />
+          <SectionHeading title="Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Address" value={emp.officeAddress} />
             <Field label="Pin Code" value={emp.officePinCode} />
@@ -536,6 +546,14 @@ const EmployeeView: React.FC = () => {
                 </div>
               ))}
             </div>
+          )}
+
+          {/* Remarks */}
+          {emp.remarks && (
+            <>
+              <SectionHeading title="Remarks" />
+              <p className="text-sm text-foreground">{emp.remarks}</p>
+            </>
           )}
 
           {/* ══════════════ 9. Spouse Working Details ══════════════ */}
