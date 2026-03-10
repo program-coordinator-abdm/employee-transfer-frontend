@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { clearDraftsForUser } from "@/lib/draftStorage";
 import { getToken, getUser, setToken, setUser, removeToken, removeUser, login as apiLogin } from "@/lib/api";
 
 export type UserRole = "ADMIN" | "DATA_OFFICER" | "DTC";
