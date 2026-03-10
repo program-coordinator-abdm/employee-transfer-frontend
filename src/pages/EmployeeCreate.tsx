@@ -1851,6 +1851,17 @@ const EmployeeCreate: React.FC = () => {
           </Card>
           </div>
 
+          {/* Remarks Section */}
+          <div className={cn(!shouldShowSection(8) && "hidden")}>
+          <Card className="p-6">
+            <SectionTitle number="8b" title="Remarks" />
+            <div>
+              <label className="input-label">General Remarks (Optional)</label>
+              <textarea value={remarks} onChange={(e) => setRemarks(e.target.value)} className="input-field min-h-[100px] resize-y" placeholder="Enter any general remarks..." />
+            </div>
+          </Card>
+          </div>
+
           {/* 9. Spouse Working Details */}
           <div className={cn(!shouldShowSection(9) && "hidden")} ref={el => { sectionRefs.current[9] = el; }}>
           <Card className="p-6">
