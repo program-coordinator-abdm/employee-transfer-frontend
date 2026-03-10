@@ -161,6 +161,9 @@ const EmployeeCreate: React.FC = () => {
   const [contractRegularisedDate, setContractRegularisedDate] = useState<Date>();
   const [contractJoiningDate, setContractJoiningDate] = useState<Date>();
   const [pastServiceDocs, setPastServiceDocs] = useState<string[]>([""]);
+  const [remarks, setRemarks] = useState("");
+  const [cgPost, setCgPost] = useState("");
+  const [cgDesignation, setCgDesignation] = useState("");
   // Timebound doctor checkboxes
   const [timebound6Years, setTimebound6Years] = useState(false);
   const [timebound6YearsDoc, setTimebound6YearsDoc] = useState("");
