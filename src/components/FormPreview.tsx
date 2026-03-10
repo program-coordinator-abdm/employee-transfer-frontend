@@ -195,12 +195,12 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
     if (data.promotionRejected && data.promotionRejectedDate) {
       tbPdfRows.push(["Promotion Rejected Date", fmt(data.promotionRejectedDate)]);
     }
-    tbPdfRows.push(["PG Bond", data.pgBond ? "Yes" : "No"]);
+    tbPdfRows.push(["PG Completion details", data.pgBond ? "Yes" : "No"]);
     if (data.pgBond && data.pgBondDoc) {
-      tbPdfRows.push(["PG Bond Certificate", data.pgBondDoc]);
+      tbPdfRows.push(["PG Completion Certificate", data.pgBondDoc]);
     }
     if (data.pgBond && data.pgBondCompletionDate) {
-      tbPdfRows.push(["PG Bond Completion Date", fmt(data.pgBondCompletionDate)]);
+      tbPdfRows.push(["PG Completion Date", fmt(data.pgBondCompletionDate)]);
     }
     addSection("3. Timebound", tbPdfRows);
 

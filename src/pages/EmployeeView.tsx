@@ -183,8 +183,8 @@ const EmployeeView: React.FC = () => {
       tbRows.push(["Rejected Designation", emp.promotionRejectedDesignation || "—"]);
       tbRows.push(["Rejected Date", fmtPdf(emp.promotionRejectedDate)]);
     }
-    tbRows.push(["PG Bond", yn(emp.pgBond, emp.pgBondDoc)]);
-    if (emp.pgBond) tbRows.push(["PG Bond Completion Date", fmtPdf(emp.pgBondCompletionDate)]);
+    tbRows.push(["PG Completion details", yn(emp.pgBond, emp.pgBondDoc)]);
+    if (emp.pgBond) tbRows.push(["PG Completion Date", fmtPdf(emp.pgBondCompletionDate)]);
     addSection("3. Timebound", tbRows);
 
     // 4. Service & Personal Details
