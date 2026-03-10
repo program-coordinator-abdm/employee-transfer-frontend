@@ -2228,6 +2228,11 @@ const EmployeeCreate: React.FC = () => {
           {formStep === "fill" && editingSection === null && (
             <div className="flex items-center justify-end gap-3 pb-8">
               <button type="button" onClick={() => navigate("/categories")} className="btn-ghost px-8 py-3">Cancel</button>
+              {!isEditMode && (
+                <button type="button" onClick={handleSaveDraft} className="btn-ghost flex items-center gap-2 px-8 py-3 text-base border border-border">
+                  <FileText className="w-5 h-5" /> Save Draft
+                </button>
+              )}
               <button type="button" onClick={handlePreview} className="btn-primary flex items-center gap-2 px-8 py-3 text-base">
                 Preview & Print
               </button>
