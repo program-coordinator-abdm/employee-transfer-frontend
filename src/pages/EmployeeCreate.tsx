@@ -313,6 +313,134 @@ const EmployeeCreate: React.FC = () => {
     });
   }, [editId]);
 
+  // ---- Draft helpers ----
+  const collectFormSnapshot = (): Record<string, any> => ({
+    kgid, name, designation, designationGroup, designationSubGroup, firstPostHeld, firstPostHeldOther,
+    dateOfEntry: dateOfEntry?.toISOString() || "", gender, probationaryPeriod, probationaryPeriodDoc,
+    probationDeclarationDate: probationDeclarationDate?.toISOString() || "",
+    dateOfBirth: dateOfBirth?.toISOString() || "", cltCompleted, cltCompletedDoc,
+    deptExamCompleted, deptExamName, deptExamDoc,
+    isDoctorNursePharmacist, hprId, hfrId,
+    address, pinCode, email, phoneNumber, telephoneNumber,
+    officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
+    currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld, currentFirstPostHeldOther,
+    currentInstitution, currentInstitutionType, currentHfrId,
+    currentDistrict, currentTaluk, currentCityTownVillage,
+    currentWorkingSince: currentWorkingSince?.toISOString() || "", currentZone, currentAreaType,
+    spouseDesignation, spouseDistrict, spouseTaluk, spouseCityTownVillage,
+    pastServices, pastZones, pastServiceDocs,
+    pastFromDates: pastFromDates.map(d => d?.toISOString() || ""),
+    pastToDates: pastToDates.map(d => d?.toISOString() || ""),
+    educationDetails,
+    timeboundApplicable, timeboundCategory, timeboundYears, timeboundDoc,
+    timeboundDate: timeboundDate?.toISOString() || "",
+    promotionRejected, promotionRejectedDate: promotionRejectedDate?.toISOString() || "",
+    promotionRejectedDesignation, pgBond, pgBondDoc,
+    pgBondCompletionDate: pgBondCompletionDate?.toISOString() || "",
+    recruitmentType, directRecruitmentMode, directRecruitmentOther,
+    contractRegularised, contractRegularisedDoc,
+    contractRegularisedDate: contractRegularisedDate?.toISOString() || "",
+    contractJoiningDate: contractJoiningDate?.toISOString() || "",
+    terminallyIll, terminallyIllDoc, pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
+    retiringWithinTwoYears, retiringWithinTwoYearsDoc,
+    childSpouseDisability, childSpouseDisabilityDoc,
+    divorceeWidowWithChild, divorceeWidowWithChildDoc,
+    spouseGovtServant, spouseGovtServantDoc,
+    ngoBenefits, ngoBenefitsDoc, remarks, cgPost, cgDesignation,
+    timebound6Years, timebound6YearsDoc, timebound6YearsDate: timebound6YearsDate?.toISOString() || "",
+    timebound13Years, timebound13YearsDoc, timebound13YearsDate: timebound13YearsDate?.toISOString() || "",
+    timebound20Years, timebound20YearsDoc, timebound20YearsDate: timebound20YearsDate?.toISOString() || "",
+    timebound10Years, timebound10YearsDoc, timebound10YearsDate: timebound10YearsDate?.toISOString() || "",
+    timebound15Years, timebound15YearsDoc, timebound15YearsDate: timebound15YearsDate?.toISOString() || "",
+    timebound25Years, timebound25YearsDoc, timebound25YearsDate: timebound25YearsDate?.toISOString() || "",
+    timebound30Years, timebound30YearsDoc, timebound30YearsDate: timebound30YearsDate?.toISOString() || "",
+    currentServiceDoc,
+  });
+
+  const loadDraftIntoForm = (d: Record<string, any>) => {
+    const s = (k: string) => d[k] || "";
+    const b = (k: string) => !!d[k];
+    const dt = (k: string) => d[k] ? new Date(d[k]) : undefined;
+    setKgid(s("kgid")); setName(s("name")); setDesignation(s("designation"));
+    setDesignationGroup(s("designationGroup")); setDesignationSubGroup(s("designationSubGroup"));
+    setFirstPostHeld(s("firstPostHeld")); setFirstPostHeldOther(s("firstPostHeldOther"));
+    setDateOfEntry(dt("dateOfEntry")); setGender(s("gender"));
+    setProbationaryPeriod(b("probationaryPeriod")); setProbationaryPeriodDoc(s("probationaryPeriodDoc"));
+    setProbationDeclarationDate(dt("probationDeclarationDate"));
+    setDateOfBirth(dt("dateOfBirth")); setCltCompleted(b("cltCompleted")); setCltCompletedDoc(s("cltCompletedDoc"));
+    setDeptExamCompleted(b("deptExamCompleted")); setDeptExamName(s("deptExamName")); setDeptExamDoc(s("deptExamDoc"));
+    setIsDoctorNursePharmacist(b("isDoctorNursePharmacist")); setHprId(s("hprId")); setHfrId(s("hfrId"));
+    setAddress(s("address")); setPinCode(s("pinCode")); setEmail(s("email"));
+    setPhoneNumber(s("phoneNumber")); setTelephoneNumber(s("telephoneNumber"));
+    setOfficeAddress(s("officeAddress")); setOfficePinCode(s("officePinCode"));
+    setOfficeEmail(s("officeEmail")); setOfficePhoneNumber(s("officePhoneNumber"));
+    setOfficeTelephoneNumber(s("officeTelephoneNumber"));
+    setCurrentPostHeld(s("currentPostHeld")); setCurrentPostGroup(s("currentPostGroup"));
+    setCurrentPostSubGroup(s("currentPostSubGroup")); setCurrentFirstPostHeld(s("currentFirstPostHeld"));
+    setCurrentFirstPostHeldOther(s("currentFirstPostHeldOther"));
+    setCurrentInstitution(s("currentInstitution")); setCurrentInstitutionType(s("currentInstitutionType"));
+    setCurrentHfrId(s("currentHfrId")); setCurrentDistrict(s("currentDistrict"));
+    setCurrentTaluk(s("currentTaluk")); setCurrentCityTownVillage(s("currentCityTownVillage"));
+    setCurrentWorkingSince(dt("currentWorkingSince")); setCurrentZone(s("currentZone"));
+    setCurrentAreaType(s("currentAreaType"));
+    setSpouseDesignation(s("spouseDesignation")); setSpouseDistrict(s("spouseDistrict"));
+    setSpouseTaluk(s("spouseTaluk")); setSpouseCityTownVillage(s("spouseCityTownVillage"));
+    if (d.pastServices?.length) setPastServices(d.pastServices);
+    if (d.pastZones?.length) setPastZones(d.pastZones);
+    if (d.pastServiceDocs?.length) setPastServiceDocs(d.pastServiceDocs);
+    if (d.pastFromDates?.length) setPastFromDates(d.pastFromDates.map((v: string) => v ? new Date(v) : undefined));
+    if (d.pastToDates?.length) setPastToDates(d.pastToDates.map((v: string) => v ? new Date(v) : undefined));
+    if (d.educationDetails?.length) setEducationDetails(d.educationDetails);
+    setTimeboundApplicable(b("timeboundApplicable")); setTimeboundCategory(s("timeboundCategory"));
+    setTimeboundYears(s("timeboundYears")); setTimeboundDoc(s("timeboundDoc"));
+    setTimeboundDate(dt("timeboundDate"));
+    setPromotionRejected(b("promotionRejected")); setPromotionRejectedDate(dt("promotionRejectedDate"));
+    setPromotionRejectedDesignation(s("promotionRejectedDesignation"));
+    setPgBond(b("pgBond")); setPgBondDoc(s("pgBondDoc")); setPgBondCompletionDate(dt("pgBondCompletionDate"));
+    setRecruitmentType(s("recruitmentType")); setDirectRecruitmentMode(s("directRecruitmentMode"));
+    setDirectRecruitmentOther(s("directRecruitmentOther"));
+    setContractRegularised(b("contractRegularised")); setContractRegularisedDoc(s("contractRegularisedDoc"));
+    setContractRegularisedDate(dt("contractRegularisedDate")); setContractJoiningDate(dt("contractJoiningDate"));
+    setTerminallyIll(b("terminallyIll")); setTerminallyIllDoc(s("terminallyIllDoc"));
+    setPregnantOrChildUnderOne(b("pregnantOrChildUnderOne")); setPregnantOrChildUnderOneDoc(s("pregnantOrChildUnderOneDoc"));
+    setRetiringWithinTwoYears(b("retiringWithinTwoYears")); setRetiringWithinTwoYearsDoc(s("retiringWithinTwoYearsDoc"));
+    setChildSpouseDisability(b("childSpouseDisability")); setChildSpouseDisabilityDoc(s("childSpouseDisabilityDoc"));
+    setDivorceeWidowWithChild(b("divorceeWidowWithChild")); setDivorceeWidowWithChildDoc(s("divorceeWidowWithChildDoc"));
+    setSpouseGovtServant(b("spouseGovtServant")); setSpouseGovtServantDoc(s("spouseGovtServantDoc"));
+    setNgoBenefits(b("ngoBenefits")); setNgoBenefitsDoc(s("ngoBenefitsDoc"));
+    setRemarks(s("remarks")); setCgPost(s("cgPost")); setCgDesignation(s("cgDesignation"));
+    setTimebound6Years(b("timebound6Years")); setTimebound6YearsDoc(s("timebound6YearsDoc")); setTimebound6YearsDate(dt("timebound6YearsDate"));
+    setTimebound13Years(b("timebound13Years")); setTimebound13YearsDoc(s("timebound13YearsDoc")); setTimebound13YearsDate(dt("timebound13YearsDate"));
+    setTimebound20Years(b("timebound20Years")); setTimebound20YearsDoc(s("timebound20YearsDoc")); setTimebound20YearsDate(dt("timebound20YearsDate"));
+    setTimebound10Years(b("timebound10Years")); setTimebound10YearsDoc(s("timebound10YearsDoc")); setTimebound10YearsDate(dt("timebound10YearsDate"));
+    setTimebound15Years(b("timebound15Years")); setTimebound15YearsDoc(s("timebound15YearsDoc")); setTimebound15YearsDate(dt("timebound15YearsDate"));
+    setTimebound25Years(b("timebound25Years")); setTimebound25YearsDoc(s("timebound25YearsDoc")); setTimebound25YearsDate(dt("timebound25YearsDate"));
+    setTimebound30Years(b("timebound30Years")); setTimebound30YearsDoc(s("timebound30YearsDoc")); setTimebound30YearsDate(dt("timebound30YearsDate"));
+    setCurrentServiceDoc(s("currentServiceDoc"));
+  };
+
+  const handleSaveDraft = () => {
+    if (!user?.username) { showToast("You must be logged in to save a draft", "error"); return; }
+    const snap = collectFormSnapshot();
+    const id = saveDraft(user.username, snap, currentDraftId);
+    setCurrentDraftId(id);
+    showToast("Draft saved to this device", "success");
+  };
+
+  // Load draft from query param on mount
+  useEffect(() => {
+    if (isEditMode) return;
+    const draftId = searchParams.get("draftId");
+    if (!draftId || !user?.username) return;
+    const drafts = getDraftsForUser(user.username);
+    const draft = drafts.find(d => d.draftId === draftId);
+    if (draft) {
+      loadDraftIntoForm(draft.formData);
+      setCurrentDraftId(draftId);
+      setDraftResumed(true);
+    }
+  }, []);
+
   // Fetch all employees for duplicate KGID check
   const [allKgids, setAllKgids] = useState<Set<string>>(new Set());
   const [kgidDuplicate, setKgidDuplicate] = useState(false);
