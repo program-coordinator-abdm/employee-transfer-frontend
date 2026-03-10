@@ -294,6 +294,9 @@ const EmployeeCreate: React.FC = () => {
       if (existing.pastServiceDocs && existing.pastServiceDocs.length > 0) setPastServiceDocs(existing.pastServiceDocs);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
       if (existing.ngoBenefitsDoc !== undefined) setNgoBenefitsDoc(existing.ngoBenefitsDoc);
+      if (existing.remarks) setRemarks(existing.remarks);
+      if (existing.cgPost) setCgPost(existing.cgPost);
+      if (existing.cgDesignation) setCgDesignation(existing.cgDesignation);
       if (existing.educationDetails && existing.educationDetails.length > 0) setEducationDetails(existing.educationDetails);
       setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
       if (existing.empDeclDate) setEmpDeclDate(new Date(existing.empDeclDate));
