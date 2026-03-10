@@ -433,9 +433,9 @@ const EmployeeView: React.FC = () => {
                 <Field label="Rejected Date" value={fmt(emp.promotionRejectedDate)} />
               </>
             )}
-            <BoolField label="PG Bond" value={emp.pgBond} doc={emp.pgBondDoc} />
+            <BoolField label="PG Completion details" value={emp.pgBond} doc={emp.pgBondDoc} />
             {emp.pgBond && (
-              <Field label="PG Bond Completion Date" value={fmt(emp.pgBondCompletionDate)} />
+              <Field label="PG Completion Date" value={fmt(emp.pgBondCompletionDate)} />
             )}
           </div>
 
