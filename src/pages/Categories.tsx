@@ -321,6 +321,18 @@ const Categories: React.FC = () => {
   const [allEmployees, setAllEmployees] = useState<NewEmployee[]>([]);
   const [employeesLoading, setEmployeesLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false);
+  const [drafts, setDrafts] = useState<EmployeeDraft[]>([]);
+  const [showDrafts, setShowDrafts] = useState(false);
+
+  // Load drafts
+  React.useEffect(() => {
+    if (user?.username) setDrafts(getDraftsForUser(user.username));
+  }, [user?.username]);
+
+  const handleDeleteDraft = (draftId: string) => {
+    deleteDraft(draftId);
+    if (user?.username) setDrafts(getDraftsForUser(user.username));
+  };
 
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
