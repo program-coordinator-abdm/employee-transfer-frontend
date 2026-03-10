@@ -483,7 +483,7 @@ const EmployeeView: React.FC = () => {
             {emp.telephoneNumber && <Field label="Telephone" value={emp.telephoneNumber} />}
           </div>
 
-          <SectionHeading title="Office Address" />
+          <SectionHeading title="Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="Address" value={emp.officeAddress} />
             <Field label="Pin Code" value={emp.officePinCode} />
