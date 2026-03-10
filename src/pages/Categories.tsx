@@ -319,6 +319,7 @@ const Categories: React.FC = () => {
   const [subSelections, setSubSelections] = useState<Record<string, string>>({});
   const [allEmployees, setAllEmployees] = useState<NewEmployee[]>([]);
   const [employeesLoading, setEmployeesLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
 
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
