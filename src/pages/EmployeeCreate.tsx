@@ -52,8 +52,12 @@ const EDUCATION_LEVELS = ["Unschooled/UnEducated", "10th/SSLC", "PU/12th", "Dipl
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
   const { id: editId } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const isEditMode = !!editId;
+  const { user } = useAuth();
   const { toast, showToast, hideToast } = useToastState();
+  const [currentDraftId, setCurrentDraftId] = useState<string | undefined>();
+  const [draftResumed, setDraftResumed] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   // formStep: "fill" → "preview" → "declare"
   const [formStep, setFormStep] = useState<"fill" | "preview" | "declare" | "submitted">("fill");
