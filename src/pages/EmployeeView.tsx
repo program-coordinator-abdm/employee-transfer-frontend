@@ -544,6 +544,14 @@ const EmployeeView: React.FC = () => {
             </div>
           )}
 
+          {/* Remarks */}
+          {emp.remarks && (
+            <>
+              <SectionHeading title="Remarks" />
+              <p className="text-sm text-foreground">{emp.remarks}</p>
+            </>
+          )}
+
           {/* ══════════════ 9. Spouse Working Details ══════════════ */}
           <SectionHeading title="Spouse Working Details" number={9} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
