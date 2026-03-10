@@ -301,6 +301,8 @@ export const KARNATAKA_GEO: Record<string, DistrictData> = {
       { name: "Kotturu", cities: ["Kotturu", "Mariyammanahalli"] },
       { name: "Harpanahalli", cities: ["Harpanahalli", "Harapanahalli"] },
       { name: "Hoovinahadagali", cities: ["Hoovinahadagali"] },
+      { name: "Kampli", cities: ["Kampli"] },
+      { name: "Kurugod", cities: ["Kurugod"] },
     ],
   },
   "Vijayapura (Bijapur)": {

@@ -92,6 +92,8 @@ const GROUP_B_POSITIONS = [
   "District Nursing Officer",
   "Deputy District Health Education Officer",
   "Senior Nursing Officer / Senior Staff Nursing Officer",
+  "Hospital Attendant - Grade - II",
+  "Statistical Officer",
 ];
 
 const GROUP_C_POSITIONS = [
