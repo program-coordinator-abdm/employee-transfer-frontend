@@ -331,11 +331,13 @@ const Categories: React.FC = () => {
   React.useEffect(() => {
     if (!isAuthenticated) return;
     setEmployeesLoading(true);
+    setFetchError(false);
     getNewEmployees()
       .then(setAllEmployees)
       .catch((err) => {
         console.error("Failed to fetch employees:", err);
         setAllEmployees([]);
+        setFetchError(true);
       })
       .finally(() => setEmployeesLoading(false));
   }, [isAuthenticated]);
