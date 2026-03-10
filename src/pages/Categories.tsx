@@ -607,6 +607,10 @@ const Categories: React.FC = () => {
                   <p className="text-muted-foreground">Loading...</p>
                 </div>
               </Card>
+            ) : fetchError ? (
+              <Card className="p-8 text-center border-dashed border-2 border-destructive/30">
+                <p className="text-destructive font-medium">Failed to load employees</p>
+              </Card>
             ) : filteredEmployees.length === 0 ? (
               <Card className="p-8 text-center border-dashed border-2 border-border">
                 <UserCircle className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
