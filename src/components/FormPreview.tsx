@@ -312,6 +312,9 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <Field label="KGID" value={data.kgid} />
           <Field label="Name" value={data.name} />
+          {data.recruitmentType && <Field label="Recruitment Type" value={data.recruitmentType} />}
+          {data.recruitmentType === "CG Grounds" && data.cgPost && <Field label="CG Post" value={data.cgPost} />}
+          {data.recruitmentType === "CG Grounds" && data.cgDesignation && <Field label="CG Designation" value={data.cgDesignation} />}
         </div>
       </PreviewSection>
 
