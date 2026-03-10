@@ -54,9 +54,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const logout = () => {
+    const currentUser = user;
     removeToken();
     removeUser();
     setUserState(null);
+    if (currentUser?.username) clearDraftsForUser(currentUser.username);
   };
 
   return (
