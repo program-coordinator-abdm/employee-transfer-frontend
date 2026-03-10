@@ -796,7 +796,7 @@ const EmployeeCreate: React.FC = () => {
       ["Email", emp.email], ["Phone", emp.phoneNumber],
       ["Telephone", emp.telephoneNumber || "—"],
     ]);
-    addSection("6b. Current Address", [
+    addSection("6b. Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ", [
       ["Address", emp.officeAddress], ["Pin Code", emp.officePinCode],
       ["Email", emp.officeEmail], ["Phone", emp.officePhoneNumber],
       ["Telephone", emp.officeTelephoneNumber || "—"],
