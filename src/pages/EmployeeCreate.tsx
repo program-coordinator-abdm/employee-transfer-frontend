@@ -766,12 +766,12 @@ const EmployeeCreate: React.FC = () => {
     if (emp.promotionRejected && emp.promotionRejectedDate) {
       tbPdfRows.push(["Promotion Rejected Date", fmt(emp.promotionRejectedDate)]);
     }
-    tbPdfRows.push(["PG Bond", emp.pgBond ? "Yes" : "No"]);
+    tbPdfRows.push(["PG Completion details", emp.pgBond ? "Yes" : "No"]);
     if (emp.pgBond && emp.pgBondDoc) {
-      tbPdfRows.push(["PG Bond Certificate", emp.pgBondDoc]);
+      tbPdfRows.push(["PG Completion Certificate", emp.pgBondDoc]);
     }
     if (emp.pgBond && emp.pgBondCompletionDate) {
-      tbPdfRows.push(["PG Bond Completion Date", fmt(emp.pgBondCompletionDate)]);
+      tbPdfRows.push(["PG Completion Date", fmt(emp.pgBondCompletionDate)]);
     }
     addSection("3. Timebound", tbPdfRows);
     addSection("4. Service & Personal Details", [
