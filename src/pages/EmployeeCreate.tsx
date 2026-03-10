@@ -813,6 +813,8 @@ const EmployeeCreate: React.FC = () => {
         setTimeout(() => navigate("/employee-list"), 1200);
       } else {
         const saved = await createEmployee(payload);
+        // Remove draft on successful submit
+        if (currentDraftId) { deleteDraft(currentDraftId); setCurrentDraftId(undefined); }
         setSubmittedEmp({ ...payload, id: saved.id, createdAt: saved.createdAt });
         setFormStep("submitted");
         window.scrollTo({ top: 0, behavior: "smooth" });
