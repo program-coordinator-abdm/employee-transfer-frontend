@@ -468,6 +468,13 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
         )}
       </PreviewSection>
 
+      {/* Remarks */}
+      {data.remarks && (
+        <PreviewSection title="Remarks" number="8b" onEdit={() => onEdit(8)}>
+          <p className="text-sm text-foreground">{data.remarks}</p>
+        </PreviewSection>
+      )}
+
       {/* Section 8 - Spouse Working Details */}
       <PreviewSection title="Spouse Working Details" number="9" onEdit={() => onEdit(9)}>
         <div className="grid grid-cols-1 gap-3">
