@@ -56,6 +56,8 @@ const JRO_LRO_POSITIONS = [
   "CMO",
   "Dental Health Officer",
   "Psychiatry",
+  "General Surgeon",
+  "Senior Specialist",
 ];
 
 const GROUP_B_POSITIONS = [
