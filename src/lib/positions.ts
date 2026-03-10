@@ -26,6 +26,8 @@ const LRO_POSITIONS = [
   "DTO / DLO",
   "District Surgeon (DS)",
   "District Health Officer (DHO)",
+  "Taluk Health Officer (THO)",
+  "Programme Officer",
 ];
 
 const JRO_LRO_POSITIONS = [
