@@ -600,6 +600,9 @@ export interface NewEmployee {
   contractRegularisedDate: string;
   contractJoiningDate: string;
   pastServiceDocs: string[];
+  remarks: string;
+  cgPost: string;
+  cgDesignation: string;
   empDeclAgreed: boolean;
   empDeclName: string;
   empDeclDate: string;
