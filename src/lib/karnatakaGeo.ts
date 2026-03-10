@@ -24,9 +24,7 @@ export const KARNATAKA_GEO: Record<string, DistrictData> = {
     taluks: [
       { name: "Ballari", cities: ["Ballari", "Cowl Bazaar", "Cantonment"] },
       { name: "Hospet", cities: ["Hosapete", "Kamalapur", "Hampi"] },
-      { name: "Kampli", cities: ["Kampli"] },
       { name: "Kudligi", cities: ["Kudligi", "Hagari"] },
-      { name: "Kurugod", cities: ["Kurugod"] },
       { name: "Sandur", cities: ["Sandur", "Toranagallu", "Swamyhalli"] },
       { name: "Siruguppa", cities: ["Siruguppa", "Siraguppa"] },
     ],
