@@ -1486,7 +1486,7 @@ const EmployeeCreate: React.FC = () => {
             <Separator className="my-5" />
 
             {/* Office Address */}
-            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Current Address</h4>
+            <h4 className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ</h4>
             <div className="space-y-4">
               <div>
                 <label className="input-label">Address <span className="text-destructive">*</span></label>
