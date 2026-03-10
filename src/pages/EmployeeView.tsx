@@ -149,6 +149,10 @@ const EmployeeView: React.FC = () => {
       basicRows.push(["Contract Regularised Date", fmtPdf(emp.contractRegularisedDate)]);
       basicRows.push(["Contract Joining Date", fmtPdf(emp.contractJoiningDate)]);
     }
+    if (emp.recruitmentType === "CG Grounds") {
+      if (emp.cgPost) basicRows.push(["CG Post", emp.cgPost]);
+      if (emp.cgDesignation) basicRows.push(["CG Designation", emp.cgDesignation]);
+    }
     addSection("1. Basic Information", basicRows);
 
     // 2. Designation & Medical IDs
