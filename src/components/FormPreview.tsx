@@ -357,12 +357,12 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           {data.promotionRejected && data.promotionRejectedDate && (
             <Field label="Promotion Rejected Date" value={fmt(data.promotionRejectedDate)} />
           )}
-          <Field label="PG Bond" value={data.pgBond ? "Yes" : "No"} />
+          <Field label="PG Completion details" value={data.pgBond ? "Yes" : "No"} />
           {data.pgBond && data.pgBondDoc && (
-            <Field label="PG Bond Certificate" value={data.pgBondDoc} />
+            <Field label="PG Completion Certificate" value={data.pgBondDoc} />
           )}
           {data.pgBond && data.pgBondCompletionDate && (
-            <Field label="PG Bond Completion Date" value={fmt(data.pgBondCompletionDate)} />
+            <Field label="PG Completion Date" value={fmt(data.pgBondCompletionDate)} />
           )}
         </div>
       </PreviewSection>
