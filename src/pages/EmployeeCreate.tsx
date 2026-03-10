@@ -1068,7 +1068,13 @@ const EmployeeCreate: React.FC = () => {
           </div>
         </div>
 
-        {/* PREVIEW MODE */}
+        {draftResumed && (
+          <div className="mb-4 p-3 rounded-lg border border-primary/30 bg-primary/5 text-sm text-foreground flex items-center justify-between">
+            <span>📋 Draft resumed. <strong>Attachments must be re-uploaded.</strong> Drafts are stored only on this device until logout.</span>
+            <button type="button" onClick={() => setDraftResumed(false)} className="text-muted-foreground hover:text-foreground ml-4">✕</button>
+          </div>
+        )}
+
         {formStep === "preview" && (
           <FormPreview
             data={getPreviewData()}
