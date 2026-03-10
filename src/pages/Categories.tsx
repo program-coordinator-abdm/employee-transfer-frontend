@@ -495,18 +495,24 @@ const Categories: React.FC = () => {
           ))}
         </div>
 
-        {activeFilter && (
-          <div className="mb-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleClearFilters}
-              className="gap-1.5 text-destructive border-destructive/30 hover:bg-destructive/10"
-            >
-              <XCircle className="w-4 h-4" /> Clear Filters
-            </Button>
-          </div>
-        )}
+        <div className="mb-4 flex items-center gap-2">
+          <Button
+            size="sm"
+            onClick={() => {/* Search is automatic via activeFilter */}}
+            className="gap-1.5"
+            disabled={!activeFilter}
+          >
+            <SearchIcon className="w-4 h-4" /> Search
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleClearFilters}
+            className="gap-1.5 text-destructive border-destructive/30 hover:bg-destructive/10"
+          >
+            <XCircle className="w-4 h-4" /> Clear Filters
+          </Button>
+        </div>
 
         {/* Sub-options dropdown for any group with sub-options */}
         {GROUP_CONFIGS.map((group) => {
