@@ -1029,6 +1029,18 @@ const EmployeeCreate: React.FC = () => {
                   <input type="radio" name="recruitmentType" value="CG Grounds" checked={recruitmentType === "CG Grounds"} onChange={() => { setRecruitmentType("CG Grounds"); setContractRegularised(false); setContractRegularisedDoc(""); setContractJoiningDate(undefined); setDirectRecruitmentMode(""); }} className="accent-primary" />
                   <span className="text-sm font-medium text-foreground">CG Grounds</span>
                 </label>
+                {recruitmentType === "CG Grounds" && (
+                  <div className="ml-6 mt-3 space-y-3">
+                    <div>
+                      <label className="input-label">Post</label>
+                      <input type="text" value={cgPost} onChange={(e) => setCgPost(e.target.value)} className="input-field" placeholder="Enter post" />
+                    </div>
+                    <div>
+                      <label className="input-label">Designation</label>
+                      <input type="text" value={cgDesignation} onChange={(e) => setCgDesignation(e.target.value)} className="input-field" placeholder="Enter designation" />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </Card>
