@@ -1227,7 +1227,7 @@ const EmployeeCreate: React.FC = () => {
               {/* PG Bond */}
               <div className="flex flex-col gap-3 p-4 rounded-lg border border-border bg-muted/20">
                 <div className="flex items-center justify-between gap-4">
-                  <Label className="text-sm font-medium leading-snug">PG Bond?</Label>
+                  <Label className="text-sm font-medium leading-snug">PG Completion details?</Label>
                   <div className="flex items-center gap-2 shrink-0">
                     <Switch checked={pgBond} onCheckedChange={(v) => { setPgBond(v); if (!v) { setPgBondDoc(""); setPgBondCompletionDate(undefined); } }} />
                     <span className="text-sm text-muted-foreground w-8">{pgBond ? "Yes" : "No"}</span>
