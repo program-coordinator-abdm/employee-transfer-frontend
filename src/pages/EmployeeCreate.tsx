@@ -1427,9 +1427,9 @@ const EmployeeCreate: React.FC = () => {
                       <FileUploadField
                         value={edu.documentProof}
                         onChange={(name) => { updateEducation(idx, "documentProof", name); }}
-                        label="Upload Certificate / Marksheet"
+                        label="Upload Certificate / Marksheet / Convocation Certificate"
                         required={false}
-                        hint="Upload certificate or marksheet. Max file size: 5 MB."
+                        hint="Upload certificate, marksheet, or convocation certificate. Max file size: 5 MB."
                       />
                     </div>
                   )}
