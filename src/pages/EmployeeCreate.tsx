@@ -730,9 +730,15 @@ const EmployeeCreate: React.FC = () => {
       y += 6;
     };
 
-    addSection("1. Basic Information", [
+    const basicRows: [string, string][] = [
       ["KGID", emp.kgid], ["Name", emp.name],
-    ]);
+    ];
+    if (emp.recruitmentType) basicRows.push(["Recruitment Type", emp.recruitmentType]);
+    if (emp.recruitmentType === "CG Grounds") {
+      if (emp.cgPost) basicRows.push(["CG Post", emp.cgPost]);
+      if (emp.cgDesignation) basicRows.push(["CG Designation", emp.cgDesignation]);
+    }
+    addSection("1. Basic Information", basicRows);
     const desigRows: [string, string][] = [
       ["Designation", emp.designation],
       ["Group", `${emp.designationGroup} — ${emp.designationSubGroup}`],
