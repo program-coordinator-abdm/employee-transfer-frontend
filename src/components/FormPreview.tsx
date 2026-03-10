@@ -231,7 +231,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
       ["Phone", data.phoneNumber],
       ["Telephone", data.telephoneNumber || "—"],
     ]);
-    addSection("6b. Current Address", [
+    addSection("6b. Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ", [
       ["Address", data.officeAddress],
       ["Pin Code", data.officePinCode],
       ["Email", data.officeEmail],
