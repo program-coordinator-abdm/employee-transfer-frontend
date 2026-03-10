@@ -413,7 +413,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           {data.telephoneNumber && <Field label="Telephone" value={data.telephoneNumber} />}
         </div>
         <Separator className="my-4" />
-        <h4 className="text-xs font-semibold text-primary uppercase tracking-wide mb-3">Current Address</h4>
+        <h4 className="text-xs font-semibold text-primary uppercase tracking-wide mb-3">Current Address ಪ್ರಸ್ತುತ / ಹಾಲಿ ವಾಸಿಸುವ ಸ್ಥಳ</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Address" value={data.officeAddress} />
           <Field label="Pin Code" value={data.officePinCode} />
