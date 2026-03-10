@@ -652,6 +652,9 @@ const EmployeeCreate: React.FC = () => {
       spouseGovtServant, spouseGovtServantDoc,
       spouseDesignation, spouseDistrict, spouseTaluk, spouseCityTownVillage,
       ngoBenefits, ngoBenefitsDoc,
+      remarks,
+      cgPost: recruitmentType === "CG Grounds" ? cgPost : "",
+      cgDesignation: recruitmentType === "CG Grounds" ? cgDesignation : "",
       empDeclAgreed, empDeclName, empDeclDate: empDeclDate?.toISOString() || "",
       officerDeclAgreed, officerDeclName, officerDeclDate: officerDeclDate?.toISOString() || "",
     };
