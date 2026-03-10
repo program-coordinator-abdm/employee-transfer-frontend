@@ -45,7 +45,7 @@ const INSTITUTION_TYPES = [
 ];
 const HFR_ELIGIBLE_TYPES = ["SC", "PHC/UPHC", "CHC", "Taluk General Hospital", "Sub Division Hospital", "District Hospital", "District Level Hospitals", "MCH/W&C", "Prisons Hospitals"];
 
-const EDUCATION_LEVELS = ["Unschooled/UnEducated", "10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "MBBS", "MD", "Paramedical", "PhD", "Others"];
+const EDUCATION_LEVELS = ["Unschooled/UnEducated", "10th/SSLC", "PU/12th", "Diploma (IT/Medical/Pharmacy/Paramedical)", "GNM", "BSc", "Bachelor's degree (UG) (Science/Arts/Commerce)", "Master's degree (PG) (Science/Arts/Commerce)", "MBBS", "MD", "Paramedical", "PhD", "Others"];
 
 const EmployeeCreate: React.FC = () => {
   const navigate = useNavigate();
