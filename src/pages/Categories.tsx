@@ -562,7 +562,7 @@ const Categories: React.FC = () => {
           );
         })}
 
-        {/* Filtered Employee List */}
+        {/* Filtered Employee Results */}
         {activeFilter && (
           <div className="mb-10">
             <div className="flex items-center justify-between mb-4">
@@ -572,7 +572,7 @@ const Categories: React.FC = () => {
                   Employees — {activeFilter.position}
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  {filteredEmployees.length} employee{filteredEmployees.length !== 1 ? "s" : ""} found
+                  {employeesLoading ? "Loading..." : `${filteredEmployees.length} employee${filteredEmployees.length !== 1 ? "s" : ""} found`}
                 </p>
               </div>
               {filteredEmployees.length > 0 && (
@@ -597,43 +597,60 @@ const Categories: React.FC = () => {
               </div>
             )}
 
-            {filteredEmployees.length === 0 ? (
+            {employeesLoading ? (
+              <Card className="p-8 text-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin" />
+                  <p className="text-muted-foreground">Loading...</p>
+                </div>
+              </Card>
+            ) : filteredEmployees.length === 0 ? (
               <Card className="p-8 text-center border-dashed border-2 border-border">
                 <UserCircle className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
-                <p className="text-muted-foreground font-medium">No employees registered under this position yet.</p>
+                <p className="text-muted-foreground font-medium">No employees found for selected filters</p>
                 <Button variant="outline" className="mt-4 gap-2 text-primary border-primary/30 hover:bg-primary/10" onClick={() => navigate("/employee/new")}>
                   <UserPlus className="w-4 h-4" /> Add Employee
                 </Button>
               </Card>
             ) : (
-              <div className="space-y-3">
-                {filteredEmployees.map((emp) => (
-                  <Card key={emp.id} className="p-4 hover:shadow-md hover:border-primary/30 transition-all">
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-4 min-w-0">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm flex-shrink-0">
-                          {emp.name.charAt(0)}
-                        </div>
-                        <div className="min-w-0">
-                          <p className="font-semibold text-foreground truncate">{emp.name}</p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span className="font-mono">KGID: {emp.kgid}</span>
-                            <span>•</span>
-                            <span>{emp.currentPostHeld || emp.designation || emp.designationGroup || "—"}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigate(`/employee-view/${emp.id}`)}
-                        className="gap-1.5 text-primary border-primary/30 hover:bg-primary/10 flex-shrink-0"
-                      >
-                        <Eye className="w-4 h-4" /> View
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
+              <div className="bg-card rounded-xl border border-border overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border bg-muted/50">
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Employee Name</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">KGID</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Designation</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Designation Group</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Institution</th>
+                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">District</th>
+                        <th className="px-4 py-3 text-center font-semibold text-muted-foreground">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredEmployees.map((emp) => (
+                        <tr key={emp.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
+                          <td className="px-4 py-3 font-medium text-foreground">{emp.name}</td>
+                          <td className="px-4 py-3 font-mono text-foreground">{emp.kgid}</td>
+                          <td className="px-4 py-3 text-foreground">{emp.currentPostHeld || emp.designation || "—"}</td>
+                          <td className="px-4 py-3 text-foreground">{emp.designationGroup || "—"}</td>
+                          <td className="px-4 py-3 text-foreground">{emp.currentInstitution || "—"}</td>
+                          <td className="px-4 py-3 text-foreground">{emp.currentDistrict || "—"}</td>
+                          <td className="px-4 py-3 text-center">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => navigate(`/employee-view/${emp.id}`)}
+                              className="gap-1.5 text-primary border-primary/30 hover:bg-primary/10"
+                            >
+                              <Eye className="w-4 h-4" /> View
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>
