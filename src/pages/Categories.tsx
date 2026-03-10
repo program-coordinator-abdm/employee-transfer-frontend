@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet, XCircle, ClipboardList, Search as SearchIcon, MapPin } from "lucide-react";
+import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet, XCircle, ClipboardList, Search as SearchIcon, MapPin, FileText, Trash2, Clock } from "lucide-react";
 import KGIDSearch from "@/components/KGIDSearch";
 import { cn } from "@/lib/utils";
 import { getNewEmployees, type NewEmployee } from "@/lib/api";
