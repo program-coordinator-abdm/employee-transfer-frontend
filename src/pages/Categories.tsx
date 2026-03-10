@@ -434,7 +434,40 @@ const Categories: React.FC = () => {
           </div>
         </Card>
 
-        {/* Add Vacancies CTA */}
+        {/* Drafts Section */}
+        {drafts.length > 0 && (
+          <Card className="mb-8 border border-border">
+            <div className="p-4">
+              <button onClick={() => setShowDrafts(!showDrafts)} className="flex items-center gap-2 w-full text-left">
+                <FileText className="w-5 h-5 text-primary" />
+                <h3 className="text-base font-semibold text-foreground flex-1">Saved Drafts ({drafts.length})</h3>
+                <span className="text-xs text-muted-foreground">{showDrafts ? "Hide" : "Show"}</span>
+              </button>
+              {showDrafts && (
+                <div className="mt-3 space-y-2">
+                  <p className="text-xs text-muted-foreground mb-2">⚠ Drafts are stored only on this device until logout.</p>
+                  {drafts.map(d => (
+                    <div key={d.draftId} className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-foreground text-sm truncate">{d.name || "Untitled Draft"}</p>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                          {d.kgid && <span>KGID: {d.kgid}</span>}
+                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{new Date(d.updatedAt).toLocaleString("en-IN")}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 ml-3">
+                        <Button size="sm" onClick={() => navigate(`/employee/new?draftId=${d.draftId}`)}>Resume</Button>
+                        <Button size="sm" variant="ghost" onClick={() => handleDeleteDraft(d.draftId)} className="text-destructive hover:text-destructive">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </Card>
+        )}
         <Card
           className="mb-8 cursor-pointer group border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all duration-200 hover:shadow-lg"
           onClick={() => navigate("/add-vacancies")}
