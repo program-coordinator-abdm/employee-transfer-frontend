@@ -106,6 +106,9 @@ export interface FormPreviewData {
   spouseCityTownVillage: string;
   ngoBenefits: boolean;
   ngoBenefitsDoc: string;
+  remarks: string;
+  cgPost: string;
+  cgDesignation: string;
   timeboundApplicable: boolean;
   timeboundCategory: string;
   timeboundYears: string;

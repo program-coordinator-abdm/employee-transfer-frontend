@@ -557,6 +557,9 @@ const EmployeeCreate: React.FC = () => {
     spouseGovtServant, spouseGovtServantDoc,
     spouseDesignation, spouseDistrict, spouseTaluk, spouseCityTownVillage,
     ngoBenefits, ngoBenefitsDoc,
+    remarks,
+    cgPost: recruitmentType === "CG Grounds" ? cgPost : "",
+    cgDesignation: recruitmentType === "CG Grounds" ? cgDesignation : "",
   });
 
   const [submitting, setSubmitting] = useState(false);
