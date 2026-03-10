@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { getDraftsForUser, deleteDraft, type EmployeeDraft } from "@/lib/draftStorage";
 import { ArrowRightLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet, XCircle, ClipboardList, Search as SearchIcon, MapPin } from "lucide-react";
+import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet, XCircle, ClipboardList, Search as SearchIcon, MapPin, FileText, Trash2, Clock } from "lucide-react";
 import KGIDSearch from "@/components/KGIDSearch";
 import { cn } from "@/lib/utils";
 import { getNewEmployees, type NewEmployee } from "@/lib/api";
@@ -320,6 +321,18 @@ const Categories: React.FC = () => {
   const [allEmployees, setAllEmployees] = useState<NewEmployee[]>([]);
   const [employeesLoading, setEmployeesLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false);
+  const [drafts, setDrafts] = useState<EmployeeDraft[]>([]);
+  const [showDrafts, setShowDrafts] = useState(false);
+
+  // Load drafts
+  React.useEffect(() => {
+    if (user?.username) setDrafts(getDraftsForUser(user.username));
+  }, [user?.username]);
+
+  const handleDeleteDraft = (draftId: string) => {
+    deleteDraft(draftId);
+    if (user?.username) setDrafts(getDraftsForUser(user.username));
+  };
 
   React.useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -421,7 +434,40 @@ const Categories: React.FC = () => {
           </div>
         </Card>
 
-        {/* Add Vacancies CTA */}
+        {/* Drafts Section */}
+        {drafts.length > 0 && (
+          <Card className="mb-8 border border-border">
+            <div className="p-4">
+              <button onClick={() => setShowDrafts(!showDrafts)} className="flex items-center gap-2 w-full text-left">
+                <FileText className="w-5 h-5 text-primary" />
+                <h3 className="text-base font-semibold text-foreground flex-1">Saved Drafts ({drafts.length})</h3>
+                <span className="text-xs text-muted-foreground">{showDrafts ? "Hide" : "Show"}</span>
+              </button>
+              {showDrafts && (
+                <div className="mt-3 space-y-2">
+                  <p className="text-xs text-muted-foreground mb-2">⚠ Drafts are stored only on this device until logout.</p>
+                  {drafts.map(d => (
+                    <div key={d.draftId} className="flex items-center justify-between p-3 rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-foreground text-sm truncate">{d.name || "Untitled Draft"}</p>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                          {d.kgid && <span>KGID: {d.kgid}</span>}
+                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{new Date(d.updatedAt).toLocaleString("en-IN")}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 ml-3">
+                        <Button size="sm" onClick={() => navigate(`/employee/new?draftId=${d.draftId}`)}>Resume</Button>
+                        <Button size="sm" variant="ghost" onClick={() => handleDeleteDraft(d.draftId)} className="text-destructive hover:text-destructive">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </Card>
+        )}
         <Card
           className="mb-8 cursor-pointer group border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all duration-200 hover:shadow-lg"
           onClick={() => navigate("/add-vacancies")}
