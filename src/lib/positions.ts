@@ -139,6 +139,13 @@ const GROUP_C_POSITIONS = [
   "Senior Pharmacists",
   "Nursing Officer / Staff Nursing Officer",
   "Assistant Statistical Officer",
+  "Lab Technician",
+  "Typist (CCT)",
+  "Stenographer",
+  "Grade - I and Grade - II officers",
+  "Senior non Medical Supervisor",
+  "ASO",
+  "Cholera Officers",
 ];
 
 const GROUP_D_GRADE1_POSITIONS = [
