@@ -1673,7 +1673,7 @@ const EmployeeCreate: React.FC = () => {
                 </div>
                 <div>
                   <label className="input-label">Email ID <span className="text-destructive">*</span></label>
-                  <input type="email" value={officeEmail} onChange={(e) => { setOfficeEmail(e.target.value); clearError("officeEmail"); }} className={`input-field ${errors.officeEmail ? "border-destructive" : ""}`} placeholder="office@example.com" />
+                  <input type="email" value={officeEmail} onChange={(e) => { setOfficeEmail(e.target.value); clearError("officeEmail"); }} className={`input-field ${errors.officeEmail ? "border-destructive" : ""}`} placeholder="email@example.com" />
                   <FieldError error={errors.officeEmail} />
                 </div>
                 <div>
