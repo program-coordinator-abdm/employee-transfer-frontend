@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, Building2, MapPin, Loader2, ChevronsUpDown, Check } from "lucide-react";
+import { ArrowLeft, Building2, MapPin, Loader2, ChevronsUpDown, Check, FilterX } from "lucide-react";
 import { fetchVacancyInstitutions, fetchVacanciesByInstitution, type VacancyInstitution, type VacancySubmission } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
@@ -23,15 +24,49 @@ const ViewVacancies: React.FC = () => {
   const [loadingData, setLoadingData] = useState(false);
   const [error, setError] = useState("");
 
-  const filteredInstitutions = useMemo(() => {
-    if (!searchQuery.trim()) return institutions;
-    const q = searchQuery.toLowerCase();
-    return institutions.filter((inst) =>
-      `${inst.institutionName} ${inst.taluk} ${inst.district} ${inst.institutionTypeName || ""}`.toLowerCase().includes(q)
+  // Filter state
+  const [filterDistrict, setFilterDistrict] = useState("");
+  const [filterTaluk, setFilterTaluk] = useState("");
+
+  // Derive unique districts from fetched institutions
+  const districts = useMemo(() => {
+    const set = new Set(institutions.map((i) => i.district).filter(Boolean));
+    return Array.from(set).sort();
+  }, [institutions]);
+
+  // Derive taluks based on selected district
+  const taluks = useMemo(() => {
+    if (!filterDistrict) return [];
+    const set = new Set(
+      institutions.filter((i) => i.district === filterDistrict).map((i) => i.taluk).filter(Boolean)
     );
-  }, [institutions, searchQuery]);
+    return Array.from(set).sort();
+  }, [institutions, filterDistrict]);
+
+  // Filter institutions by district, taluk, and search query
+  const filteredInstitutions = useMemo(() => {
+    let list = institutions;
+    if (filterDistrict) list = list.filter((i) => i.district === filterDistrict);
+    if (filterTaluk) list = list.filter((i) => i.taluk === filterTaluk);
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter((inst) =>
+        `${inst.institutionName} ${inst.taluk} ${inst.district} ${inst.institutionTypeName || ""}`.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [institutions, filterDistrict, filterTaluk, searchQuery]);
 
   const selectedInst = institutions.find((i) => i.institutionKey === selectedKey);
+  const hasActiveFilters = filterDistrict || filterTaluk;
+
+  const clearFilters = () => {
+    setFilterDistrict("");
+    setFilterTaluk("");
+    setSelectedKey("");
+    setInstitution(null);
+    setSubmissions([]);
+  };
 
   useEffect(() => {
     fetchVacancyInstitutions()
@@ -92,11 +127,71 @@ const ViewVacancies: React.FC = () => {
 
         <h1 className="text-2xl font-bold text-foreground mb-6">View Vacancies</h1>
 
+        {/* Filters */}
+        <Card className="mb-4">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-primary" /> Filter by Location
+              </CardTitle>
+              {hasActiveFilters && (
+                <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground gap-1 h-8">
+                  <FilterX className="w-4 h-4" /> Clear Filters
+                </Button>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm text-muted-foreground mb-1 block">District</label>
+                <Select
+                  value={filterDistrict}
+                  onValueChange={(val) => {
+                    setFilterDistrict(val);
+                    setFilterTaluk("");
+                    setSelectedKey("");
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Districts" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {districts.map((d) => (
+                      <SelectItem key={d} value={d}>{d}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm text-muted-foreground mb-1 block">Taluk</label>
+                <Select
+                  value={filterTaluk}
+                  onValueChange={(val) => {
+                    setFilterTaluk(val);
+                    setSelectedKey("");
+                  }}
+                  disabled={!filterDistrict}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={filterDistrict ? "All Taluks" : "Select district first"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {taluks.map((t) => (
+                      <SelectItem key={t} value={t}>{t}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Institution selector */}
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-primary" /> Select Institution
+              <Building2 className="w-5 h-5 text-primary" /> Select Facility
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -116,7 +211,7 @@ const ViewVacancies: React.FC = () => {
                           ? `${selectedInst.institutionName} – ${selectedInst.taluk} – ${selectedInst.district}${selectedInst.institutionTypeName ? ` (${selectedInst.institutionTypeName})` : ""}`
                           : loadingInst
                           ? "Loading institutions..."
-                          : "Choose an institution"}
+                          : "Choose a facility"}
                       </span>
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -124,7 +219,7 @@ const ViewVacancies: React.FC = () => {
                   <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                     <div className="p-2 border-b border-border">
                       <Input
-                        placeholder="Search institution..."
+                        placeholder="Search facility..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="h-9"
@@ -133,7 +228,7 @@ const ViewVacancies: React.FC = () => {
                     </div>
                     <div className="max-h-60 overflow-y-auto">
                       {filteredInstitutions.length === 0 ? (
-                        <p className="text-sm text-muted-foreground p-3 text-center">No institutions found.</p>
+                        <p className="text-sm text-muted-foreground p-3 text-center">No facilities found.</p>
                       ) : (
                         filteredInstitutions.map((inst) => (
                           <button
@@ -196,7 +291,7 @@ const ViewVacancies: React.FC = () => {
         {!loadingData && institution && sortedSubmissions.length === 0 && !error && (
           <Card className="p-8 text-center text-muted-foreground">
             <MapPin className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            No vacancy data found for this institution.
+            No vacancy data found for this facility.
           </Card>
         )}
 
