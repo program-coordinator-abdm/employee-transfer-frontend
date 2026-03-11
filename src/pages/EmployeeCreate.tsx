@@ -806,6 +806,8 @@ const EmployeeCreate: React.FC = () => {
       return;
     }
 
+    console.log("[Probation Debug] probationaryPeriod:", payload.probationaryPeriod, "| probationaryPeriodDoc:", payload.probationaryPeriodDoc, "| probationDeclarationDate:", payload.probationDeclarationDate);
+
     setSubmitting(true);
     try {
       if (isEditMode) {
