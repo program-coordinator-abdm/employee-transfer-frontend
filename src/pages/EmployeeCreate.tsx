@@ -713,8 +713,9 @@ const EmployeeCreate: React.FC = () => {
       kgid, name, designation, designationGroup, designationSubGroup,
       firstPostHeld: firstPostHeld === "Others" ? firstPostHeldOther.trim() : firstPostHeld,
       dateOfEntry: dateOfEntry!.toISOString(),
-      gender, probationaryPeriod, probationaryPeriodDoc,
-      probationDeclarationDate: probationDeclarationDate?.toISOString() || "",
+      gender, probationaryPeriod,
+      probationaryPeriodDoc: probationaryPeriod ? probationaryPeriodDoc : "",
+      probationDeclarationDate: probationaryPeriod && probationDeclarationDate ? probationDeclarationDate.toISOString() : "",
       dateOfBirth: dateOfBirth!.toISOString(),
       cltCompleted, cltCompletedDoc, cltCompletionDate: cltCompletionDate?.toISOString() || "",
       deptExamCompleted, deptExamName: deptExamCompleted ? deptExamName : "", deptExamDoc: deptExamCompleted ? deptExamDoc : "",
@@ -804,6 +805,8 @@ const EmployeeCreate: React.FC = () => {
       setErrors(prev => ({ ...prev, kgid: "This KGID already exists" }));
       return;
     }
+
+    console.log("[Probation Debug] probationaryPeriod:", payload.probationaryPeriod, "| probationaryPeriodDoc:", payload.probationaryPeriodDoc, "| probationDeclarationDate:", payload.probationDeclarationDate);
 
     setSubmitting(true);
     try {
@@ -1455,7 +1458,7 @@ const EmployeeCreate: React.FC = () => {
               <div className="flex flex-col gap-3 pt-4">
                 <div className="flex items-center gap-4">
                   <Label htmlFor="probation" className="text-sm font-medium">Probationary Period Completion document</Label>
-                  <Switch id="probation" checked={probationaryPeriod} onCheckedChange={setProbationaryPeriod} />
+                  <Switch id="probation" checked={probationaryPeriod} onCheckedChange={(checked) => { setProbationaryPeriod(checked); if (!checked) { setProbationaryPeriodDoc(""); setProbationDeclarationDate(undefined); } }} />
                   <span className="text-sm text-muted-foreground">{probationaryPeriod ? "Yes" : "No"}</span>
                 </div>
                 {probationaryPeriod && (
