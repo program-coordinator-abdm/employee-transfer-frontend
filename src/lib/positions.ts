@@ -281,6 +281,7 @@ function buildPositions(names: string[], group: string, subGroup: string): Posit
 }
 
 export const ALL_POSITIONS: PositionInfo[] = [
+  ...buildPositions(JRO_OFFICER_POSITIONS, "Group A", "Officers (JRO)"),
   ...buildPositions(LRO_POSITIONS, "Group A", "Officers (LRO)"),
   ...buildPositions(JRO_LRO_POSITIONS, "Group A", "Doctors (JRO & LRO)"),
   ...buildPositions(GROUP_B_POSITIONS, "Group B", "Officers"),
