@@ -972,6 +972,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     educationDetails: payload.educationDetails,
   });
   const finalBody = sanitizeEmployeePayload(body);
+  (finalBody as any).isDraft = false;
   return apiClient<NewEmployee>(`/employees/${id}`, {
     method: "PUT",
     body: JSON.stringify(finalBody),
