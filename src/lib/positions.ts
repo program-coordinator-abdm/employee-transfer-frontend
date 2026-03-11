@@ -155,6 +155,7 @@ const GROUP_C_POSITIONS = [
   "Nursing Officer / Staff Nursing Officer",
   "Assistant Statistical Officer",
   "Lab Technician",
+  "Junior Lab Technician",
   "Typist (CCT)",
   "Stenographer",
   "Grade - I and Grade - II officers",
