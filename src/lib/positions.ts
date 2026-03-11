@@ -137,7 +137,7 @@ const GROUP_C_POSITIONS = [
   "OT Technicians",
   "Pharmacy Officers",
   "Senior Pharmacy Officers",
-  "Junior Pharmacists",
+  "Junior Pharmacist / Junior Pharmacy Officer",
   "Senior Pharmacists",
   "Nursing Officer / Staff Nursing Officer",
   "Assistant Statistical Officer",
