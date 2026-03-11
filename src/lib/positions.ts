@@ -6,6 +6,19 @@ export interface PositionInfo {
   subGroup: string;
 }
 
+const JRO_OFFICER_POSITIONS = [
+  "Director",
+  "Additional Director",
+  "Joint Director",
+  "Deputy Director",
+  "Assistant Deputy Director",
+  "Assistant Administrator Officer",
+  "Chief Administrative Officer",
+  "Chief Medical Officer",
+  "Medical Officer",
+  "Administrative Officer",
+];
+
 const LRO_POSITIONS = [
   "Chief Transport Officer",
   "Administrative Officer (AO) (General) / (Transport) / (Family Welfare)",
