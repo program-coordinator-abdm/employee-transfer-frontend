@@ -1662,7 +1662,7 @@ const EmployeeCreate: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <label className="input-label">Address <span className="text-destructive">*</span></label>
-                <textarea value={officeAddress} onChange={(e) => { setOfficeAddress(e.target.value); clearError("officeAddress"); }} className={`input-field min-h-[80px] resize-y ${errors.officeAddress ? "border-destructive" : ""}`} placeholder="Full office address" />
+                <textarea value={officeAddress} onChange={(e) => { setOfficeAddress(e.target.value); clearError("officeAddress"); }} className={`input-field min-h-[80px] resize-y ${errors.officeAddress ? "border-destructive" : ""}`} placeholder="Full current address" />
                 <FieldError error={errors.officeAddress} />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
