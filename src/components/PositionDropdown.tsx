@@ -14,6 +14,7 @@ interface PositionDropdownProps {
 }
 
 const GROUPS = [
+  { group: "Group A", subGroup: "Officers (JRO)", heading: "Group A — Officers (JRO)", prefix: "a-jro-off" },
   { group: "Group A", subGroup: "Officers (LRO)", heading: "Group A — Officers (LRO)", prefix: "a-lro" },
   { group: "Group A", subGroup: "Doctors (JRO & LRO)", heading: "Group A — Doctors (JRO & LRO)", prefix: "a-jro" },
   { group: "Group B", subGroup: "Officers", heading: "Group B — Officers", prefix: "b" },

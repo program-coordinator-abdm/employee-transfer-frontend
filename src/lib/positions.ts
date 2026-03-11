@@ -6,6 +6,19 @@ export interface PositionInfo {
   subGroup: string;
 }
 
+const JRO_OFFICER_POSITIONS = [
+  "Director",
+  "Additional Director",
+  "Joint Director",
+  "Deputy Director",
+  "Assistant Deputy Director",
+  "Assistant Administrator Officer",
+  "Chief Administrative Officer",
+  "Chief Medical Officer",
+  "Medical Officer",
+  "Administrative Officer",
+];
+
 const LRO_POSITIONS = [
   "Chief Transport Officer",
   "Administrative Officer (AO) (General) / (Transport) / (Family Welfare)",
@@ -268,6 +281,7 @@ function buildPositions(names: string[], group: string, subGroup: string): Posit
 }
 
 export const ALL_POSITIONS: PositionInfo[] = [
+  ...buildPositions(JRO_OFFICER_POSITIONS, "Group A", "Officers (JRO)"),
   ...buildPositions(LRO_POSITIONS, "Group A", "Officers (LRO)"),
   ...buildPositions(JRO_LRO_POSITIONS, "Group A", "Doctors (JRO & LRO)"),
   ...buildPositions(GROUP_B_POSITIONS, "Group B", "Officers"),
