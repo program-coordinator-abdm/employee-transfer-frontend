@@ -31,7 +31,12 @@ export function sanitizeEmployeePayload(input: any): any {
     for (const key in input) {
       const v = input[key];
       if (v === null || v === undefined) {
-        out[key] = key in DEFAULTS_BY_KEY ? DEFAULTS_BY_KEY[key] : "NA";
+        // Date fields must stay null — "NA" would be rejected as invalid date by backend
+        if (key.endsWith("Date") || key === "dob" || key === "dateOfEntry" || key === "dateOfJoining") {
+          out[key] = null;
+        } else {
+          out[key] = key in DEFAULTS_BY_KEY ? DEFAULTS_BY_KEY[key] : "NA";
+        }
       } else if (Array.isArray(v)) {
         out[key] = v.map(sanitizeEmployeePayload);
       } else if (typeof v === "object") {
