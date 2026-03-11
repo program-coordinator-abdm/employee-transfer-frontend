@@ -847,6 +847,8 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     educationDetails: payload.educationDetails,
   });
   const finalBody = sanitizeEmployeePayload(body);
+  // Ensure final submission is never treated as a draft
+  (finalBody as any).isDraft = false;
   console.log("[createEmployee] Request body:", JSON.stringify(finalBody, null, 2));
   return apiClient<NewEmployee>("/employees", {
     method: "POST",
@@ -970,6 +972,7 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     educationDetails: payload.educationDetails,
   });
   const finalBody = sanitizeEmployeePayload(body);
+  (finalBody as any).isDraft = false;
   return apiClient<NewEmployee>(`/employees/${id}`, {
     method: "PUT",
     body: JSON.stringify(finalBody),

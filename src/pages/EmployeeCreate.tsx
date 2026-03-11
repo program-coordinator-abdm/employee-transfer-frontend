@@ -810,14 +810,20 @@ const EmployeeCreate: React.FC = () => {
 
     setSubmitting(true);
     try {
+      // Clear draft storage BEFORE submission to prevent stale draft flags
+      if (currentDraftId) {
+        deleteDraft(currentDraftId);
+      }
+      localStorage.removeItem("employeeDraft");
+      sessionStorage.removeItem("employeeDraft");
+
       if (isEditMode) {
         await updateEmployeeById(editId, payload);
         showToast("Employee updated successfully!", "success");
         setTimeout(() => navigate("/employee-list"), 1200);
       } else {
         const saved = await createEmployee(payload);
-        // Remove draft on successful submit
-        if (currentDraftId) { deleteDraft(currentDraftId); setCurrentDraftId(undefined); }
+        setCurrentDraftId(undefined);
         setSubmittedEmp({ ...payload, id: saved.id, createdAt: saved.createdAt });
         setFormStep("submitted");
         window.scrollTo({ top: 0, behavior: "smooth" });
