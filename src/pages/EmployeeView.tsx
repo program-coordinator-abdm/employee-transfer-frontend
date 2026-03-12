@@ -58,24 +58,25 @@ const EmployeeView: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
-    console.log("[EmployeeView] Loading employee with route param id:", id);
+    console.log("[EmployeeView] Route param id:", id);
     setLoading(true);
     setError("");
     getNewEmployeeById(id)
       .then((data) => {
-        console.log("[EmployeeView] Employee loaded:", data?.name, data?.kgid);
+        console.log("[EmployeeView] Employee loaded successfully:", data?.name, data?.kgid);
         setEmp(data);
       })
       .catch((err: any) => {
         const msg = err?.message || "";
         console.error("[EmployeeView] Fetch error:", msg);
-        if (msg.includes("404") || msg.includes("not found") || msg.includes("Not Found")) {
-          setError("Employee not found. The record may have been removed.");
-        } else if (msg === "Session expired") {
-          // apiClient already redirects to /login
+        if (msg === "Session expired") {
           return;
+        } else if (msg.includes("404") || msg.toLowerCase().includes("not found")) {
+          setError("not_found");
+        } else if (msg.includes("503")) {
+          setError("service_unavailable");
         } else {
-          setError(`Server error: ${msg || "Unable to reach the server. Please try again."}`);
+          setError("generic");
         }
       })
       .finally(() => setLoading(false));
