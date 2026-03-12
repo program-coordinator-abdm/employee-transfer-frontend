@@ -58,10 +58,26 @@ const EmployeeView: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
+    console.log("[EmployeeView] Loading employee with route param id:", id);
     setLoading(true);
+    setError("");
     getNewEmployeeById(id)
-      .then(setEmp)
-      .catch(() => setError("Failed to load employee data"))
+      .then((data) => {
+        console.log("[EmployeeView] Employee loaded:", data?.name, data?.kgid);
+        setEmp(data);
+      })
+      .catch((err: any) => {
+        const msg = err?.message || "";
+        console.error("[EmployeeView] Fetch error:", msg);
+        if (msg.includes("404") || msg.includes("not found") || msg.includes("Not Found")) {
+          setError("Employee not found. The record may have been removed.");
+        } else if (msg === "Session expired") {
+          // apiClient already redirects to /login
+          return;
+        } else {
+          setError(`Server error: ${msg || "Unable to reach the server. Please try again."}`);
+        }
+      })
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -88,15 +104,27 @@ const EmployeeView: React.FC = () => {
     );
   }
 
-  if (error || !emp) {
+  if (!emp) {
+    const isNotFound = error.includes("not found") || error.includes("Not Found") || error.includes("404");
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <Card className="p-8 text-center">
-            <h2 className="text-xl font-bold mb-2">Employee Not Found</h2>
-            <p className="text-muted-foreground mb-4">{error || "The requested employee record does not exist."}</p>
-            <button onClick={() => navigate("/employee-list")} className="btn-primary">Go to Employee List</button>
+          <Card className="p-8 text-center max-w-md">
+            <h2 className="text-xl font-bold mb-2">
+              {isNotFound ? "Employee Not Found" : "Error Loading Employee"}
+            </h2>
+            <p className="text-muted-foreground mb-4">
+              {error || "The requested employee record does not exist."}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <button onClick={() => navigate("/employee-list")} className="btn-primary">Go to Employee List</button>
+              {!isNotFound && (
+                <button onClick={() => { setError(""); setLoading(true); getNewEmployeeById(id!).then(setEmp).catch((e: any) => setError(e?.message || "Failed")).finally(() => setLoading(false)); }} className="btn-ghost">
+                  Retry
+                </button>
+              )}
+            </div>
           </Card>
         </main>
       </div>

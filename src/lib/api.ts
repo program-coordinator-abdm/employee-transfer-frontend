@@ -1102,8 +1102,17 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
 
 // Get single new-format employee by ID
 export const getNewEmployeeById = async (id: string): Promise<NewEmployee> => {
-  const raw = await apiClient<any>(`/employees/${id}`);
-  return mapBackendToNewEmployee(raw);
+  console.log("[getNewEmployeeById] Route param id:", id);
+  const url = `/employees/${id}`;
+  console.log("[getNewEmployeeById] Request URL:", `${API_BASE_URL}${url}`);
+  try {
+    const raw = await apiClient<any>(url);
+    console.log("[getNewEmployeeById] Response payload:", raw);
+    return mapBackendToNewEmployee(raw);
+  } catch (err: any) {
+    console.error("[getNewEmployeeById] Error:", err?.message || err);
+    throw err;
+  }
 };
 
 // Delete employee by ID (Admin only)
