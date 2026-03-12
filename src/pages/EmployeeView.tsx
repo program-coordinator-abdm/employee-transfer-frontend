@@ -58,24 +58,25 @@ const EmployeeView: React.FC = () => {
 
   useEffect(() => {
     if (!id) return;
-    console.log("[EmployeeView] Loading employee with route param id:", id);
+    console.log("[EmployeeView] Route param id:", id);
     setLoading(true);
     setError("");
     getNewEmployeeById(id)
       .then((data) => {
-        console.log("[EmployeeView] Employee loaded:", data?.name, data?.kgid);
+        console.log("[EmployeeView] Employee loaded successfully:", data?.name, data?.kgid);
         setEmp(data);
       })
       .catch((err: any) => {
         const msg = err?.message || "";
         console.error("[EmployeeView] Fetch error:", msg);
-        if (msg.includes("404") || msg.includes("not found") || msg.includes("Not Found")) {
-          setError("Employee not found. The record may have been removed.");
-        } else if (msg === "Session expired") {
-          // apiClient already redirects to /login
+        if (msg === "Session expired") {
           return;
+        } else if (msg.includes("404") || msg.toLowerCase().includes("not found")) {
+          setError("not_found");
+        } else if (msg.includes("503")) {
+          setError("service_unavailable");
         } else {
-          setError(`Server error: ${msg || "Unable to reach the server. Please try again."}`);
+          setError("generic");
         }
       })
       .finally(() => setLoading(false));
@@ -105,22 +106,29 @@ const EmployeeView: React.FC = () => {
   }
 
   if (!emp) {
-    const isNotFound = error.includes("not found") || error.includes("Not Found") || error.includes("404");
+    const errorTitle =
+      error === "not_found" ? "Employee Not Found" :
+      error === "service_unavailable" ? "Service Unavailable" :
+      "Error Loading Employee";
+
+    const errorMessage =
+      error === "not_found" ? "The requested employee record does not exist or may have been removed." :
+      error === "service_unavailable" ? "Service temporarily unavailable. Please try again." :
+      "Unable to load employee data. Please check your connection and try again.";
+
+    const canRetry = error !== "not_found";
+
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <Card className="p-8 text-center max-w-md">
-            <h2 className="text-xl font-bold mb-2">
-              {isNotFound ? "Employee Not Found" : "Error Loading Employee"}
-            </h2>
-            <p className="text-muted-foreground mb-4">
-              {error || "The requested employee record does not exist."}
-            </p>
+            <h2 className="text-xl font-bold mb-2">{errorTitle}</h2>
+            <p className="text-muted-foreground mb-4">{errorMessage}</p>
             <div className="flex gap-3 justify-center">
               <button onClick={() => navigate("/employee-list")} className="btn-primary">Go to Employee List</button>
-              {!isNotFound && (
-                <button onClick={() => { setError(""); setLoading(true); getNewEmployeeById(id!).then(setEmp).catch((e: any) => setError(e?.message || "Failed")).finally(() => setLoading(false)); }} className="btn-ghost">
+              {canRetry && (
+                <button onClick={() => { setError(""); setLoading(true); getNewEmployeeById(id!).then(setEmp).catch((e: any) => { const m = e?.message || ""; if (m.includes("503")) setError("service_unavailable"); else if (m.includes("404") || m.toLowerCase().includes("not found")) setError("not_found"); else setError("generic"); }).finally(() => setLoading(false)); }} className="btn-ghost">
                   Retry
                 </button>
               )}
