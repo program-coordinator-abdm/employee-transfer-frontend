@@ -590,6 +590,7 @@ const EmployeeCreate: React.FC = () => {
     if (!officeAddress.trim()) errs.officeAddress = "Office address is required";
     if (!officePinCode.trim()) errs.officePinCode = "Office pin code is required";
     if (!officeEmail.trim()) errs.officeEmail = "Office email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(officeEmail.trim())) errs.officeEmail = "Please enter a valid email address";
     if (!officePhoneNumber.trim()) errs.officePhoneNumber = "Office phone number is required";
     if (!currentPostHeld) errs.currentPostHeld = "Current post is required";
     if (!currentInstitution.trim()) errs.currentInstitution = "Institution is required";
