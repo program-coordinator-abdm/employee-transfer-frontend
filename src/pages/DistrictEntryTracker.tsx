@@ -30,7 +30,31 @@ import {
 
 interface DistrictEntry {
   district: string;
+  taluk?: string;
   count: number;
+}
+
+interface TalukEntry {
+  district: string;
+  taluk: string;
+  count: number;
+}
+
+/** Group raw records by district→taluk if taluk data exists */
+function groupByTaluk(raw: DistrictEntry[]): TalukEntry[] | null {
+  const hasTaluk = raw.some((r) => r.taluk && r.taluk.trim() !== "");
+  if (!hasTaluk) return null;
+  const map = new Map<string, number>();
+  for (const r of raw) {
+    const key = `${r.district}|||${r.taluk?.trim() || "Unknown"}`;
+    map.set(key, (map.get(key) || 0) + r.count);
+  }
+  return Array.from(map.entries())
+    .map(([key, count]) => {
+      const [district, taluk] = key.split("|||");
+      return { district, taluk, count };
+    })
+    .sort((a, b) => a.district.localeCompare(b.district) || a.taluk.localeCompare(b.taluk));
 }
 
 const POLL_INTERVAL = 15000;
@@ -46,6 +70,8 @@ const DistrictEntryTracker: React.FC = () => {
   const navigate = useNavigate();
   const [entity, setEntity] = useState<"employees" | "vacancies">("employees");
   const [data, setData] = useState<DistrictEntry[]>([]);
+  const [talukData, setTalukData] = useState<TalukEntry[] | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("__all__");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -66,9 +92,15 @@ const DistrictEntryTracker: React.FC = () => {
       const json = await res.json();
       // Accept { data: [...] } or plain array
       const raw: DistrictEntry[] = Array.isArray(json) ? json : json.data || [];
-      // Strip bracketed suffixes from district names e.g. "Ballari (Bellary)" → "Ballari"
+      console.log("[DistrictTracker] Sample record keys:", raw[0] ? Object.keys(raw[0]) : "empty");
+      console.log("[DistrictTracker] Has taluk?", raw.some((r) => !!r.taluk));
+      // Strip bracketed suffixes from district names
       const entries = raw.map((d) => ({ ...d, district: d.district.replace(/\s*\(.*?\)\s*$/, '') }));
       setData(entries);
+      // Compute taluk grouping (null if API doesn't return taluk)
+      const grouped = groupByTaluk(entries);
+      setTalukData(grouped);
+      setSelectedDistrict("__all__");
       setError(null);
       setLastUpdated(new Date());
     } catch (err: any) {
@@ -197,6 +229,57 @@ const DistrictEntryTracker: React.FC = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </Card>
+            )}
+
+            {/* Taluk-wise Distribution */}
+            {talukData && talukData.length > 0 && (
+              <Card className="overflow-hidden">
+                <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
+                  <h3 className="text-base font-semibold text-foreground">Taluk-wise Distribution</h3>
+                  <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+                    <SelectTrigger className="w-56">
+                      <SelectValue placeholder="Filter by district" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__all__">All Districts</SelectItem>
+                      {[...new Set(talukData.map((t) => t.district))].map((d) => (
+                        <SelectItem key={d} value={d}>{d}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-12">#</TableHead>
+                      <TableHead>District</TableHead>
+                      <TableHead>Taluk</TableHead>
+                      <TableHead className="text-right">Count</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {talukData
+                      .filter((r) => selectedDistrict === "__all__" || r.district === selectedDistrict)
+                      .map((row, idx) => (
+                        <TableRow key={`${row.district}-${row.taluk}`}>
+                          <TableCell className="text-muted-foreground">{idx + 1}</TableCell>
+                          <TableCell className="font-medium">{row.district}</TableCell>
+                          <TableCell>{row.taluk}</TableCell>
+                          <TableCell className="text-right font-mono">{row.count}</TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </Card>
+            )}
+
+            {/* Note when taluk data is not available */}
+            {!talukData && data.length > 0 && (
+              <Card className="p-4 border-dashed border-2">
+                <p className="text-sm text-muted-foreground text-center">
+                  ℹ️ Taluk-wise distribution is not available — the API response does not include <code className="text-xs bg-muted px-1 py-0.5 rounded">taluk</code> field.
+                </p>
               </Card>
             )}
           </div>
