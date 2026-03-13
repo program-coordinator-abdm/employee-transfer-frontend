@@ -46,7 +46,7 @@ const TransfersList: React.FC = () => {
               <p className="text-sm text-muted-foreground">Manage employee transfer requests</p>
             </div>
           </div>
-          <Button className="btn-primary gap-2" onClick={() => navigate("/transfers/new")}>
+          <Button className="btn-primary gap-2" onClick={() => navigate("/transfer-create")}>
             <Plus className="w-4 h-4" /> Create Transfer
           </Button>
         </div>
