@@ -98,7 +98,7 @@ const TransfersList: React.FC = () => {
                             <Edit2 className="w-3.5 h-3.5" /> Edit
                           </Button>
                         ) : (
-                          <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfers/edit/${t.id}`)}>
+                          <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfer-create?edit=${t.id}`)}>
                             <Eye className="w-3.5 h-3.5" /> View
                           </Button>
                         )}

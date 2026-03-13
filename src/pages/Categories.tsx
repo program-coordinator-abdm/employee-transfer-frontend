@@ -745,7 +745,7 @@ const Categories: React.FC = () => {
           </Card>
           <Card
             className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-primary hover:bg-primary/10 bg-card group"
-            onClick={() => navigate("/reports/district-entries")}
+            onClick={() => navigate("/district-entry-tracker")}
           >
             <div className="p-5 flex items-start gap-4">
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">

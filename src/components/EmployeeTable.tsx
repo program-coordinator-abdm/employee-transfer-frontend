@@ -106,7 +106,7 @@ const EmployeeTable: React.FC<EmployeeTableProps> = ({ employees, isLoading }) =
                 <span className="badge-primary text-xs">{employee.kgid}</span>
               </div>
               <button
-                onClick={() => navigate(`/employees/${employee.id}${categoryKey ? `?category=${categoryKey}` : ''}`)}
+                onClick={() => navigate(`/employee/${employee.id}${categoryKey ? `?category=${categoryKey}` : ''}`)}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary hover:text-primary-foreground transition-all duration-200"
               >
                 <Eye className="w-3.5 h-3.5" />
