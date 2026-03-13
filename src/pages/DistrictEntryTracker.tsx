@@ -30,7 +30,31 @@ import {
 
 interface DistrictEntry {
   district: string;
+  taluk?: string;
   count: number;
+}
+
+interface TalukEntry {
+  district: string;
+  taluk: string;
+  count: number;
+}
+
+/** Group raw records by district→taluk if taluk data exists */
+function groupByTaluk(raw: DistrictEntry[]): TalukEntry[] | null {
+  const hasTaluk = raw.some((r) => r.taluk && r.taluk.trim() !== "");
+  if (!hasTaluk) return null;
+  const map = new Map<string, number>();
+  for (const r of raw) {
+    const key = `${r.district}|||${r.taluk?.trim() || "Unknown"}`;
+    map.set(key, (map.get(key) || 0) + r.count);
+  }
+  return Array.from(map.entries())
+    .map(([key, count]) => {
+      const [district, taluk] = key.split("|||");
+      return { district, taluk, count };
+    })
+    .sort((a, b) => a.district.localeCompare(b.district) || a.taluk.localeCompare(b.taluk));
 }
 
 const POLL_INTERVAL = 15000;
