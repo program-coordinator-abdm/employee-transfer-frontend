@@ -427,7 +427,7 @@ const Categories: React.FC = () => {
               <p className="text-sm text-muted-foreground">Register a new employee with complete service details, designation, and working history</p>
             </div>
             <div className="hidden sm:flex items-center gap-2">
-              <Button className="btn-primary px-6 py-2.5 text-base font-semibold" onClick={(e) => { e.stopPropagation(); navigate("/employee/new"); }}>
+              <Button className="btn-primary px-6 py-2.5 text-base font-semibold" onClick={(e) => { e.stopPropagation(); navigate("/employee-create"); }}>
                 <UserPlus className="w-5 h-5 mr-2" /> Add Employee
               </Button>
             </div>
