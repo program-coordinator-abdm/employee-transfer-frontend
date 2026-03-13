@@ -812,6 +812,7 @@ const EmployeeCreate: React.FC = () => {
     console.log("[Probation Debug] probationaryPeriod:", payload.probationaryPeriod, "| probationaryPeriodDoc:", payload.probationaryPeriodDoc, "| probationDeclarationDate:", payload.probationDeclarationDate);
 
     setSubmitting(true);
+    setSubmitError("");
     try {
       // Clear draft storage BEFORE submission to prevent stale draft flags
       if (currentDraftId) {
