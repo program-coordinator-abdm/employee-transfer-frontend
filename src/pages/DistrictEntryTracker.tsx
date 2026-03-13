@@ -231,6 +231,57 @@ const DistrictEntryTracker: React.FC = () => {
                 </Table>
               </Card>
             )}
+
+            {/* Taluk-wise Distribution */}
+            {talukData && talukData.length > 0 && (
+              <Card className="overflow-hidden">
+                <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
+                  <h3 className="text-base font-semibold text-foreground">Taluk-wise Distribution</h3>
+                  <Select value={selectedDistrict} onValueChange={setSelectedDistrict}>
+                    <SelectTrigger className="w-56">
+                      <SelectValue placeholder="Filter by district" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__all__">All Districts</SelectItem>
+                      {[...new Set(talukData.map((t) => t.district))].map((d) => (
+                        <SelectItem key={d} value={d}>{d}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-12">#</TableHead>
+                      <TableHead>District</TableHead>
+                      <TableHead>Taluk</TableHead>
+                      <TableHead className="text-right">Count</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {talukData
+                      .filter((r) => selectedDistrict === "__all__" || r.district === selectedDistrict)
+                      .map((row, idx) => (
+                        <TableRow key={`${row.district}-${row.taluk}`}>
+                          <TableCell className="text-muted-foreground">{idx + 1}</TableCell>
+                          <TableCell className="font-medium">{row.district}</TableCell>
+                          <TableCell>{row.taluk}</TableCell>
+                          <TableCell className="text-right font-mono">{row.count}</TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </Card>
+            )}
+
+            {/* Note when taluk data is not available */}
+            {!talukData && data.length > 0 && (
+              <Card className="p-4 border-dashed border-2">
+                <p className="text-sm text-muted-foreground text-center">
+                  ℹ️ Taluk-wise distribution is not available — the API response does not include <code className="text-xs bg-muted px-1 py-0.5 rounded">taluk</code> field.
+                </p>
+              </Card>
+            )}
           </div>
         )}
       </main>
