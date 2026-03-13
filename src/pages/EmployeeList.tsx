@@ -136,7 +136,7 @@ const EmployeeList: React.FC = () => {
                 </Button>
               </>
             )}
-            <Button onClick={() => navigate("/employee/new")} className="btn-primary flex items-center gap-2">
+            <Button onClick={() => navigate("/employee-create")} className="btn-primary flex items-center gap-2">
               <UserPlus className="w-4 h-4" /> Add Employee
             </Button>
           </div>
