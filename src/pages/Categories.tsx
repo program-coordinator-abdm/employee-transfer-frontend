@@ -416,7 +416,7 @@ const Categories: React.FC = () => {
         {/* Add Employee CTA */}
         <Card
           className="mb-8 cursor-pointer group border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all duration-200 hover:shadow-lg"
-          onClick={() => navigate("/employee/new")}
+          onClick={() => navigate("/employee-create")}
         >
           <div className="p-6 flex items-center gap-5">
             <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-105 transition-transform">
