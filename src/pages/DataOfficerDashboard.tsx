@@ -27,7 +27,7 @@ const DataOfficerDashboard: React.FC = () => {
       title: "Add Employee",
       description: "Create a new employee record",
       icon: <UserPlus className="w-8 h-8" />,
-      onClick: () => navigate("/employee/new"),
+      onClick: () => navigate("/employee-create"),
     },
     {
       title: "View / Search Employees",

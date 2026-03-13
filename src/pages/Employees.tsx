@@ -83,7 +83,7 @@ const Employees: React.FC = () => {
   };
 
   const handleEmployeeSelect = (employee: Employee) => {
-    navigate(`/employees/${employee.id}${categoryKey ? `?category=${categoryKey}` : ''}`);
+    navigate(`/employee/${employee.id}${categoryKey ? `?category=${categoryKey}` : ''}`);
   };
 
   const handlePageChange = (page: number) => {

@@ -136,7 +136,7 @@ const EmployeeList: React.FC = () => {
                 </Button>
               </>
             )}
-            <Button onClick={() => navigate("/employee/new")} className="btn-primary flex items-center gap-2">
+            <Button onClick={() => navigate("/employee-create")} className="btn-primary flex items-center gap-2">
               <UserPlus className="w-4 h-4" /> Add Employee
             </Button>
           </div>
@@ -193,7 +193,7 @@ const EmployeeList: React.FC = () => {
               <h3 className="text-lg font-semibold text-foreground">{debouncedSearch ? "No matching employees" : "No employees yet"}</h3>
               <p className="text-muted-foreground text-sm max-w-md">{debouncedSearch ? `No employees found matching "${debouncedSearch}". Try a different search.` : "Start by adding a new employee to the system."}</p>
               {!debouncedSearch && (
-                <Button onClick={() => navigate("/employee/new")} className="btn-primary mt-2">
+                <Button onClick={() => navigate("/employee-create")} className="btn-primary mt-2">
                   <UserPlus className="w-4 h-4 mr-2" /> Add New Employee
                 </Button>
               )}

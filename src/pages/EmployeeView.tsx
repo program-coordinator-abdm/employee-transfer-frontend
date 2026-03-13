@@ -384,7 +384,7 @@ const EmployeeView: React.FC = () => {
               </Button>
               {isAdmin && (
                 <>
-                  <Button variant="outline" size="sm" onClick={() => navigate(`/employee/edit/${emp.id}`)} className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => navigate(`/employee-create/${emp.id}`)} className="flex items-center gap-2">
                     <Pencil className="w-4 h-4" /> Edit
                   </Button>
                   <AlertDialog>

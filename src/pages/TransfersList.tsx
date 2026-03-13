@@ -46,7 +46,7 @@ const TransfersList: React.FC = () => {
               <p className="text-sm text-muted-foreground">Manage employee transfer requests</p>
             </div>
           </div>
-          <Button className="btn-primary gap-2" onClick={() => navigate("/transfers/new")}>
+          <Button className="btn-primary gap-2" onClick={() => navigate("/transfer-create")}>
             <Plus className="w-4 h-4" /> Create Transfer
           </Button>
         </div>
@@ -94,11 +94,11 @@ const TransfersList: React.FC = () => {
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
                         {t.status === "draft" ? (
-                          <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfers/edit/${t.id}`)}>
+                          <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfer-create?edit=${t.id}`)}>
                             <Edit2 className="w-3.5 h-3.5" /> Edit
                           </Button>
                         ) : (
-                          <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfers/edit/${t.id}`)}>
+                          <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfer-create?edit=${t.id}`)}>
                             <Eye className="w-3.5 h-3.5" /> View
                           </Button>
                         )}

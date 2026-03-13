@@ -351,7 +351,7 @@ const Promotions: React.FC = () => {
                     <TableRow
                       key={`${p.employeeId}-${i}`}
                       className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => navigate(`/employees/${p.employeeId}`)}
+                      onClick={() => navigate(`/employee/${p.employeeId}`)}
                     >
                       <TableCell className="font-medium">{p.employeeName}</TableCell>
                       <TableCell className="text-muted-foreground">{p.kgid}</TableCell>

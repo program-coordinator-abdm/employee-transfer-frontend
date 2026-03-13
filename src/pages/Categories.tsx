@@ -416,7 +416,7 @@ const Categories: React.FC = () => {
         {/* Add Employee CTA */}
         <Card
           className="mb-8 cursor-pointer group border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all duration-200 hover:shadow-lg"
-          onClick={() => navigate("/employee/new")}
+          onClick={() => navigate("/employee-create")}
         >
           <div className="p-6 flex items-center gap-5">
             <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-105 transition-transform">
@@ -427,7 +427,7 @@ const Categories: React.FC = () => {
               <p className="text-sm text-muted-foreground">Register a new employee with complete service details, designation, and working history</p>
             </div>
             <div className="hidden sm:flex items-center gap-2">
-              <Button className="btn-primary px-6 py-2.5 text-base font-semibold" onClick={(e) => { e.stopPropagation(); navigate("/employee/new"); }}>
+              <Button className="btn-primary px-6 py-2.5 text-base font-semibold" onClick={(e) => { e.stopPropagation(); navigate("/employee-create"); }}>
                 <UserPlus className="w-5 h-5 mr-2" /> Add Employee
               </Button>
             </div>
@@ -456,7 +456,7 @@ const Categories: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-3">
-                        <Button size="sm" onClick={() => navigate(`/employee/new?draftId=${d.draftId}`)}>Resume</Button>
+                        <Button size="sm" onClick={() => navigate(`/employee-create?draftId=${d.draftId}`)}>Resume</Button>
                         <Button size="sm" variant="ghost" onClick={() => handleDeleteDraft(d.draftId)} className="text-destructive hover:text-destructive">
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -484,7 +484,7 @@ const Categories: React.FC = () => {
               <Button className="btn-primary px-6 py-2.5 text-base font-semibold" onClick={(e) => { e.stopPropagation(); navigate("/add-vacancies"); }}>
                 <ClipboardList className="w-5 h-5 mr-2" /> Add Vacancies
               </Button>
-              <Button variant="outline" className="px-5 py-2.5 text-base font-semibold border-primary/30 text-primary hover:bg-primary/10" onClick={(e) => { e.stopPropagation(); navigate("/vacancies/view"); }}>
+              <Button variant="outline" className="px-5 py-2.5 text-base font-semibold border-primary/30 text-primary hover:bg-primary/10" onClick={(e) => { e.stopPropagation(); navigate("/view-vacancies"); }}>
                 <SearchIcon className="w-5 h-5 mr-2" /> View Vacancies
               </Button>
             </div>
@@ -661,7 +661,7 @@ const Categories: React.FC = () => {
               <Card className="p-8 text-center border-dashed border-2 border-border">
                 <UserCircle className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
                 <p className="text-muted-foreground font-medium">No employees found for selected filters</p>
-                <Button variant="outline" className="mt-4 gap-2 text-primary border-primary/30 hover:bg-primary/10" onClick={() => navigate("/employee/new")}>
+                <Button variant="outline" className="mt-4 gap-2 text-primary border-primary/30 hover:bg-primary/10" onClick={() => navigate("/employee-create")}>
                   <UserPlus className="w-4 h-4" /> Add Employee
                 </Button>
               </Card>
@@ -745,7 +745,7 @@ const Categories: React.FC = () => {
           </Card>
           <Card
             className="cursor-pointer transition-all duration-200 hover:shadow-lg hover:border-primary hover:bg-primary/10 bg-card group"
-            onClick={() => navigate("/reports/district-entries")}
+            onClick={() => navigate("/district-entry-tracker")}
           >
             <div className="p-5 flex items-start gap-4">
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
