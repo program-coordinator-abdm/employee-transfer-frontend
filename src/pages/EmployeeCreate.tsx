@@ -837,10 +837,12 @@ const EmployeeCreate: React.FC = () => {
       if (msg.toLowerCase().includes("kgid") && (msg.toLowerCase().includes("exist") || msg.toLowerCase().includes("duplicate"))) {
         setKgidDuplicate(true);
         setErrors(prev => ({ ...prev, kgid: "This KGID already exists in the system" }));
-        showToast("This KGID already exists. Please use a unique KGID number.", "error");
+        const errMsg = "This KGID already exists. Please use a unique KGID number.";
+        setSubmitError(errMsg);
+        showToast(errMsg, "error");
       } else {
-        // apiClient already extracts backend message/error into err.message
-        const backendMsg = msg || "Failed to save employee. Please try again.";
+        const backendMsg = msg || "Submission failed. Please check the entered details and try again.";
+        setSubmitError(backendMsg);
         showToast(backendMsg, "error");
       }
     } finally {
