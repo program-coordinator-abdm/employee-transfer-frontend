@@ -34,9 +34,25 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Maintenance mode: all routes redirect to maintenance */}
+              <Route path="/login" element={<Login />} />
               <Route path="/maintenance" element={<Maintenance />} />
-              <Route path="*" element={<Navigate to="/maintenance" replace />} />
+              <Route path="/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
+              <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
+              <Route path="/employee/:id" element={<ProtectedRoute><EmployeeDetail /></ProtectedRoute>} />
+              <Route path="/employee-list" element={<ProtectedRoute><EmployeeList /></ProtectedRoute>} />
+              <Route path="/employee-view/:id" element={<ProtectedRoute><EmployeeView /></ProtectedRoute>} />
+              <Route path="/employee-create" element={<ProtectedRoute><EmployeeCreate /></ProtectedRoute>} />
+              <Route path="/employee-create/:id" element={<ProtectedRoute><EmployeeCreate /></ProtectedRoute>} />
+              <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+              <Route path="/promotions" element={<ProtectedRoute><Promotions /></ProtectedRoute>} />
+              <Route path="/data-officer-dashboard" element={<ProtectedRoute><DataOfficerDashboard /></ProtectedRoute>} />
+              <Route path="/add-vacancies" element={<ProtectedRoute><AddVacancies /></ProtectedRoute>} />
+              <Route path="/view-vacancies" element={<ProtectedRoute><ViewVacancies /></ProtectedRoute>} />
+              <Route path="/district-entry-tracker" element={<ProtectedRoute><DistrictEntryTracker /></ProtectedRoute>} />
+              <Route path="/transfers" element={<ProtectedRoute><TransfersList /></ProtectedRoute>} />
+              <Route path="/transfer-create" element={<ProtectedRoute><TransferCreate /></ProtectedRoute>} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

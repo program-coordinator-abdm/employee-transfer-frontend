@@ -585,10 +585,12 @@ const EmployeeCreate: React.FC = () => {
     if (!address.trim()) errs.address = "Address is required";
     if (!pinCode.trim()) errs.pinCode = "Pin code is required";
     if (!email.trim()) errs.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errs.email = "Please enter a valid email address";
     if (!phoneNumber.trim()) errs.phoneNumber = "Phone number is required";
     if (!officeAddress.trim()) errs.officeAddress = "Office address is required";
     if (!officePinCode.trim()) errs.officePinCode = "Office pin code is required";
     if (!officeEmail.trim()) errs.officeEmail = "Office email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(officeEmail.trim())) errs.officeEmail = "Please enter a valid email address";
     if (!officePhoneNumber.trim()) errs.officePhoneNumber = "Office phone number is required";
     if (!currentPostHeld) errs.currentPostHeld = "Current post is required";
     if (!currentInstitution.trim()) errs.currentInstitution = "Institution is required";
@@ -697,6 +699,7 @@ const EmployeeCreate: React.FC = () => {
   });
 
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -809,6 +812,7 @@ const EmployeeCreate: React.FC = () => {
     console.log("[Probation Debug] probationaryPeriod:", payload.probationaryPeriod, "| probationaryPeriodDoc:", payload.probationaryPeriodDoc, "| probationDeclarationDate:", payload.probationDeclarationDate);
 
     setSubmitting(true);
+    setSubmitError("");
     try {
       // Clear draft storage BEFORE submission to prevent stale draft flags
       if (currentDraftId) {
@@ -833,10 +837,12 @@ const EmployeeCreate: React.FC = () => {
       if (msg.toLowerCase().includes("kgid") && (msg.toLowerCase().includes("exist") || msg.toLowerCase().includes("duplicate"))) {
         setKgidDuplicate(true);
         setErrors(prev => ({ ...prev, kgid: "This KGID already exists in the system" }));
-        showToast("This KGID already exists. Please use a unique KGID number.", "error");
+        const errMsg = "This KGID already exists. Please use a unique KGID number.";
+        setSubmitError(errMsg);
+        showToast(errMsg, "error");
       } else {
-        // apiClient already extracts backend message/error into err.message
-        const backendMsg = msg || "Failed to save employee. Please try again.";
+        const backendMsg = msg || "Submission failed. Please check the entered details and try again.";
+        setSubmitError(backendMsg);
         showToast(backendMsg, "error");
       }
     } finally {
@@ -2331,6 +2337,11 @@ const EmployeeCreate: React.FC = () => {
             </div>
           </Card>
 
+          {submitError && (
+            <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+              <strong>Error:</strong> {submitError}
+            </div>
+          )}
           <div className="flex items-center justify-end gap-3 pb-8">
             <button type="button" onClick={() => { setFormStep("preview"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="btn-ghost px-8 py-3">Back to Preview</button>
             <button type="submit" className="btn-primary flex items-center gap-2 px-8 py-3 text-base">
