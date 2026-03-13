@@ -484,7 +484,7 @@ const Categories: React.FC = () => {
               <Button className="btn-primary px-6 py-2.5 text-base font-semibold" onClick={(e) => { e.stopPropagation(); navigate("/add-vacancies"); }}>
                 <ClipboardList className="w-5 h-5 mr-2" /> Add Vacancies
               </Button>
-              <Button variant="outline" className="px-5 py-2.5 text-base font-semibold border-primary/30 text-primary hover:bg-primary/10" onClick={(e) => { e.stopPropagation(); navigate("/vacancies/view"); }}>
+              <Button variant="outline" className="px-5 py-2.5 text-base font-semibold border-primary/30 text-primary hover:bg-primary/10" onClick={(e) => { e.stopPropagation(); navigate("/view-vacancies"); }}>
                 <SearchIcon className="w-5 h-5 mr-2" /> View Vacancies
               </Button>
             </div>
