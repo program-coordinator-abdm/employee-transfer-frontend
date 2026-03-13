@@ -661,7 +661,7 @@ const Categories: React.FC = () => {
               <Card className="p-8 text-center border-dashed border-2 border-border">
                 <UserCircle className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
                 <p className="text-muted-foreground font-medium">No employees found for selected filters</p>
-                <Button variant="outline" className="mt-4 gap-2 text-primary border-primary/30 hover:bg-primary/10" onClick={() => navigate("/employee/new")}>
+                <Button variant="outline" className="mt-4 gap-2 text-primary border-primary/30 hover:bg-primary/10" onClick={() => navigate("/employee-create")}>
                   <UserPlus className="w-4 h-4" /> Add Employee
                 </Button>
               </Card>
