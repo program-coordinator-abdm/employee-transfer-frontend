@@ -92,9 +92,15 @@ const DistrictEntryTracker: React.FC = () => {
       const json = await res.json();
       // Accept { data: [...] } or plain array
       const raw: DistrictEntry[] = Array.isArray(json) ? json : json.data || [];
-      // Strip bracketed suffixes from district names e.g. "Ballari (Bellary)" → "Ballari"
+      console.log("[DistrictTracker] Sample record keys:", raw[0] ? Object.keys(raw[0]) : "empty");
+      console.log("[DistrictTracker] Has taluk?", raw.some((r) => !!r.taluk));
+      // Strip bracketed suffixes from district names
       const entries = raw.map((d) => ({ ...d, district: d.district.replace(/\s*\(.*?\)\s*$/, '') }));
       setData(entries);
+      // Compute taluk grouping (null if API doesn't return taluk)
+      const grouped = groupByTaluk(entries);
+      setTalukData(grouped);
+      setSelectedDistrict("__all__");
       setError(null);
       setLastUpdated(new Date());
     } catch (err: any) {
