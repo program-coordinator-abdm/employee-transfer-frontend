@@ -70,6 +70,8 @@ const DistrictEntryTracker: React.FC = () => {
   const navigate = useNavigate();
   const [entity, setEntity] = useState<"employees" | "vacancies">("employees");
   const [data, setData] = useState<DistrictEntry[]>([]);
+  const [talukData, setTalukData] = useState<TalukEntry[] | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<string>("__all__");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
