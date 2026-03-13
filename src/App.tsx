@@ -34,8 +34,8 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/maintenance" element={<Navigate to="/login" replace />} />
+              <Route path="/login" element={<Navigate to="/maintenance" replace />} />
+              <Route path="/maintenance" element={<Maintenance />} />
               <Route path="/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
               <Route path="/employees" element={<ProtectedRoute><Employees /></ProtectedRoute>} />
               <Route path="/employee/:id" element={<ProtectedRoute><EmployeeDetail /></ProtectedRoute>} />
@@ -51,7 +51,7 @@ const App = () => {
               <Route path="/district-entry-tracker" element={<ProtectedRoute><DistrictEntryTracker /></ProtectedRoute>} />
               <Route path="/transfers" element={<ProtectedRoute><TransfersList /></ProtectedRoute>} />
               <Route path="/transfer-create" element={<ProtectedRoute><TransferCreate /></ProtectedRoute>} />
-              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/" element={<Navigate to="/maintenance" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
