@@ -456,7 +456,7 @@ const Categories: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-3">
-                        <Button size="sm" onClick={() => navigate(`/employee/new?draftId=${d.draftId}`)}>Resume</Button>
+                        <Button size="sm" onClick={() => navigate(`/employee-create?draftId=${d.draftId}`)}>Resume</Button>
                         <Button size="sm" variant="ghost" onClick={() => handleDeleteDraft(d.draftId)} className="text-destructive hover:text-destructive">
                           <Trash2 className="w-4 h-4" />
                         </Button>
