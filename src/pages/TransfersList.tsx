@@ -94,7 +94,7 @@ const TransfersList: React.FC = () => {
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
                         {t.status === "draft" ? (
-                          <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfers/edit/${t.id}`)}>
+                          <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfer-create?edit=${t.id}`)}>
                             <Edit2 className="w-3.5 h-3.5" /> Edit
                           </Button>
                         ) : (
