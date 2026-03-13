@@ -2337,6 +2337,11 @@ const EmployeeCreate: React.FC = () => {
             </div>
           </Card>
 
+          {submitError && (
+            <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
+              <strong>Error:</strong> {submitError}
+            </div>
+          )}
           <div className="flex items-center justify-end gap-3 pb-8">
             <button type="button" onClick={() => { setFormStep("preview"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="btn-ghost px-8 py-3">Back to Preview</button>
             <button type="submit" className="btn-primary flex items-center gap-2 px-8 py-3 text-base">
