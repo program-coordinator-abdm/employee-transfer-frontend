@@ -30,8 +30,8 @@ import {
 
 interface DistrictEntry {
   district: string;
-  taluk?: string;
   count: number;
+  taluks?: { taluk: string; count: number }[];
 }
 
 interface TalukEntry {
@@ -40,21 +40,22 @@ interface TalukEntry {
   count: number;
 }
 
-/** Group raw records by district→taluk if taluk data exists */
-function groupByTaluk(raw: DistrictEntry[]): TalukEntry[] | null {
-  const hasTaluk = raw.some((r) => r.taluk && r.taluk.trim() !== "");
-  if (!hasTaluk) return null;
-  const map = new Map<string, number>();
+/** Flatten nested taluks from district records */
+function flattenTaluks(raw: DistrictEntry[]): TalukEntry[] | null {
+  const result: TalukEntry[] = [];
   for (const r of raw) {
-    const key = `${r.district}|||${r.taluk?.trim() || "Unknown"}`;
-    map.set(key, (map.get(key) || 0) + r.count);
+    if (r.taluks && r.taluks.length > 0) {
+      for (const t of r.taluks) {
+        result.push({
+          district: r.district,
+          taluk: t.taluk?.trim() || "Unknown",
+          count: t.count,
+        });
+      }
+    }
   }
-  return Array.from(map.entries())
-    .map(([key, count]) => {
-      const [district, taluk] = key.split("|||");
-      return { district, taluk, count };
-    })
-    .sort((a, b) => a.district.localeCompare(b.district) || a.taluk.localeCompare(b.taluk));
+  if (result.length === 0) return null;
+  return result.sort((a, b) => a.district.localeCompare(b.district) || a.taluk.localeCompare(b.taluk));
 }
 
 const POLL_INTERVAL = 15000;
