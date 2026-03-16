@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { clearDraftsForUser } from "@/lib/draftStorage";
 import { getToken, getUser, setToken, setUser, removeToken, removeUser, login as apiLogin } from "@/lib/api";
 
-export type UserRole = "ADMIN" | "DATA_OFFICER" | "DTC";
+export type UserRole = "ADMIN" | "DATA_OFFICER" | "DTC" | "TRANSFER_OPERATOR";
 
 interface User {
   id: string;
