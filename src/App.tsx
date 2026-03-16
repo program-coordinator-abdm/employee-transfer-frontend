@@ -49,8 +49,8 @@ const App = () => {
               <Route path="/add-vacancies" element={<ProtectedRoute><AddVacancies /></ProtectedRoute>} />
               <Route path="/view-vacancies" element={<ProtectedRoute><ViewVacancies /></ProtectedRoute>} />
               <Route path="/district-entry-tracker" element={<ProtectedRoute><DistrictEntryTracker /></ProtectedRoute>} />
-              <Route path="/transfers" element={<ProtectedRoute><TransfersList /></ProtectedRoute>} />
-              <Route path="/transfer-create" element={<ProtectedRoute><TransferCreate /></ProtectedRoute>} />
+              <Route path="/transfers" element={<ProtectedRoute allowedRoles={["ADMIN", "TRANSFER_OPERATOR"]}><TransfersList /></ProtectedRoute>} />
+              <Route path="/transfer-create" element={<ProtectedRoute allowedRoles={["ADMIN", "TRANSFER_OPERATOR"]}><TransferCreate /></ProtectedRoute>} />
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -491,8 +491,8 @@ const Categories: React.FC = () => {
           </div>
         </Card>
 
-        {/* Transfers CTA - Admin only */}
-        {user?.role === "ADMIN" && (
+        {/* Transfers CTA - Admin & Transfer Operator */}
+        {(user?.role === "ADMIN" || user?.role === "TRANSFER_OPERATOR") && (
           <Card
             className="mb-8 cursor-pointer group border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all duration-200 hover:shadow-lg"
             onClick={() => navigate("/transfers")}
