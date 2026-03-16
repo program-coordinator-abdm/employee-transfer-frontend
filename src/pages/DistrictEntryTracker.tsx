@@ -137,8 +137,8 @@ const DistrictEntryTracker: React.FC = () => {
           </div>
         </div>
 
-        {/* Entity Selector */}
-        <div className="flex items-center gap-3 mb-6">
+        {/* Entity & View Selectors */}
+        <div className="flex items-center gap-3 mb-6 flex-wrap">
           <label className="text-sm font-semibold text-foreground">Entity:</label>
           <Select value={entity} onValueChange={(v) => setEntity(v as "employees" | "vacancies")}>
             <SelectTrigger className="w-48">
@@ -147,6 +147,16 @@ const DistrictEntryTracker: React.FC = () => {
             <SelectContent>
               <SelectItem value="employees">Employees</SelectItem>
               <SelectItem value="vacancies">Vacancies</SelectItem>
+            </SelectContent>
+          </Select>
+          <label className="text-sm font-semibold text-foreground ml-2">View:</label>
+          <Select value={viewMode} onValueChange={(v) => setViewMode(v as "district" | "taluk")}>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="district">District-wise</SelectItem>
+              <SelectItem value="taluk">Taluk-wise</SelectItem>
             </SelectContent>
           </Select>
           <Button variant="outline" size="sm" onClick={() => { setLoading(true); fetchData(); }} className="gap-1.5">
