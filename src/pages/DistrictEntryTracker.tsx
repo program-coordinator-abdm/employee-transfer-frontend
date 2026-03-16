@@ -69,6 +69,7 @@ const chartConfig = {
 const DistrictEntryTracker: React.FC = () => {
   const navigate = useNavigate();
   const [entity, setEntity] = useState<"employees" | "vacancies">("employees");
+  const [viewMode, setViewMode] = useState<"district" | "taluk">("district");
   const [data, setData] = useState<DistrictEntry[]>([]);
   const [talukData, setTalukData] = useState<TalukEntry[] | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string>("__all__");
