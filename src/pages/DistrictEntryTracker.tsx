@@ -95,12 +95,12 @@ const DistrictEntryTracker: React.FC = () => {
       // Accept { data: [...] } or plain array
       const raw: DistrictEntry[] = Array.isArray(json) ? json : json.data || [];
       console.log("[DistrictTracker] Sample record keys:", raw[0] ? Object.keys(raw[0]) : "empty");
-      console.log("[DistrictTracker] Has taluk?", raw.some((r) => !!r.taluk));
+      console.log("[DistrictTracker] Has taluks?", raw.some((r) => !!r.taluks));
       // Strip bracketed suffixes from district names
       const entries = raw.map((d) => ({ ...d, district: d.district.replace(/\s*\(.*?\)\s*$/, '') }));
       setData(entries);
-      // Compute taluk grouping (null if API doesn't return taluk)
-      const grouped = groupByTaluk(entries);
+      // Flatten nested taluks
+      const grouped = flattenTaluks(entries);
       setTalukData(grouped);
       setSelectedDistrict("__all__");
       setError(null);
