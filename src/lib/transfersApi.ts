@@ -45,6 +45,7 @@ export interface TransferFormData {
   // Section 5: Elected Members
   ngoBenefits: boolean;
   ngoBenefitsDoc: string;
+  remarks: string;
 }
 
 export interface TransferRecord {
@@ -175,4 +176,5 @@ export const EMPTY_TRANSFER_FORM: () => TransferFormData = () => ({
   spouseInGovtServiceDoc: "",
   ngoBenefits: false,
   ngoBenefitsDoc: "",
+  remarks: "",
 });

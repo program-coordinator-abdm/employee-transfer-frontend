@@ -139,14 +139,7 @@ const TransferCreate: React.FC = () => {
       if (!wd.workingSince) e[`workDetails.${idx}.workingSince`] = "Working since is required";
     });
 
-    // Special conditions doc validation
-    if (formData.terminallyIll && !formData.terminallyIllDoc) e.terminallyIllDoc = "Document required";
-    if (formData.physicallyChallenged && !formData.physicallyChallengedDoc) e.physicallyChallengedDoc = "Document required";
-    if (formData.widow && !formData.widowDoc) e.widowDoc = "Document required";
-    if (formData.spouseInGovtService && !formData.spouseInGovtServiceDoc) e.spouseInGovtServiceDoc = "Document required";
-
-    // Elected members validation
-    if (formData.ngoBenefits && !formData.ngoBenefitsDoc) e.ngoBenefitsDoc = "Document required when elected member";
+    // Document uploads are optional — no validation enforced
 
     return e;
   };
@@ -299,8 +292,14 @@ const TransferCreate: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold text-primary mb-3">5. Karnataka State Govt Employee Association Elected Members</h3>
               <div className="grid grid-cols-1 gap-y-2 text-sm">
-                <PreviewField label="Elected Association Member" value={formData.ngoBenefits ? `Yes — ${formData.ngoBenefitsDoc || "Document pending"}` : "No"} />
+              <PreviewField label="Elected Association Member" value={formData.ngoBenefits ? `Yes — ${formData.ngoBenefitsDoc || "Document pending"}` : "No"} />
               </div>
+            </div>
+            <Separator />
+            {/* Remarks */}
+            <div>
+              <h3 className="text-lg font-semibold text-primary mb-3">Remarks</h3>
+              <p className="text-foreground">{formData.remarks || "—"}</p>
             </div>
           </Card>
 
@@ -585,6 +584,20 @@ const TransferCreate: React.FC = () => {
                   />
                 </div>
               )}
+            </div>
+          </Card>
+
+          {/* REMARKS */}
+          <Card className="p-6">
+            <h2 className="text-lg font-bold text-primary mb-4">Remarks</h2>
+            <div>
+              <label className={labelClass}>Remarks (Optional)</label>
+              <textarea
+                className={cn(inputClass, "h-24 py-2")}
+                placeholder="Enter any additional remarks (optional)"
+                value={formData.remarks}
+                onChange={(e) => updateField("remarks", e.target.value)}
+              />
             </div>
           </Card>
 
