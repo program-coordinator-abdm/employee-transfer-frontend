@@ -45,6 +45,7 @@ export interface TransferFormData {
   // Section 5: Elected Members
   ngoBenefits: boolean;
   ngoBenefitsDoc: string;
+  remarks: string;
 }
 
 export interface TransferRecord {
