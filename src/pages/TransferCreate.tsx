@@ -587,6 +587,20 @@ const TransferCreate: React.FC = () => {
             </div>
           </Card>
 
+          {/* REMARKS */}
+          <Card className="p-6">
+            <h2 className="text-lg font-bold text-primary mb-4">Remarks</h2>
+            <div>
+              <label className={labelClass}>Remarks (Optional)</label>
+              <textarea
+                className={cn(inputClass, "h-24 py-2")}
+                placeholder="Enter any additional remarks (optional)"
+                value={formData.remarks}
+                onChange={(e) => updateField("remarks", e.target.value)}
+              />
+            </div>
+          </Card>
+
           {/* Action Buttons */}
           <div className="flex items-center justify-end gap-3 pb-8">
             <Button variant="outline" onClick={handleSaveDraft} disabled={saving} className="gap-1.5">

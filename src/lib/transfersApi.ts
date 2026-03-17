@@ -176,4 +176,5 @@ export const EMPTY_TRANSFER_FORM: () => TransferFormData = () => ({
   spouseInGovtServiceDoc: "",
   ngoBenefits: false,
   ngoBenefitsDoc: "",
+  remarks: "",
 });
