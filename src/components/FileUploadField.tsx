@@ -22,7 +22,7 @@ const FileUploadField: React.FC<FileUploadFieldProps> = ({
   placeholder,
   error,
   label = "Attach Documentary Proof",
-  required = true,
+  required = false,
   hint,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
