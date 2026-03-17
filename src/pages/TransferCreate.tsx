@@ -139,14 +139,7 @@ const TransferCreate: React.FC = () => {
       if (!wd.workingSince) e[`workDetails.${idx}.workingSince`] = "Working since is required";
     });
 
-    // Special conditions doc validation
-    if (formData.terminallyIll && !formData.terminallyIllDoc) e.terminallyIllDoc = "Document required";
-    if (formData.physicallyChallenged && !formData.physicallyChallengedDoc) e.physicallyChallengedDoc = "Document required";
-    if (formData.widow && !formData.widowDoc) e.widowDoc = "Document required";
-    if (formData.spouseInGovtService && !formData.spouseInGovtServiceDoc) e.spouseInGovtServiceDoc = "Document required";
-
-    // Elected members validation
-    if (formData.ngoBenefits && !formData.ngoBenefitsDoc) e.ngoBenefitsDoc = "Document required when elected member";
+    // Document uploads are optional — no validation enforced
 
     return e;
   };
