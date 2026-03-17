@@ -292,8 +292,14 @@ const TransferCreate: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold text-primary mb-3">5. Karnataka State Govt Employee Association Elected Members</h3>
               <div className="grid grid-cols-1 gap-y-2 text-sm">
-                <PreviewField label="Elected Association Member" value={formData.ngoBenefits ? `Yes — ${formData.ngoBenefitsDoc || "Document pending"}` : "No"} />
+              <PreviewField label="Elected Association Member" value={formData.ngoBenefits ? `Yes — ${formData.ngoBenefitsDoc || "Document pending"}` : "No"} />
               </div>
+            </div>
+            <Separator />
+            {/* Remarks */}
+            <div>
+              <h3 className="text-lg font-semibold text-primary mb-3">Remarks</h3>
+              <p className="text-foreground">{formData.remarks || "—"}</p>
             </div>
           </Card>
 
