@@ -64,6 +64,13 @@ const DataOfficerDashboard: React.FC = () => {
               </h1>
             </div>
             <div className="flex items-center gap-3">
+              <div className="hidden sm:block text-right">
+                <p className="text-xs text-banner-foreground/80">ಸರ್ಕಾರ</p>
+                <p className="text-sm font-semibold text-banner-foreground">ಕರ್ನಾಟಕ</p>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center border-2 border-border/30 overflow-hidden shadow-md">
+                <img src={karnatakaEmblem} alt="ಕರ್ನಾಟಕ ಸರ್ಕಾರ" className="w-10 h-10 object-contain" />
+              </div>
               <button onClick={handleLogout} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-danger/10 hover:bg-danger/20 text-banner-foreground transition-colors text-sm font-medium">
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:inline">Logout</span>
