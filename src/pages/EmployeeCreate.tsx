@@ -389,8 +389,8 @@ const EmployeeCreate: React.FC = () => {
     if (d.pastServices?.length) setPastServices(d.pastServices);
     if (d.pastZones?.length) setPastZones(d.pastZones);
     if (d.pastServiceDocs?.length) setPastServiceDocs(d.pastServiceDocs);
-    if (d.pastFromDates?.length) setPastFromDates(d.pastFromDates.map((v: string) => v ? new Date(v) : undefined));
-    if (d.pastToDates?.length) setPastToDates(d.pastToDates.map((v: string) => v ? new Date(v) : undefined));
+    if (d.pastFromDates?.length) setPastFromDates(d.pastFromDates.map((v: string) => v ? parseLocalDate(v) : undefined));
+    if (d.pastToDates?.length) setPastToDates(d.pastToDates.map((v: string) => v ? parseLocalDate(v) : undefined));
     if (d.educationDetails?.length) setEducationDetails(d.educationDetails);
     setTimeboundApplicable(b("timeboundApplicable")); setTimeboundCategory(s("timeboundCategory"));
     setTimeboundYears(s("timeboundYears")); setTimeboundDoc(s("timeboundDoc"));
