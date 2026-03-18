@@ -1,7 +1,7 @@
 import React from "react";
 import { User } from "lucide-react";
 import { Employee } from "@/lib/constants";
-import { format } from "date-fns";
+import { formatDateDisplay } from "@/lib/dateUtils";
 import SectionCard from "./SectionCard";
 import FieldPair from "./FieldPair";
 
@@ -10,13 +10,7 @@ interface Props {
 }
 
 const BasicInfoSection: React.FC<Props> = ({ employee }) => {
-  const formattedDob = (() => {
-    try {
-      return format(new Date(employee.dob), "yyyy-MM-dd");
-    } catch {
-      return employee.dob || "Not provided";
-    }
-  })();
+  const formattedDob = formatDateDisplay(employee.dob);
 
   return (
     <SectionCard title="Basic Information" icon={User}>
