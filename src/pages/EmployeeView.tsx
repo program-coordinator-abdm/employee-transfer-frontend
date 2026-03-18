@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Pencil, Download, Printer, Loader2, Trash2 } from "lucide-react";
-import { format } from "date-fns";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import Header from "@/components/Header";
@@ -16,11 +15,9 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader,
   AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { formatDateDisplay } from "@/lib/dateUtils";
 
-const fmt = (iso: string) => {
-  if (!iso) return "—";
-  try { return format(new Date(iso), "dd MMM yyyy"); } catch { return iso; }
-};
+const fmt = (iso: string) => formatDateDisplay(iso);
 
 const Field: React.FC<{ label: string; value: string | React.ReactNode }> = ({ label, value }) => (
   <div>
