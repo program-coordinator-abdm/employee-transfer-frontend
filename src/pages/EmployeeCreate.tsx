@@ -242,11 +242,11 @@ const EmployeeCreate: React.FC = () => {
       if (existing.currentHfrId) setCurrentHfrId(existing.currentHfrId);
       setCurrentDistrict(existing.currentDistrict); setCurrentTaluk(existing.currentTaluk);
       setCurrentCityTownVillage(existing.currentCityTownVillage);
-      setCurrentWorkingSince(new Date(existing.currentWorkingSince));
-      if (existing.cltCompletionDate) setCltCompletionDate(new Date(existing.cltCompletionDate));
+      setCurrentWorkingSince(parseLocalDate(existing.currentWorkingSince));
+      if (existing.cltCompletionDate) setCltCompletionDate(parseLocalDate(existing.cltCompletionDate));
       setPastServices(existing.pastServices);
-      setPastFromDates(existing.pastServices.map(s => s.fromDate ? new Date(s.fromDate) : undefined));
-      setPastToDates(existing.pastServices.map(s => s.toDate ? new Date(s.toDate) : undefined));
+      setPastFromDates(existing.pastServices.map(s => s.fromDate ? parseLocalDate(s.fromDate) : undefined));
+      setPastToDates(existing.pastServices.map(s => s.toDate ? parseLocalDate(s.toDate) : undefined));
       setTerminallyIll(existing.terminallyIll); setTerminallyIllDoc(existing.terminallyIllDoc);
       setPregnantOrChildUnderOne(existing.pregnantOrChildUnderOne); setPregnantOrChildUnderOneDoc(existing.pregnantOrChildUnderOneDoc);
       setRetiringWithinTwoYears(existing.retiringWithinTwoYears); setRetiringWithinTwoYearsDoc(existing.retiringWithinTwoYearsDoc);
