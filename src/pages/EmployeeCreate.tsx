@@ -800,8 +800,8 @@ const EmployeeCreate: React.FC = () => {
       remarks,
       cgPost: recruitmentType === "CG Grounds" ? cgPost : "",
       cgDesignation: recruitmentType === "CG Grounds" ? cgDesignation : "",
-      empDeclAgreed, empDeclName, empDeclDate: empDeclDate?.toISOString() || "",
-      officerDeclAgreed, officerDeclName, officerDeclDate: officerDeclDate?.toISOString() || "",
+      empDeclAgreed, empDeclName, empDeclDate: formatLocalDate(empDeclDate),
+      officerDeclAgreed, officerDeclName, officerDeclDate: formatLocalDate(officerDeclDate),
     };
 
     if (kgidDuplicate) {
