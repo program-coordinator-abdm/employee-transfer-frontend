@@ -730,7 +730,7 @@ const EmployeeCreate: React.FC = () => {
       currentFirstPostHeld: currentFirstPostHeld === "Others" ? currentFirstPostHeldOther.trim() : currentFirstPostHeld,
       currentInstitution, currentInstitutionType, currentHfrId,
       currentDistrict, currentTaluk, currentCityTownVillage,
-      currentWorkingSince: currentWorkingSince!.toISOString(),
+      currentWorkingSince: formatLocalDate(currentWorkingSince!),
       currentAreaType,
       pastServices: pastServices.map((s) => ({
         postHeld: s.postHeld,
