@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Eye, EyeOff, Mail, Lock, LogIn, User, Shield, Database } from "lucide-react";
 import karnatakaEmblem from "@/assets/karnataka-emblem.png";
-import abdmLogo from "@/assets/abdm-logo.png";
+
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
