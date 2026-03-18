@@ -79,9 +79,6 @@ const Login: React.FC = () => {
                 Health and Family Welfare Department Database
               </h1>
             </div>
-            <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center border-2 border-border/30 overflow-hidden shadow-md">
-              <img src={abdmLogo} alt="ABDM" className="w-10 h-10 object-contain" />
-            </div>
           </div>
         </div>
       </header>
