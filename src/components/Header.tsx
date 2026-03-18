@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import karnatakaEmblem from "@/assets/karnataka-emblem.png";
-import abdmLogo from "@/assets/abdm-logo.png";
+
 
 const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
