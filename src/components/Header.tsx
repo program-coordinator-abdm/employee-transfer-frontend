@@ -50,7 +50,7 @@ const Header: React.FC = () => {
             </p>
           </div>
 
-          {/* Right: User Menu */}
+          {/* Right: Karnataka Logo (Kannada) and User Menu */}
           <div className="flex items-center gap-4">
             {isAuthenticated && user && (
               <DropdownMenu>
@@ -93,6 +93,16 @@ const Header: React.FC = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
+
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:block text-right">
+                <p className="text-xs text-banner-foreground/80">ಸರ್ಕಾರ</p>
+                <p className="text-sm font-semibold text-banner-foreground">ಕರ್ನಾಟಕ</p>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border-2 border-white/30 overflow-hidden shadow-md">
+                <img src={karnatakaEmblem} alt="ಕರ್ನಾಟಕ ಸರ್ಕಾರ" className="w-10 h-10 object-contain" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
