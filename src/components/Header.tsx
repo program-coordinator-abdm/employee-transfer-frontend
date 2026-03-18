@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import karnatakaEmblem from "@/assets/karnataka-emblem.png";
-import abdmLogo from "@/assets/abdm-logo.png";
+
 
 const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -50,16 +50,8 @@ const Header: React.FC = () => {
             </p>
           </div>
 
-          {/* Right: ABDM Logo and User Menu */}
+          {/* Right: User Menu */}
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center border-2 border-white/30 overflow-hidden shadow-md">
-              <img
-                src={abdmLogo}
-                alt="ABDM"
-                className="w-10 h-10 object-contain"
-              />
-            </div>
-
             {isAuthenticated && user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

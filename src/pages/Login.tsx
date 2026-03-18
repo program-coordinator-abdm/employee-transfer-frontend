@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Eye, EyeOff, Mail, Lock, LogIn, User, Shield, Database } from "lucide-react";
 import karnatakaEmblem from "@/assets/karnataka-emblem.png";
-import abdmLogo from "@/assets/abdm-logo.png";
+
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -78,9 +78,6 @@ const Login: React.FC = () => {
               <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-banner-foreground">
                 Health and Family Welfare Department Database
               </h1>
-            </div>
-            <div className="w-12 h-12 rounded-full bg-surface flex items-center justify-center border-2 border-border/30 overflow-hidden shadow-md">
-              <img src={abdmLogo} alt="ABDM" className="w-10 h-10 object-contain" />
             </div>
           </div>
         </div>
