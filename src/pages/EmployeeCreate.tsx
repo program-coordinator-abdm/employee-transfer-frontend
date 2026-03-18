@@ -278,7 +278,7 @@ const EmployeeCreate: React.FC = () => {
       if (existing.contractJoiningDate) setContractJoiningDate(parseLocalDate(existing.contractJoiningDate));
       if (existing.timebound6Years !== undefined) setTimebound6Years(existing.timebound6Years);
       if (existing.timebound6YearsDoc) setTimebound6YearsDoc(existing.timebound6YearsDoc);
-      if (existing.timebound6YearsDate) setTimebound6YearsDate(new Date(existing.timebound6YearsDate));
+      if (existing.timebound6YearsDate) setTimebound6YearsDate(parseLocalDate(existing.timebound6YearsDate));
       if (existing.timebound13Years !== undefined) setTimebound13Years(existing.timebound13Years);
       if (existing.timebound13YearsDoc) setTimebound13YearsDoc(existing.timebound13YearsDoc);
       if (existing.timebound13YearsDate) setTimebound13YearsDate(new Date(existing.timebound13YearsDate));
