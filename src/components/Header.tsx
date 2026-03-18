@@ -50,7 +50,7 @@ const Header: React.FC = () => {
             </p>
           </div>
 
-          {/* Right: User Menu */}
+          {/* Right: Karnataka Logo (Kannada) and User Menu */}
           <div className="flex items-center gap-4">
             {isAuthenticated && user && (
               <DropdownMenu>
