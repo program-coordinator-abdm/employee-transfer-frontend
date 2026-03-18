@@ -1,5 +1,4 @@
 import React from "react";
-import { format } from "date-fns";
 import { Printer, Pencil, ChevronRight } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -8,16 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { type PastServiceEntry, type EducationFormEntry } from "@/lib/api";
+import { formatDateDisplay } from "@/lib/dateUtils";
 
-const fmt = (iso: string | Date | undefined) => {
-  if (!iso) return "—";
-  try {
-    const d = typeof iso === "string" ? new Date(iso) : iso;
-    return format(d, "dd MMM yyyy");
-  } catch {
-    return String(iso);
-  }
-};
+const fmt = (iso: string | Date | undefined) => formatDateDisplay(iso);
 
 const Field: React.FC<{ label: string; value: string | React.ReactNode }> = ({ label, value }) => (
   <div>

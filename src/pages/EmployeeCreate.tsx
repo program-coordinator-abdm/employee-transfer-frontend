@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { displayValue } from "@/lib/dataSanitizer";
+import { parseLocalDate, formatLocalDate } from "@/lib/dateUtils";
 import FileUploadField from "@/components/FileUploadField";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2, Upload, Download, Printer, CheckCircle2, FileText } from "lucide-react";
@@ -217,10 +218,10 @@ const EmployeeCreate: React.FC = () => {
       setKgid(existing.kgid); setName(existing.name);
       setDesignation(existing.designation); setDesignationGroup(existing.designationGroup); setDesignationSubGroup(existing.designationSubGroup);
       setFirstPostHeld(existing.firstPostHeld || "");
-      setDateOfEntry(new Date(existing.dateOfEntry)); setGender(existing.gender);
+      setDateOfEntry(parseLocalDate(existing.dateOfEntry)); setGender(existing.gender);
       setProbationaryPeriod(existing.probationaryPeriod); setProbationaryPeriodDoc(existing.probationaryPeriodDoc);
-      if (existing.probationDeclarationDate) setProbationDeclarationDate(new Date(existing.probationDeclarationDate));
-      setDateOfBirth(new Date(existing.dateOfBirth));
+      if (existing.probationDeclarationDate) setProbationDeclarationDate(parseLocalDate(existing.probationDeclarationDate));
+      setDateOfBirth(parseLocalDate(existing.dateOfBirth));
       if (existing.cltCompleted !== undefined) setCltCompleted(existing.cltCompleted);
       if (existing.cltCompletedDoc) setCltCompletedDoc(existing.cltCompletedDoc);
       if (existing.deptExamCompleted !== undefined) setDeptExamCompleted(existing.deptExamCompleted);
@@ -241,11 +242,11 @@ const EmployeeCreate: React.FC = () => {
       if (existing.currentHfrId) setCurrentHfrId(existing.currentHfrId);
       setCurrentDistrict(existing.currentDistrict); setCurrentTaluk(existing.currentTaluk);
       setCurrentCityTownVillage(existing.currentCityTownVillage);
-      setCurrentWorkingSince(new Date(existing.currentWorkingSince));
-      if (existing.cltCompletionDate) setCltCompletionDate(new Date(existing.cltCompletionDate));
+      setCurrentWorkingSince(parseLocalDate(existing.currentWorkingSince));
+      if (existing.cltCompletionDate) setCltCompletionDate(parseLocalDate(existing.cltCompletionDate));
       setPastServices(existing.pastServices);
-      setPastFromDates(existing.pastServices.map(s => s.fromDate ? new Date(s.fromDate) : undefined));
-      setPastToDates(existing.pastServices.map(s => s.toDate ? new Date(s.toDate) : undefined));
+      setPastFromDates(existing.pastServices.map(s => s.fromDate ? parseLocalDate(s.fromDate) : undefined));
+      setPastToDates(existing.pastServices.map(s => s.toDate ? parseLocalDate(s.toDate) : undefined));
       setTerminallyIll(existing.terminallyIll); setTerminallyIllDoc(existing.terminallyIllDoc);
       setPregnantOrChildUnderOne(existing.pregnantOrChildUnderOne); setPregnantOrChildUnderOneDoc(existing.pregnantOrChildUnderOneDoc);
       setRetiringWithinTwoYears(existing.retiringWithinTwoYears); setRetiringWithinTwoYearsDoc(existing.retiringWithinTwoYearsDoc);
@@ -261,41 +262,41 @@ const EmployeeCreate: React.FC = () => {
       if (existing.timeboundCategory) setTimeboundCategory(existing.timeboundCategory);
       if (existing.timeboundYears) setTimeboundYears(existing.timeboundYears);
       if (existing.timeboundDoc) setTimeboundDoc(existing.timeboundDoc);
-      if (existing.timeboundDate) setTimeboundDate(new Date(existing.timeboundDate));
+      if (existing.timeboundDate) setTimeboundDate(parseLocalDate(existing.timeboundDate));
       if (existing.promotionRejected !== undefined) setPromotionRejected(existing.promotionRejected);
-      if (existing.promotionRejectedDate) setPromotionRejectedDate(new Date(existing.promotionRejectedDate));
+      if (existing.promotionRejectedDate) setPromotionRejectedDate(parseLocalDate(existing.promotionRejectedDate));
       if (existing.promotionRejectedDesignation) setPromotionRejectedDesignation(existing.promotionRejectedDesignation);
       if (existing.pgBond !== undefined) setPgBond(existing.pgBond);
       if (existing.pgBondDoc) setPgBondDoc(existing.pgBondDoc);
-      if (existing.pgBondCompletionDate) setPgBondCompletionDate(new Date(existing.pgBondCompletionDate));
+      if (existing.pgBondCompletionDate) setPgBondCompletionDate(parseLocalDate(existing.pgBondCompletionDate));
       if (existing.recruitmentType) setRecruitmentType(existing.recruitmentType);
       if (existing.directRecruitmentMode) setDirectRecruitmentMode(existing.directRecruitmentMode);
       if (existing.directRecruitmentOther) setDirectRecruitmentOther(existing.directRecruitmentOther);
       if (existing.contractRegularised !== undefined) setContractRegularised(existing.contractRegularised);
       if (existing.contractRegularisedDoc) setContractRegularisedDoc(existing.contractRegularisedDoc);
-      if (existing.contractRegularisedDate) setContractRegularisedDate(new Date(existing.contractRegularisedDate));
-      if (existing.contractJoiningDate) setContractJoiningDate(new Date(existing.contractJoiningDate));
+      if (existing.contractRegularisedDate) setContractRegularisedDate(parseLocalDate(existing.contractRegularisedDate));
+      if (existing.contractJoiningDate) setContractJoiningDate(parseLocalDate(existing.contractJoiningDate));
       if (existing.timebound6Years !== undefined) setTimebound6Years(existing.timebound6Years);
       if (existing.timebound6YearsDoc) setTimebound6YearsDoc(existing.timebound6YearsDoc);
-      if (existing.timebound6YearsDate) setTimebound6YearsDate(new Date(existing.timebound6YearsDate));
+      if (existing.timebound6YearsDate) setTimebound6YearsDate(parseLocalDate(existing.timebound6YearsDate));
       if (existing.timebound13Years !== undefined) setTimebound13Years(existing.timebound13Years);
       if (existing.timebound13YearsDoc) setTimebound13YearsDoc(existing.timebound13YearsDoc);
-      if (existing.timebound13YearsDate) setTimebound13YearsDate(new Date(existing.timebound13YearsDate));
+      if (existing.timebound13YearsDate) setTimebound13YearsDate(parseLocalDate(existing.timebound13YearsDate));
       if (existing.timebound20Years !== undefined) setTimebound20Years(existing.timebound20Years);
       if (existing.timebound20YearsDoc) setTimebound20YearsDoc(existing.timebound20YearsDoc);
-      if (existing.timebound20YearsDate) setTimebound20YearsDate(new Date(existing.timebound20YearsDate));
+      if (existing.timebound20YearsDate) setTimebound20YearsDate(parseLocalDate(existing.timebound20YearsDate));
       if (existing.timebound10Years !== undefined) setTimebound10Years(existing.timebound10Years);
       if (existing.timebound10YearsDoc) setTimebound10YearsDoc(existing.timebound10YearsDoc);
-      if (existing.timebound10YearsDate) setTimebound10YearsDate(new Date(existing.timebound10YearsDate));
+      if (existing.timebound10YearsDate) setTimebound10YearsDate(parseLocalDate(existing.timebound10YearsDate));
       if (existing.timebound15Years !== undefined) setTimebound15Years(existing.timebound15Years);
       if (existing.timebound15YearsDoc) setTimebound15YearsDoc(existing.timebound15YearsDoc);
-      if (existing.timebound15YearsDate) setTimebound15YearsDate(new Date(existing.timebound15YearsDate));
+      if (existing.timebound15YearsDate) setTimebound15YearsDate(parseLocalDate(existing.timebound15YearsDate));
       if (existing.timebound25Years !== undefined) setTimebound25Years(existing.timebound25Years);
       if (existing.timebound25YearsDoc) setTimebound25YearsDoc(existing.timebound25YearsDoc);
-      if (existing.timebound25YearsDate) setTimebound25YearsDate(new Date(existing.timebound25YearsDate));
+      if (existing.timebound25YearsDate) setTimebound25YearsDate(parseLocalDate(existing.timebound25YearsDate));
       if (existing.timebound30Years !== undefined) setTimebound30Years(existing.timebound30Years);
       if (existing.timebound30YearsDoc) setTimebound30YearsDoc(existing.timebound30YearsDoc);
-      if (existing.timebound30YearsDate) setTimebound30YearsDate(new Date(existing.timebound30YearsDate));
+      if (existing.timebound30YearsDate) setTimebound30YearsDate(parseLocalDate(existing.timebound30YearsDate));
       if (existing.currentServiceDoc) setCurrentServiceDoc(existing.currentServiceDoc);
       if (existing.pastServiceDocs && existing.pastServiceDocs.length > 0) setPastServiceDocs(existing.pastServiceDocs);
       if (existing.ngoBenefits !== undefined) setNgoBenefits(existing.ngoBenefits);
@@ -305,9 +306,9 @@ const EmployeeCreate: React.FC = () => {
       if (existing.cgDesignation) setCgDesignation(existing.cgDesignation);
       if (existing.educationDetails && existing.educationDetails.length > 0) setEducationDetails(existing.educationDetails);
       setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
-      if (existing.empDeclDate) setEmpDeclDate(new Date(existing.empDeclDate));
+      if (existing.empDeclDate) setEmpDeclDate(parseLocalDate(existing.empDeclDate));
       setOfficerDeclAgreed(existing.officerDeclAgreed); setOfficerDeclName(existing.officerDeclName);
-      if (existing.officerDeclDate) setOfficerDeclDate(new Date(existing.officerDeclDate));
+      if (existing.officerDeclDate) setOfficerDeclDate(parseLocalDate(existing.officerDeclDate));
     }).catch(() => {
       showToast("Failed to load employee data", "error");
     });
@@ -316,9 +317,9 @@ const EmployeeCreate: React.FC = () => {
   // ---- Draft helpers ----
   const collectFormSnapshot = (): Record<string, any> => ({
     kgid, name, designation, designationGroup, designationSubGroup, firstPostHeld, firstPostHeldOther,
-    dateOfEntry: dateOfEntry?.toISOString() || "", gender, probationaryPeriod, probationaryPeriodDoc,
-    probationDeclarationDate: probationDeclarationDate?.toISOString() || "",
-    dateOfBirth: dateOfBirth?.toISOString() || "", cltCompleted, cltCompletedDoc,
+    dateOfEntry: formatLocalDate(dateOfEntry), gender, probationaryPeriod, probationaryPeriodDoc,
+    probationDeclarationDate: formatLocalDate(probationDeclarationDate),
+    dateOfBirth: formatLocalDate(dateOfBirth), cltCompleted, cltCompletedDoc,
     deptExamCompleted, deptExamName, deptExamDoc,
     isDoctorNursePharmacist, hprId, hfrId,
     address, pinCode, email, phoneNumber, telephoneNumber,
@@ -326,34 +327,34 @@ const EmployeeCreate: React.FC = () => {
     currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld, currentFirstPostHeldOther,
     currentInstitution, currentInstitutionType, currentHfrId,
     currentDistrict, currentTaluk, currentCityTownVillage,
-    currentWorkingSince: currentWorkingSince?.toISOString() || "", currentZone, currentAreaType,
+    currentWorkingSince: formatLocalDate(currentWorkingSince), currentZone, currentAreaType,
     spouseDesignation, spouseDistrict, spouseTaluk, spouseCityTownVillage,
     pastServices, pastZones, pastServiceDocs,
-    pastFromDates: pastFromDates.map(d => d?.toISOString() || ""),
-    pastToDates: pastToDates.map(d => d?.toISOString() || ""),
+    pastFromDates: pastFromDates.map(d => formatLocalDate(d)),
+    pastToDates: pastToDates.map(d => formatLocalDate(d)),
     educationDetails,
     timeboundApplicable, timeboundCategory, timeboundYears, timeboundDoc,
-    timeboundDate: timeboundDate?.toISOString() || "",
-    promotionRejected, promotionRejectedDate: promotionRejectedDate?.toISOString() || "",
+    timeboundDate: formatLocalDate(timeboundDate),
+    promotionRejected, promotionRejectedDate: formatLocalDate(promotionRejectedDate),
     promotionRejectedDesignation, pgBond, pgBondDoc,
-    pgBondCompletionDate: pgBondCompletionDate?.toISOString() || "",
+    pgBondCompletionDate: formatLocalDate(pgBondCompletionDate),
     recruitmentType, directRecruitmentMode, directRecruitmentOther,
     contractRegularised, contractRegularisedDoc,
-    contractRegularisedDate: contractRegularisedDate?.toISOString() || "",
-    contractJoiningDate: contractJoiningDate?.toISOString() || "",
+    contractRegularisedDate: formatLocalDate(contractRegularisedDate),
+    contractJoiningDate: formatLocalDate(contractJoiningDate),
     terminallyIll, terminallyIllDoc, pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
     retiringWithinTwoYears, retiringWithinTwoYearsDoc,
     childSpouseDisability, childSpouseDisabilityDoc,
     divorceeWidowWithChild, divorceeWidowWithChildDoc,
     spouseGovtServant, spouseGovtServantDoc,
     ngoBenefits, ngoBenefitsDoc, remarks, cgPost, cgDesignation,
-    timebound6Years, timebound6YearsDoc, timebound6YearsDate: timebound6YearsDate?.toISOString() || "",
-    timebound13Years, timebound13YearsDoc, timebound13YearsDate: timebound13YearsDate?.toISOString() || "",
-    timebound20Years, timebound20YearsDoc, timebound20YearsDate: timebound20YearsDate?.toISOString() || "",
-    timebound10Years, timebound10YearsDoc, timebound10YearsDate: timebound10YearsDate?.toISOString() || "",
-    timebound15Years, timebound15YearsDoc, timebound15YearsDate: timebound15YearsDate?.toISOString() || "",
-    timebound25Years, timebound25YearsDoc, timebound25YearsDate: timebound25YearsDate?.toISOString() || "",
-    timebound30Years, timebound30YearsDoc, timebound30YearsDate: timebound30YearsDate?.toISOString() || "",
+    timebound6Years, timebound6YearsDoc, timebound6YearsDate: formatLocalDate(timebound6YearsDate),
+    timebound13Years, timebound13YearsDoc, timebound13YearsDate: formatLocalDate(timebound13YearsDate),
+    timebound20Years, timebound20YearsDoc, timebound20YearsDate: formatLocalDate(timebound20YearsDate),
+    timebound10Years, timebound10YearsDoc, timebound10YearsDate: formatLocalDate(timebound10YearsDate),
+    timebound15Years, timebound15YearsDoc, timebound15YearsDate: formatLocalDate(timebound15YearsDate),
+    timebound25Years, timebound25YearsDoc, timebound25YearsDate: formatLocalDate(timebound25YearsDate),
+    timebound30Years, timebound30YearsDoc, timebound30YearsDate: formatLocalDate(timebound30YearsDate),
     currentServiceDoc,
   });
 
@@ -388,8 +389,8 @@ const EmployeeCreate: React.FC = () => {
     if (d.pastServices?.length) setPastServices(d.pastServices);
     if (d.pastZones?.length) setPastZones(d.pastZones);
     if (d.pastServiceDocs?.length) setPastServiceDocs(d.pastServiceDocs);
-    if (d.pastFromDates?.length) setPastFromDates(d.pastFromDates.map((v: string) => v ? new Date(v) : undefined));
-    if (d.pastToDates?.length) setPastToDates(d.pastToDates.map((v: string) => v ? new Date(v) : undefined));
+    if (d.pastFromDates?.length) setPastFromDates(d.pastFromDates.map((v: string) => v ? parseLocalDate(v) : undefined));
+    if (d.pastToDates?.length) setPastToDates(d.pastToDates.map((v: string) => v ? parseLocalDate(v) : undefined));
     if (d.educationDetails?.length) setEducationDetails(d.educationDetails);
     setTimeboundApplicable(b("timeboundApplicable")); setTimeboundCategory(s("timeboundCategory"));
     setTimeboundYears(s("timeboundYears")); setTimeboundDoc(s("timeboundDoc"));
@@ -715,12 +716,12 @@ const EmployeeCreate: React.FC = () => {
     const payload = {
       kgid, name, designation, designationGroup, designationSubGroup,
       firstPostHeld: firstPostHeld === "Others" ? firstPostHeldOther.trim() : firstPostHeld,
-      dateOfEntry: dateOfEntry!.toISOString(),
+      dateOfEntry: formatLocalDate(dateOfEntry!),
       gender, probationaryPeriod,
       probationaryPeriodDoc: probationaryPeriod ? probationaryPeriodDoc : "",
-      probationDeclarationDate: probationaryPeriod && probationDeclarationDate ? probationDeclarationDate.toISOString() : "",
-      dateOfBirth: dateOfBirth!.toISOString(),
-      cltCompleted, cltCompletedDoc, cltCompletionDate: cltCompletionDate?.toISOString() || "",
+      probationDeclarationDate: probationaryPeriod && probationDeclarationDate ? formatLocalDate(probationDeclarationDate) : "",
+      dateOfBirth: formatLocalDate(dateOfBirth!),
+      cltCompleted, cltCompletedDoc, cltCompletionDate: formatLocalDate(cltCompletionDate),
       deptExamCompleted, deptExamName: deptExamCompleted ? deptExamName : "", deptExamDoc: deptExamCompleted ? deptExamDoc : "",
       isDoctorNursePharmacist, hprId, hfrId: hfrId.trim() || "NA",
       address, pinCode, email, phoneNumber, telephoneNumber,
@@ -729,7 +730,7 @@ const EmployeeCreate: React.FC = () => {
       currentFirstPostHeld: currentFirstPostHeld === "Others" ? currentFirstPostHeldOther.trim() : currentFirstPostHeld,
       currentInstitution, currentInstitutionType, currentHfrId,
       currentDistrict, currentTaluk, currentCityTownVillage,
-      currentWorkingSince: currentWorkingSince!.toISOString(),
+      currentWorkingSince: formatLocalDate(currentWorkingSince!),
       currentAreaType,
       pastServices: pastServices.map((s) => ({
         postHeld: s.postHeld,
@@ -751,42 +752,42 @@ const EmployeeCreate: React.FC = () => {
       timeboundCategory: timeboundApplicable ? timeboundCategory : "",
       timeboundYears: timeboundApplicable ? (deriveTimeboundYears() || timeboundYears) : "",
       timeboundDoc: timeboundApplicable ? timeboundDoc : "",
-      timeboundDate: timeboundApplicable ? (timeboundDate?.toISOString() || "") : "",
+      timeboundDate: timeboundApplicable ? formatLocalDate(timeboundDate) : "",
       timebound6Years: timeboundApplicable ? timebound6Years : false,
       timebound6YearsDoc: timeboundApplicable ? timebound6YearsDoc : "",
-      timebound6YearsDate: timeboundApplicable ? (timebound6YearsDate?.toISOString() || "") : "",
+      timebound6YearsDate: timeboundApplicable ? formatLocalDate(timebound6YearsDate) : "",
       timebound13Years: timeboundApplicable ? timebound13Years : false,
       timebound13YearsDoc: timeboundApplicable ? timebound13YearsDoc : "",
-      timebound13YearsDate: timeboundApplicable ? (timebound13YearsDate?.toISOString() || "") : "",
+      timebound13YearsDate: timeboundApplicable ? formatLocalDate(timebound13YearsDate) : "",
       timebound20Years: timeboundApplicable ? timebound20Years : false,
       timebound20YearsDoc: timeboundApplicable ? timebound20YearsDoc : "",
-      timebound20YearsDate: timeboundApplicable ? (timebound20YearsDate?.toISOString() || "") : "",
+      timebound20YearsDate: timeboundApplicable ? formatLocalDate(timebound20YearsDate) : "",
       timebound10Years: timeboundApplicable ? timebound10Years : false,
       timebound10YearsDoc: timeboundApplicable ? timebound10YearsDoc : "",
-      timebound10YearsDate: timeboundApplicable ? (timebound10YearsDate?.toISOString() || "") : "",
+      timebound10YearsDate: timeboundApplicable ? formatLocalDate(timebound10YearsDate) : "",
       timebound15Years: timeboundApplicable ? timebound15Years : false,
       timebound15YearsDoc: timeboundApplicable ? timebound15YearsDoc : "",
-      timebound15YearsDate: timeboundApplicable ? (timebound15YearsDate?.toISOString() || "") : "",
+      timebound15YearsDate: timeboundApplicable ? formatLocalDate(timebound15YearsDate) : "",
       timebound25Years: timeboundApplicable ? timebound25Years : false,
       timebound25YearsDoc: timeboundApplicable ? timebound25YearsDoc : "",
-      timebound25YearsDate: timeboundApplicable ? (timebound25YearsDate?.toISOString() || "") : "",
+      timebound25YearsDate: timeboundApplicable ? formatLocalDate(timebound25YearsDate) : "",
       timebound30Years: timeboundApplicable ? timebound30Years : false,
       timebound30YearsDoc: timeboundApplicable ? timebound30YearsDoc : "",
-      timebound30YearsDate: timeboundApplicable ? (timebound30YearsDate?.toISOString() || "") : "",
+      timebound30YearsDate: timeboundApplicable ? formatLocalDate(timebound30YearsDate) : "",
       currentServiceDoc,
       directRecruitmentMode: directRecruitmentMode === "Others" ? "Others" : directRecruitmentMode,
       directRecruitmentOther: directRecruitmentMode === "Others" ? directRecruitmentOther : "",
       promotionRejected,
-      promotionRejectedDate: promotionRejectedDate?.toISOString() || "",
+      promotionRejectedDate: formatLocalDate(promotionRejectedDate),
       promotionRejectedDesignation,
       pgBond,
       pgBondDoc,
-      pgBondCompletionDate: pgBondCompletionDate?.toISOString() || "",
+      pgBondCompletionDate: formatLocalDate(pgBondCompletionDate),
       recruitmentType,
       contractRegularised,
       contractRegularisedDoc,
-      contractRegularisedDate: contractRegularisedDate?.toISOString() || "",
-      contractJoiningDate: contractJoiningDate?.toISOString() || "",
+      contractRegularisedDate: formatLocalDate(contractRegularisedDate),
+      contractJoiningDate: formatLocalDate(contractJoiningDate),
       pastServiceDocs,
       terminallyIll, terminallyIllDoc,
       pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
@@ -799,8 +800,8 @@ const EmployeeCreate: React.FC = () => {
       remarks,
       cgPost: recruitmentType === "CG Grounds" ? cgPost : "",
       cgDesignation: recruitmentType === "CG Grounds" ? cgDesignation : "",
-      empDeclAgreed, empDeclName, empDeclDate: empDeclDate?.toISOString() || "",
-      officerDeclAgreed, officerDeclName, officerDeclDate: officerDeclDate?.toISOString() || "",
+      empDeclAgreed, empDeclName, empDeclDate: formatLocalDate(empDeclDate),
+      officerDeclAgreed, officerDeclName, officerDeclDate: formatLocalDate(officerDeclDate),
     };
 
     if (kgidDuplicate) {
