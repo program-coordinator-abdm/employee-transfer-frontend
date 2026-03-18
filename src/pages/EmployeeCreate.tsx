@@ -306,9 +306,9 @@ const EmployeeCreate: React.FC = () => {
       if (existing.cgDesignation) setCgDesignation(existing.cgDesignation);
       if (existing.educationDetails && existing.educationDetails.length > 0) setEducationDetails(existing.educationDetails);
       setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
-      if (existing.empDeclDate) setEmpDeclDate(new Date(existing.empDeclDate));
+      if (existing.empDeclDate) setEmpDeclDate(parseLocalDate(existing.empDeclDate));
       setOfficerDeclAgreed(existing.officerDeclAgreed); setOfficerDeclName(existing.officerDeclName);
-      if (existing.officerDeclDate) setOfficerDeclDate(new Date(existing.officerDeclDate));
+      if (existing.officerDeclDate) setOfficerDeclDate(parseLocalDate(existing.officerDeclDate));
     }).catch(() => {
       showToast("Failed to load employee data", "error");
     });
