@@ -218,10 +218,10 @@ const EmployeeCreate: React.FC = () => {
       setKgid(existing.kgid); setName(existing.name);
       setDesignation(existing.designation); setDesignationGroup(existing.designationGroup); setDesignationSubGroup(existing.designationSubGroup);
       setFirstPostHeld(existing.firstPostHeld || "");
-      setDateOfEntry(new Date(existing.dateOfEntry)); setGender(existing.gender);
+      setDateOfEntry(parseLocalDate(existing.dateOfEntry)); setGender(existing.gender);
       setProbationaryPeriod(existing.probationaryPeriod); setProbationaryPeriodDoc(existing.probationaryPeriodDoc);
-      if (existing.probationDeclarationDate) setProbationDeclarationDate(new Date(existing.probationDeclarationDate));
-      setDateOfBirth(new Date(existing.dateOfBirth));
+      if (existing.probationDeclarationDate) setProbationDeclarationDate(parseLocalDate(existing.probationDeclarationDate));
+      setDateOfBirth(parseLocalDate(existing.dateOfBirth));
       if (existing.cltCompleted !== undefined) setCltCompleted(existing.cltCompleted);
       if (existing.cltCompletedDoc) setCltCompletedDoc(existing.cltCompletedDoc);
       if (existing.deptExamCompleted !== undefined) setDeptExamCompleted(existing.deptExamCompleted);
