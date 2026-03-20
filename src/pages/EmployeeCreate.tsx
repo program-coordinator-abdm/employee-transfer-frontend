@@ -614,6 +614,7 @@ const EmployeeCreate: React.FC = () => {
 
     educationDetails.forEach((e, i) => {
       if (!e.level) errs[`edu_${i}_level`] = "Education level is required";
+      if (e.level === "Others" && !e.customEducationLevel?.trim()) errs[`edu_${i}_customEducationLevel`] = "Please enter education level name";
       if (e.level && e.level !== "Unschooled/UnEducated") {
         if (!e.institution) errs[`edu_${i}_institution`] = "Institution name is required";
         if (!e.yearOfPassing) errs[`edu_${i}_yearOfPassing`] = "Date of passing is required";
