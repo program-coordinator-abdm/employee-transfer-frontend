@@ -614,6 +614,7 @@ const EmployeeCreate: React.FC = () => {
 
     educationDetails.forEach((e, i) => {
       if (!e.level) errs[`edu_${i}_level`] = "Education level is required";
+      if (e.level === "Others" && !e.customEducationLevel?.trim()) errs[`edu_${i}_customEducationLevel`] = "Please enter education level name";
       if (e.level && e.level !== "Unschooled/UnEducated") {
         if (!e.institution) errs[`edu_${i}_institution`] = "Institution name is required";
         if (!e.yearOfPassing) errs[`edu_${i}_yearOfPassing`] = "Date of passing is required";
@@ -941,7 +942,7 @@ const EmployeeCreate: React.FC = () => {
     // Education section
     const eduRows: [string, string][] = [];
     (emp.educationDetails || []).filter(e => e.level).forEach((e, i) => {
-      eduRows.push([`#${i + 1} Level`, e.level]);
+      eduRows.push([`#${i + 1} Level`, e.level === "Others" && e.customEducationLevel ? `Others — ${e.customEducationLevel}` : e.level]);
       eduRows.push([`#${i + 1} Institution`, e.institution]);
       eduRows.push([`#${i + 1} Year`, e.yearOfPassing]);
       
@@ -1565,12 +1566,19 @@ const EmployeeCreate: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="input-label">Education Level <span className="text-destructive">*</span></label>
-                      <select value={edu.level} onChange={(e) => { updateEducation(idx, "level", e.target.value); clearError(`edu_${idx}_level`); }} className={`input-field ${errors[`edu_${idx}_level`] ? "border-destructive" : ""}`}>
+                      <select value={edu.level} onChange={(e) => { const val = e.target.value; updateEducation(idx, "level", val); if (val !== "Others") updateEducation(idx, "customEducationLevel", ""); clearError(`edu_${idx}_level`); clearError(`edu_${idx}_customEducationLevel`); }} className={`input-field ${errors[`edu_${idx}_level`] ? "border-destructive" : ""}`}>
                         <option value="">Select Level</option>
                         {EDUCATION_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
                       </select>
                       <FieldError error={errors[`edu_${idx}_level`]} />
                     </div>
+                    {edu.level === "Others" && (
+                      <div>
+                        <label className="input-label">Enter Education Level <span className="text-destructive">*</span></label>
+                        <input value={edu.customEducationLevel || ""} onChange={(e) => { updateEducation(idx, "customEducationLevel", e.target.value); clearError(`edu_${idx}_customEducationLevel`); }} className={`input-field ${errors[`edu_${idx}_customEducationLevel`] ? "border-destructive" : ""}`} placeholder="Enter education level name" />
+                        <FieldError error={errors[`edu_${idx}_customEducationLevel`]} />
+                      </div>
+                    )}
                     {edu.level !== "Unschooled/UnEducated" && (
                       <div>
                         <label className="input-label">Name of Institution <span className="text-destructive">*</span></label>

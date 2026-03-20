@@ -207,7 +207,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
     addSection("5. Education Information", (() => {
       const rows: [string, string][] = [];
       data.educationDetails.filter(e => e.level).forEach((e, i) => {
-        rows.push([`#${i + 1} Level`, e.level]);
+        rows.push([`#${i + 1} Level`, e.level === "Others" && e.customEducationLevel ? `Others — ${e.customEducationLevel}` : e.level]);
         rows.push([`#${i + 1} Institution`, e.institution]);
         rows.push([`#${i + 1} Date of Passing`, e.yearOfPassing]);
         
@@ -386,7 +386,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
               <div key={idx} className="bg-muted/30 rounded-lg p-4 border border-border">
                 <p className="text-xs font-semibold text-muted-foreground mb-3">Entry #{idx + 1}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  <Field label="Level" value={e.level} />
+                  <Field label="Level" value={e.level === "Others" && e.customEducationLevel ? `Others — ${e.customEducationLevel}` : e.level} />
                   <Field label="Institution" value={e.institution} />
                   <Field label="Date of Passing" value={e.yearOfPassing} />
                   {e.documentProof && <Field label="Document" value={e.documentProof} />}
