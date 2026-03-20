@@ -487,6 +487,7 @@ export interface PastServiceEntry {
 
 export interface EducationFormEntry {
   level: string;
+  customEducationLevel?: string;
   institution: string;
   yearOfPassing: string;
   gradePercentage: string;

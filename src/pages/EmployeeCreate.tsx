@@ -942,7 +942,7 @@ const EmployeeCreate: React.FC = () => {
     // Education section
     const eduRows: [string, string][] = [];
     (emp.educationDetails || []).filter(e => e.level).forEach((e, i) => {
-      eduRows.push([`#${i + 1} Level`, e.level]);
+      eduRows.push([`#${i + 1} Level`, e.level === "Others" && e.customEducationLevel ? `Others — ${e.customEducationLevel}` : e.level]);
       eduRows.push([`#${i + 1} Institution`, e.institution]);
       eduRows.push([`#${i + 1} Year`, e.yearOfPassing]);
       
