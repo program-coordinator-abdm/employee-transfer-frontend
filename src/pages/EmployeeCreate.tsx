@@ -1565,11 +1565,17 @@ const EmployeeCreate: React.FC = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="input-label">Education Level <span className="text-destructive">*</span></label>
-                      <select value={edu.level} onChange={(e) => { updateEducation(idx, "level", e.target.value); clearError(`edu_${idx}_level`); }} className={`input-field ${errors[`edu_${idx}_level`] ? "border-destructive" : ""}`}>
+                      <select value={edu.level} onChange={(e) => { const val = e.target.value; updateEducation(idx, "level", val); if (val !== "Others") updateEducation(idx, "customEducationLevel", ""); clearError(`edu_${idx}_level`); clearError(`edu_${idx}_customEducationLevel`); }} className={`input-field ${errors[`edu_${idx}_level`] ? "border-destructive" : ""}`}>
                         <option value="">Select Level</option>
                         {EDUCATION_LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
                       </select>
                       <FieldError error={errors[`edu_${idx}_level`]} />
+                    </div>
+                    {edu.level === "Others" && (
+                      <div>
+                        <label className="input-label">Enter Education Level <span className="text-destructive">*</span></label>
+                        <input value={edu.customEducationLevel || ""} onChange={(e) => { updateEducation(idx, "customEducationLevel", e.target.value); clearError(`edu_${idx}_customEducationLevel`); }} className={`input-field ${errors[`edu_${idx}_customEducationLevel`] ? "border-destructive" : ""}`} placeholder="Enter education level name" />
+                        <FieldError error={errors[`edu_${idx}_customEducationLevel`]} />
                     </div>
                     {edu.level !== "Unschooled/UnEducated" && (
                       <div>
