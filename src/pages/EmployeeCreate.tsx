@@ -1577,7 +1577,8 @@ const EmployeeCreate: React.FC = () => {
                         <label className="input-label">Enter Education Level <span className="text-destructive">*</span></label>
                         <input value={edu.customEducationLevel || ""} onChange={(e) => { updateEducation(idx, "customEducationLevel", e.target.value); clearError(`edu_${idx}_customEducationLevel`); }} className={`input-field ${errors[`edu_${idx}_customEducationLevel`] ? "border-destructive" : ""}`} placeholder="Enter education level name" />
                         <FieldError error={errors[`edu_${idx}_customEducationLevel`]} />
-                    </div>
+                      </div>
+                    )}
                     {edu.level !== "Unschooled/UnEducated" && (
                       <div>
                         <label className="input-label">Name of Institution <span className="text-destructive">*</span></label>
