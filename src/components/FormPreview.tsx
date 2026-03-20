@@ -207,7 +207,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
     addSection("5. Education Information", (() => {
       const rows: [string, string][] = [];
       data.educationDetails.filter(e => e.level).forEach((e, i) => {
-        rows.push([`#${i + 1} Level`, e.level]);
+        rows.push([`#${i + 1} Level`, e.level === "Others" && e.customEducationLevel ? `Others — ${e.customEducationLevel}` : e.level]);
         rows.push([`#${i + 1} Institution`, e.institution]);
         rows.push([`#${i + 1} Date of Passing`, e.yearOfPassing]);
         
