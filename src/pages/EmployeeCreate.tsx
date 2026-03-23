@@ -687,7 +687,7 @@ const EmployeeCreate: React.FC = () => {
     officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
     currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
     currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
-    currentWorkingSince, currentAreaType, pastServices, educationDetails,
+    currentWorkingSince, currentAreaType, currentOtherStateLocation, pastServices, educationDetails,
     timeboundApplicable, timeboundCategory, timeboundYears, timeboundDoc,
     timeboundDate, promotionRejected, promotionRejectedDate, pgBond, pgBondDoc, pgBondCompletionDate,
     recruitmentType, contractRegularised, contractRegularisedDoc,
