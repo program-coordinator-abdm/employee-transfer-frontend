@@ -400,7 +400,7 @@ const EmployeeCreate: React.FC = () => {
     if (d.pastServiceDocs?.length) setPastServiceDocs(d.pastServiceDocs);
     if (d.pastFromDates?.length) setPastFromDates(d.pastFromDates.map((v: string) => v ? parseLocalDate(v) : undefined));
     if (d.pastToDates?.length) setPastToDates(d.pastToDates.map((v: string) => v ? parseLocalDate(v) : undefined));
-    if (d.educationDetails?.length) setEducationDetails(d.educationDetails);
+    if (d.educationDetails?.length) { setEducationDetails(d.educationDetails); setEduOtherStateFlags(d.educationDetails.map((e: EducationFormEntry) => !!(e.otherStateLocation || "").trim())); }
     setTimeboundApplicable(b("timeboundApplicable")); setTimeboundCategory(s("timeboundCategory"));
     setTimeboundYears(s("timeboundYears")); setTimeboundDoc(s("timeboundDoc"));
     setTimeboundDate(dt("timeboundDate"));
