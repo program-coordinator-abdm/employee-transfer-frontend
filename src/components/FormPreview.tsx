@@ -430,6 +430,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           <Field label="Taluk" value={data.currentTaluk} />
           <Field label="City/Town/Village" value={data.currentCityTownVillage} />
           {data.currentAreaType && <Field label="Area Type" value={data.currentAreaType} />}
+          {data.currentOtherStateLocation && <Field label="Other State?" value={data.currentOtherStateLocation} />}
           <Field label="Working Since" value={fmt(data.currentWorkingSince)} />
         </div>
       </PreviewSection>
