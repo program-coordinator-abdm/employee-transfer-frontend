@@ -391,6 +391,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
                   <Field label="Institution" value={e.institution} />
                   <Field label="Date of Passing" value={e.yearOfPassing} />
                   {e.documentProof && <Field label="Document" value={e.documentProof} />}
+                  {e.otherStateLocation && <Field label="Other State?" value={e.otherStateLocation} />}
                 </div>
               </div>
             ))}
