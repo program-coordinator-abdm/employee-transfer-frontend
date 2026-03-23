@@ -259,6 +259,7 @@ const EmployeeCreate: React.FC = () => {
       if (existing.spouseTaluk) setSpouseTaluk(existing.spouseTaluk);
       if (existing.spouseCityTownVillage) setSpouseCityTownVillage(existing.spouseCityTownVillage);
       if (existing.currentAreaType) setCurrentAreaType(existing.currentAreaType);
+      if (existing.currentOtherStateLocation) setCurrentOtherStateLocation(existing.currentOtherStateLocation);
       if (existing.timeboundApplicable !== undefined) setTimeboundApplicable(existing.timeboundApplicable);
       if (existing.timeboundCategory) setTimeboundCategory(existing.timeboundCategory);
       if (existing.timeboundYears) setTimeboundYears(existing.timeboundYears);
