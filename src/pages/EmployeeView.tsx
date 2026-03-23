@@ -510,6 +510,7 @@ const EmployeeView: React.FC = () => {
                     <Field label="Year of Passing" value={ed.yearOfPassing} />
                     <Field label="Grade / Percentage" value={ed.gradePercentage} />
                     {ed.documentProof && <Field label="Document Proof" value={ed.documentProof} />}
+                    {ed.otherStateLocation && <Field label="Other State?" value={ed.otherStateLocation} />}
                   </div>
                 </div>
               ))}
