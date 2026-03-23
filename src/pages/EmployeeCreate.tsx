@@ -116,6 +116,8 @@ const EmployeeCreate: React.FC = () => {
   const [currentCityTownVillage, setCurrentCityTownVillage] = useState("");
   const [currentVillageOtherMode, setCurrentVillageOtherMode] = useState(false);
   const [pastVillageOtherModes, setPastVillageOtherModes] = useState<boolean[]>([false]);
+  const [eduOtherStateFlags, setEduOtherStateFlags] = useState<boolean[]>([false]);
+  const [pastOtherStateFlags, setPastOtherStateFlags] = useState<boolean[]>([false]);
   const [currentWorkingSince, setCurrentWorkingSince] = useState<Date>();
   const [currentZone, setCurrentZone] = useState("");
   const [currentAreaType, setCurrentAreaType] = useState("");
