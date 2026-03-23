@@ -1878,23 +1878,6 @@ const EmployeeCreate: React.FC = () => {
                   ))}
                 </div>
               </div>
-              <div className="flex items-center gap-3 pt-2">
-                <Switch
-                  checked={currentIsOtherState}
-                  onCheckedChange={(checked) => {
-                    setCurrentIsOtherState(checked);
-                    if (!checked) { setCurrentOtherStateLocation(""); }
-                    if (checked) { clearError("currentDistrict"); clearError("currentTaluk"); clearError("currentCityTownVillage"); }
-                  }}
-                />
-                <Label className="text-sm font-medium">Other State?</Label>
-              </div>
-              {currentIsOtherState && (
-                <div>
-                  <label className="input-label">Other state?</label>
-                  <input value={currentOtherStateLocation} onChange={(e) => setCurrentOtherStateLocation(e.target.value)} className="input-field" placeholder="Enter State - City/Village" />
-                </div>
-              )}
               <div className="max-w-sm">
                 <label className="input-label">Working in this post since (Regular only) <span className="text-destructive">*</span></label>
                 <DatePickerField value={currentWorkingSince} onChange={(d) => { setCurrentWorkingSince(d); clearError("currentWorkingSince"); }} placeholder="Select date" disabled={(d) => d > new Date()} />
