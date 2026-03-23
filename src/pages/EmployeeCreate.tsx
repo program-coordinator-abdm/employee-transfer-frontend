@@ -385,7 +385,7 @@ const EmployeeCreate: React.FC = () => {
     setCurrentHfrId(s("currentHfrId")); setCurrentDistrict(s("currentDistrict"));
     setCurrentTaluk(s("currentTaluk")); setCurrentCityTownVillage(s("currentCityTownVillage"));
     setCurrentWorkingSince(dt("currentWorkingSince")); setCurrentZone(s("currentZone"));
-    setCurrentAreaType(s("currentAreaType"));
+    setCurrentAreaType(s("currentAreaType")); setCurrentOtherStateLocation(s("currentOtherStateLocation"));
     setSpouseDesignation(s("spouseDesignation")); setSpouseDistrict(s("spouseDistrict"));
     setSpouseTaluk(s("spouseTaluk")); setSpouseCityTownVillage(s("spouseCityTownVillage"));
     if (d.pastServices?.length) setPastServices(d.pastServices);
