@@ -1884,7 +1884,7 @@ const EmployeeCreate: React.FC = () => {
                 <FieldError error={errors.currentWorkingSince} />
               </div>
               <div>
-                <label className="input-label">Zone <span className="text-destructive">*</span></label>
+                <label className="input-label">Zone {!currentIsOtherState && <span className="text-destructive">*</span>}</label>
                 <div className="flex flex-wrap gap-4 mt-2">
                   {ZONE_OPTIONS.map(zone => (
                     <label key={zone.value} className="flex items-center gap-2 cursor-pointer">
