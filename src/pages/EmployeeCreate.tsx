@@ -395,7 +395,7 @@ const EmployeeCreate: React.FC = () => {
     setCurrentAreaType(s("currentAreaType")); const draftOtherState = s("currentOtherStateLocation"); setCurrentOtherStateLocation(draftOtherState); setCurrentIsOtherState(!!draftOtherState);
     setSpouseDesignation(s("spouseDesignation")); setSpouseDistrict(s("spouseDistrict"));
     setSpouseTaluk(s("spouseTaluk")); setSpouseCityTownVillage(s("spouseCityTownVillage"));
-    if (d.pastServices?.length) setPastServices(d.pastServices);
+    if (d.pastServices?.length) { setPastServices(d.pastServices); setPastOtherStateFlags(d.pastServices.map((s: PastServiceEntry) => !!(s.otherStateLocation || "").trim())); }
     if (d.pastZones?.length) setPastZones(d.pastZones);
     if (d.pastServiceDocs?.length) setPastServiceDocs(d.pastServiceDocs);
     if (d.pastFromDates?.length) setPastFromDates(d.pastFromDates.map((v: string) => v ? parseLocalDate(v) : undefined));
