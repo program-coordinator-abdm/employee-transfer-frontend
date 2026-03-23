@@ -116,10 +116,13 @@ const EmployeeCreate: React.FC = () => {
   const [currentCityTownVillage, setCurrentCityTownVillage] = useState("");
   const [currentVillageOtherMode, setCurrentVillageOtherMode] = useState(false);
   const [pastVillageOtherModes, setPastVillageOtherModes] = useState<boolean[]>([false]);
+  const [eduOtherStateFlags, setEduOtherStateFlags] = useState<boolean[]>([false]);
+  const [pastOtherStateFlags, setPastOtherStateFlags] = useState<boolean[]>([false]);
   const [currentWorkingSince, setCurrentWorkingSince] = useState<Date>();
   const [currentZone, setCurrentZone] = useState("");
   const [currentAreaType, setCurrentAreaType] = useState("");
   const [currentOtherStateLocation, setCurrentOtherStateLocation] = useState("");
+  const [currentIsOtherState, setCurrentIsOtherState] = useState(false);
   const [cltCompletionDate, setCltCompletionDate] = useState<Date>();
 
   // Spouse working details
@@ -246,6 +249,7 @@ const EmployeeCreate: React.FC = () => {
       setCurrentWorkingSince(parseLocalDate(existing.currentWorkingSince));
       if (existing.cltCompletionDate) setCltCompletionDate(parseLocalDate(existing.cltCompletionDate));
       setPastServices(existing.pastServices);
+      setPastOtherStateFlags(existing.pastServices.map(s => !!(s.otherStateLocation || "").trim()));
       setPastFromDates(existing.pastServices.map(s => s.fromDate ? parseLocalDate(s.fromDate) : undefined));
       setPastToDates(existing.pastServices.map(s => s.toDate ? parseLocalDate(s.toDate) : undefined));
       setTerminallyIll(existing.terminallyIll); setTerminallyIllDoc(existing.terminallyIllDoc);
@@ -259,7 +263,7 @@ const EmployeeCreate: React.FC = () => {
       if (existing.spouseTaluk) setSpouseTaluk(existing.spouseTaluk);
       if (existing.spouseCityTownVillage) setSpouseCityTownVillage(existing.spouseCityTownVillage);
       if (existing.currentAreaType) setCurrentAreaType(existing.currentAreaType);
-      if (existing.currentOtherStateLocation) setCurrentOtherStateLocation(existing.currentOtherStateLocation);
+      if (existing.currentOtherStateLocation) { setCurrentOtherStateLocation(existing.currentOtherStateLocation); setCurrentIsOtherState(true); }
       if (existing.timeboundApplicable !== undefined) setTimeboundApplicable(existing.timeboundApplicable);
       if (existing.timeboundCategory) setTimeboundCategory(existing.timeboundCategory);
       if (existing.timeboundYears) setTimeboundYears(existing.timeboundYears);
@@ -306,7 +310,10 @@ const EmployeeCreate: React.FC = () => {
       if (existing.remarks) setRemarks(existing.remarks);
       if (existing.cgPost) setCgPost(existing.cgPost);
       if (existing.cgDesignation) setCgDesignation(existing.cgDesignation);
-      if (existing.educationDetails && existing.educationDetails.length > 0) setEducationDetails(existing.educationDetails);
+      if (existing.educationDetails && existing.educationDetails.length > 0) {
+        setEducationDetails(existing.educationDetails);
+        setEduOtherStateFlags(existing.educationDetails.map(e => !!(e.otherStateLocation || "").trim()));
+      }
       setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
       if (existing.empDeclDate) setEmpDeclDate(parseLocalDate(existing.empDeclDate));
       setOfficerDeclAgreed(existing.officerDeclAgreed); setOfficerDeclName(existing.officerDeclName);
@@ -385,15 +392,15 @@ const EmployeeCreate: React.FC = () => {
     setCurrentHfrId(s("currentHfrId")); setCurrentDistrict(s("currentDistrict"));
     setCurrentTaluk(s("currentTaluk")); setCurrentCityTownVillage(s("currentCityTownVillage"));
     setCurrentWorkingSince(dt("currentWorkingSince")); setCurrentZone(s("currentZone"));
-    setCurrentAreaType(s("currentAreaType")); setCurrentOtherStateLocation(s("currentOtherStateLocation"));
+    setCurrentAreaType(s("currentAreaType")); const draftOtherState = s("currentOtherStateLocation"); setCurrentOtherStateLocation(draftOtherState); setCurrentIsOtherState(!!draftOtherState);
     setSpouseDesignation(s("spouseDesignation")); setSpouseDistrict(s("spouseDistrict"));
     setSpouseTaluk(s("spouseTaluk")); setSpouseCityTownVillage(s("spouseCityTownVillage"));
-    if (d.pastServices?.length) setPastServices(d.pastServices);
+    if (d.pastServices?.length) { setPastServices(d.pastServices); setPastOtherStateFlags(d.pastServices.map((s: PastServiceEntry) => !!(s.otherStateLocation || "").trim())); }
     if (d.pastZones?.length) setPastZones(d.pastZones);
     if (d.pastServiceDocs?.length) setPastServiceDocs(d.pastServiceDocs);
     if (d.pastFromDates?.length) setPastFromDates(d.pastFromDates.map((v: string) => v ? parseLocalDate(v) : undefined));
     if (d.pastToDates?.length) setPastToDates(d.pastToDates.map((v: string) => v ? parseLocalDate(v) : undefined));
-    if (d.educationDetails?.length) setEducationDetails(d.educationDetails);
+    if (d.educationDetails?.length) { setEducationDetails(d.educationDetails); setEduOtherStateFlags(d.educationDetails.map((e: EducationFormEntry) => !!(e.otherStateLocation || "").trim())); }
     setTimeboundApplicable(b("timeboundApplicable")); setTimeboundCategory(s("timeboundCategory"));
     setTimeboundYears(s("timeboundYears")); setTimeboundDoc(s("timeboundDoc"));
     setTimeboundDate(dt("timeboundDate"));
@@ -497,6 +504,7 @@ const EmployeeCreate: React.FC = () => {
     setPastToDates([...pastToDates, undefined]);
     setPastZones([...pastZones, ""]);
     setPastVillageOtherModes([...pastVillageOtherModes, false]);
+    setPastOtherStateFlags([...pastOtherStateFlags, false]);
     setPastServiceDocs([...pastServiceDocs, ""]);
   };
 
@@ -506,6 +514,7 @@ const EmployeeCreate: React.FC = () => {
     setPastToDates(pastToDates.filter((_, i) => i !== idx));
     setPastZones(pastZones.filter((_, i) => i !== idx));
     setPastVillageOtherModes(pastVillageOtherModes.filter((_, i) => i !== idx));
+    setPastOtherStateFlags(pastOtherStateFlags.filter((_, i) => i !== idx));
     setPastServiceDocs(pastServiceDocs.filter((_, i) => i !== idx));
   };
 
@@ -524,8 +533,8 @@ const EmployeeCreate: React.FC = () => {
   };
 
   // Education helpers
-  const addEducation = () => setEducationDetails([...educationDetails, EMPTY_EDUCATION()]);
-  const removeEducation = (idx: number) => setEducationDetails(educationDetails.filter((_, i) => i !== idx));
+  const addEducation = () => { setEducationDetails([...educationDetails, EMPTY_EDUCATION()]); setEduOtherStateFlags([...eduOtherStateFlags, false]); };
+  const removeEducation = (idx: number) => { setEducationDetails(educationDetails.filter((_, i) => i !== idx)); setEduOtherStateFlags(eduOtherStateFlags.filter((_, i) => i !== idx)); };
   const updateEducation = (idx: number, field: keyof EducationFormEntry, value: string) => {
     setEducationDetails(prev => prev.map((e, i) => i === idx ? { ...e, [field]: value } : e));
   };
@@ -597,10 +606,9 @@ const EmployeeCreate: React.FC = () => {
     if (!officePhoneNumber.trim()) errs.officePhoneNumber = "Office phone number is required";
     if (!currentPostHeld) errs.currentPostHeld = "Current post is required";
     if (!currentInstitution.trim()) errs.currentInstitution = "Institution is required";
-    const currentHasOtherState = currentOtherStateLocation.trim().length > 0;
-    if (!currentHasOtherState && !currentDistrict) errs.currentDistrict = "District is required";
-    if (!currentHasOtherState && !currentTaluk.trim()) errs.currentTaluk = "Taluk is required";
-    if (!currentHasOtherState && !currentCityTownVillage.trim()) errs.currentCityTownVillage = "City/Town/Village is required";
+    if (!currentIsOtherState && !currentDistrict) errs.currentDistrict = "District is required";
+    if (!currentIsOtherState && !currentTaluk.trim()) errs.currentTaluk = "Taluk is required";
+    if (!currentIsOtherState && !currentCityTownVillage.trim()) errs.currentCityTownVillage = "City/Town/Village is required";
     if (!currentWorkingSince) errs.currentWorkingSince = "Working since date is required";
     if (terminallyIll && !terminallyIllDoc) errs.terminallyIllDoc = "Documentary proof is required";
     if (pregnantOrChildUnderOne && !pregnantOrChildUnderOneDoc) errs.pregnantOrChildUnderOneDoc = "Documentary proof is required";
@@ -627,8 +635,8 @@ const EmployeeCreate: React.FC = () => {
     pastServices.forEach((s, i) => {
       if (!s.postHeld) errs[`past_${i}_postHeld`] = "Post is required";
       if (!s.institution) errs[`past_${i}_institution`] = "Institution is required";
-      const pastHasOtherState = (s.otherStateLocation || "").trim().length > 0;
-      if (!pastHasOtherState && !s.district) errs[`past_${i}_district`] = "District is required";
+      const pastIsOtherState = !!pastOtherStateFlags[i];
+      if (!pastIsOtherState && !s.district) errs[`past_${i}_district`] = "District is required";
       if (!s.fromDate) errs[`past_${i}_fromDate`] = "From date is required";
       if (!s.toDate) errs[`past_${i}_toDate`] = "To date is required";
       if (s.firstPostHeld === "Others" && !(s.firstPostHeldOther || "").trim()) {
@@ -736,8 +744,8 @@ const EmployeeCreate: React.FC = () => {
       currentInstitution, currentInstitutionType, currentHfrId,
       currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: formatLocalDate(currentWorkingSince!),
-      currentAreaType, currentOtherStateLocation: currentOtherStateLocation.trim() || undefined,
-      pastServices: pastServices.map((s) => ({
+      currentAreaType, currentOtherStateLocation: currentIsOtherState ? (currentOtherStateLocation.trim() || undefined) : undefined,
+      pastServices: pastServices.map((s, i) => ({
         postHeld: s.postHeld,
         postGroup: s.postGroup,
         postSubGroup: s.postSubGroup,
@@ -751,11 +759,11 @@ const EmployeeCreate: React.FC = () => {
         fromDate: s.fromDate,
         toDate: s.toDate,
         tenure: s.tenure,
-        otherStateLocation: (s.otherStateLocation || "").trim() || undefined,
+        otherStateLocation: pastOtherStateFlags[i] ? ((s.otherStateLocation || "").trim() || undefined) : undefined,
       })),
-      educationDetails: educationDetails.map(e => ({
+      educationDetails: educationDetails.map((e, i) => ({
         ...e,
-        otherStateLocation: (e.otherStateLocation || "").trim() || undefined,
+        otherStateLocation: eduOtherStateFlags[i] ? ((e.otherStateLocation || "").trim() || undefined) : undefined,
       })),
       timeboundApplicable,
       timeboundCategory: timeboundApplicable ? timeboundCategory : "",
@@ -1616,10 +1624,22 @@ const EmployeeCreate: React.FC = () => {
                         <input value={edu.specialization || ""} onChange={(e) => updateEducation(idx, "specialization", e.target.value)} className="input-field" placeholder="e.g. Cardiology, Computer Science" />
                       </div>
                     )}
-                    <div>
-                      <label className="input-label">Other state?</label>
-                      <input value={edu.otherStateLocation || ""} onChange={(e) => updateEducation(idx, "otherStateLocation", e.target.value)} className="input-field" placeholder="Enter as State - city/village" />
+                    <div className="flex items-center gap-3 pt-2">
+                      <Switch
+                        checked={!!eduOtherStateFlags[idx]}
+                        onCheckedChange={(checked) => {
+                          setEduOtherStateFlags(prev => prev.map((v, i) => i === idx ? checked : v));
+                          if (!checked) updateEducation(idx, "otherStateLocation", "");
+                        }}
+                      />
+                      <Label className="text-sm font-medium">Other State?</Label>
                     </div>
+                    {eduOtherStateFlags[idx] && (
+                      <div>
+                        <label className="input-label">Other state location</label>
+                        <input value={edu.otherStateLocation || ""} onChange={(e) => updateEducation(idx, "otherStateLocation", e.target.value)} className="input-field" placeholder="Enter State - City/Village" />
+                      </div>
+                    )}
                   </div>
                   {edu.level !== "Unschooled/UnEducated" && (
                     <div className="mt-4">
@@ -1841,10 +1861,23 @@ const EmployeeCreate: React.FC = () => {
                   ))}
                 </div>
               </div>
-              <div>
-                <label className="input-label">Other state?</label>
-                <input value={currentOtherStateLocation} onChange={(e) => { setCurrentOtherStateLocation(e.target.value); if (e.target.value.trim()) { clearError("currentDistrict"); clearError("currentTaluk"); clearError("currentCityTownVillage"); } }} className="input-field" placeholder="Enter as State - city/village" />
+              <div className="flex items-center gap-3 pt-2">
+                <Switch
+                  checked={currentIsOtherState}
+                  onCheckedChange={(checked) => {
+                    setCurrentIsOtherState(checked);
+                    if (!checked) { setCurrentOtherStateLocation(""); }
+                    if (checked) { clearError("currentDistrict"); clearError("currentTaluk"); clearError("currentCityTownVillage"); }
+                  }}
+                />
+                <Label className="text-sm font-medium">Other State?</Label>
               </div>
+              {currentIsOtherState && (
+                <div>
+                  <label className="input-label">Other state?</label>
+                  <input value={currentOtherStateLocation} onChange={(e) => setCurrentOtherStateLocation(e.target.value)} className="input-field" placeholder="Enter State - City/Village" />
+                </div>
+              )}
               <div className="max-w-sm">
                 <label className="input-label">Working in this post since (Regular only) <span className="text-destructive">*</span></label>
                 <DatePickerField value={currentWorkingSince} onChange={(d) => { setCurrentWorkingSince(d); clearError("currentWorkingSince"); }} placeholder="Select date" disabled={(d) => d > new Date()} />
@@ -1992,10 +2025,23 @@ const EmployeeCreate: React.FC = () => {
                         })()}
                       </div>
                     </div>
-                    <div>
-                      <label className="input-label">Other state?</label>
-                      <input value={service.otherStateLocation || ""} onChange={(e) => { updatePastService(idx, "otherStateLocation", e.target.value); if (e.target.value.trim()) { clearError(`past_${idx}_district`); } }} className="input-field" placeholder="Enter as State - city/village" />
+                    <div className="flex items-center gap-3 pt-2">
+                      <Switch
+                        checked={!!pastOtherStateFlags[idx]}
+                        onCheckedChange={(checked) => {
+                          setPastOtherStateFlags(prev => prev.map((v, i) => i === idx ? checked : v));
+                          if (!checked) updatePastService(idx, "otherStateLocation", "");
+                          if (checked) clearError(`past_${idx}_district`);
+                        }}
+                      />
+                      <Label className="text-sm font-medium">Other State?</Label>
                     </div>
+                    {pastOtherStateFlags[idx] && (
+                      <div>
+                        <label className="input-label">Other state location</label>
+                        <input value={service.otherStateLocation || ""} onChange={(e) => { updatePastService(idx, "otherStateLocation", e.target.value); if (e.target.value.trim()) { clearError(`past_${idx}_district`); } }} className="input-field" placeholder="Enter State - City/Village" />
+                      </div>
+                    )}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
                         <label className="input-label">From Date (Regular only) <span className="text-destructive">*</span></label>
