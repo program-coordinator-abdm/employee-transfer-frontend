@@ -598,10 +598,9 @@ const EmployeeCreate: React.FC = () => {
     if (!officePhoneNumber.trim()) errs.officePhoneNumber = "Office phone number is required";
     if (!currentPostHeld) errs.currentPostHeld = "Current post is required";
     if (!currentInstitution.trim()) errs.currentInstitution = "Institution is required";
-    const currentHasOtherState = currentOtherStateLocation.trim().length > 0;
-    if (!currentHasOtherState && !currentDistrict) errs.currentDistrict = "District is required";
-    if (!currentHasOtherState && !currentTaluk.trim()) errs.currentTaluk = "Taluk is required";
-    if (!currentHasOtherState && !currentCityTownVillage.trim()) errs.currentCityTownVillage = "City/Town/Village is required";
+    if (!currentIsOtherState && !currentDistrict) errs.currentDistrict = "District is required";
+    if (!currentIsOtherState && !currentTaluk.trim()) errs.currentTaluk = "Taluk is required";
+    if (!currentIsOtherState && !currentCityTownVillage.trim()) errs.currentCityTownVillage = "City/Town/Village is required";
     if (!currentWorkingSince) errs.currentWorkingSince = "Working since date is required";
     if (terminallyIll && !terminallyIllDoc) errs.terminallyIllDoc = "Documentary proof is required";
     if (pregnantOrChildUnderOne && !pregnantOrChildUnderOneDoc) errs.pregnantOrChildUnderOneDoc = "Documentary proof is required";
