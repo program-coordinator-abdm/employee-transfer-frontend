@@ -1622,20 +1622,20 @@ const EmployeeCreate: React.FC = () => {
                     )}
                     <div className="flex items-center gap-3 pt-2">
                       <Switch
-                        checked={!!(edu.otherStateLocation || "").trim()}
+                        checked={!!eduOtherStateFlags[idx]}
                         onCheckedChange={(checked) => {
+                          setEduOtherStateFlags(prev => prev.map((v, i) => i === idx ? checked : v));
                           if (!checked) updateEducation(idx, "otherStateLocation", "");
-                          else updateEducation(idx, "otherStateLocation", " ");
                         }}
                       />
                       <Label className="text-sm font-medium">Other State?</Label>
                     </div>
-                    {(edu.otherStateLocation || "").trim() ? (
+                    {eduOtherStateFlags[idx] && (
                       <div>
-                        <label className="input-label">Other state?</label>
+                        <label className="input-label">Other state location</label>
                         <input value={edu.otherStateLocation || ""} onChange={(e) => updateEducation(idx, "otherStateLocation", e.target.value)} className="input-field" placeholder="Enter State - City/Village" />
                       </div>
-                    ) : null}
+                    )}
                   </div>
                   {edu.level !== "Unschooled/UnEducated" && (
                     <div className="mt-4">
