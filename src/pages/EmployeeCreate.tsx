@@ -755,7 +755,7 @@ const EmployeeCreate: React.FC = () => {
         fromDate: s.fromDate,
         toDate: s.toDate,
         tenure: s.tenure,
-        otherStateLocation: (s.otherStateLocation || "").trim() || undefined,
+        otherStateLocation: pastOtherStateFlags[i] ? ((s.otherStateLocation || "").trim() || undefined) : undefined,
       })),
       educationDetails: educationDetails.map(e => ({
         ...e,
