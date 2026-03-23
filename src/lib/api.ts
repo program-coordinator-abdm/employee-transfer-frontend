@@ -541,6 +541,7 @@ export interface NewEmployee {
   currentHfrId: string;
   currentWorkingSince: string;
   currentAreaType: string;
+  currentOtherStateLocation?: string;
   cltCompletionDate: string;
   pastServices: PastServiceEntry[];
   educationDetails: EducationFormEntry[];
