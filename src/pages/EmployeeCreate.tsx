@@ -1991,6 +1991,10 @@ const EmployeeCreate: React.FC = () => {
                         })()}
                       </div>
                     </div>
+                    <div>
+                      <label className="input-label">Other state?</label>
+                      <input value={service.otherStateLocation || ""} onChange={(e) => { updatePastService(idx, "otherStateLocation", e.target.value); if (e.target.value.trim()) { clearError(`past_${idx}_district`); } }} className="input-field" placeholder="Enter as State - city/village" />
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
                         <label className="input-label">From Date (Regular only) <span className="text-destructive">*</span></label>
