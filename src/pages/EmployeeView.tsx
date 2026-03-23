@@ -510,6 +510,7 @@ const EmployeeView: React.FC = () => {
                     <Field label="Year of Passing" value={ed.yearOfPassing} />
                     <Field label="Grade / Percentage" value={ed.gradePercentage} />
                     {ed.documentProof && <Field label="Document Proof" value={ed.documentProof} />}
+                    {ed.otherStateLocation && <Field label="Other State?" value={ed.otherStateLocation} />}
                   </div>
                 </div>
               ))}
@@ -548,6 +549,7 @@ const EmployeeView: React.FC = () => {
             <Field label="Taluk" value={emp.currentTaluk} />
             <Field label="City/Town/Village" value={emp.currentCityTownVillage} />
             <Field label="Area Type" value={emp.currentAreaType} />
+            {emp.currentOtherStateLocation && <Field label="Other State?" value={emp.currentOtherStateLocation} />}
             <Field label="Working Since" value={fmt(emp.currentWorkingSince)} />
             {emp.currentServiceDoc && <Field label="CTC / Movement Order / SR Copy" value={emp.currentServiceDoc} />}
           </div>
@@ -571,6 +573,7 @@ const EmployeeView: React.FC = () => {
                     <Field label="District" value={ps.district} />
                     {ps.taluk && <Field label="Taluk" value={ps.taluk} />}
                     {ps.cityTownVillage && <Field label="City/Town/Village" value={ps.cityTownVillage} />}
+                    {ps.otherStateLocation && <Field label="Other State?" value={ps.otherStateLocation} />}
                     <Field label="From (Regular posts only)" value={fmt(ps.fromDate)} />
                     <Field label="To" value={fmt(ps.toDate)} />
                     <Field label="Tenure" value={ps.tenure} />

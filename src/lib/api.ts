@@ -483,6 +483,7 @@ export interface PastServiceEntry {
   fromDate: string;
   toDate: string;
   tenure: string;
+  otherStateLocation?: string;
 }
 
 export interface EducationFormEntry {
@@ -493,6 +494,7 @@ export interface EducationFormEntry {
   gradePercentage: string;
   documentProof: string;
   specialization: string;
+  otherStateLocation?: string;
 }
 
 export interface NewEmployee {
@@ -539,6 +541,7 @@ export interface NewEmployee {
   currentHfrId: string;
   currentWorkingSince: string;
   currentAreaType: string;
+  currentOtherStateLocation?: string;
   cltCompletionDate: string;
   pastServices: PastServiceEntry[];
   educationDetails: EducationFormEntry[];

@@ -78,6 +78,7 @@ export interface FormPreviewData {
   currentCityTownVillage: string;
   currentWorkingSince?: Date;
   currentAreaType: string;
+  currentOtherStateLocation?: string;
   pastServices: PastServiceEntry[];
   educationDetails: EducationFormEntry[];
   terminallyIll: boolean;
@@ -390,6 +391,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
                   <Field label="Institution" value={e.institution} />
                   <Field label="Date of Passing" value={e.yearOfPassing} />
                   {e.documentProof && <Field label="Document" value={e.documentProof} />}
+                  {e.otherStateLocation && <Field label="Other State?" value={e.otherStateLocation} />}
                 </div>
               </div>
             ))}
@@ -429,6 +431,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
           <Field label="Taluk" value={data.currentTaluk} />
           <Field label="City/Town/Village" value={data.currentCityTownVillage} />
           {data.currentAreaType && <Field label="Area Type" value={data.currentAreaType} />}
+          {data.currentOtherStateLocation && <Field label="Other State?" value={data.currentOtherStateLocation} />}
           <Field label="Working Since" value={fmt(data.currentWorkingSince)} />
         </div>
       </PreviewSection>
@@ -450,6 +453,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
                   <Field label="District" value={ps.district} />
                   {ps.taluk && <Field label="Taluk" value={ps.taluk} />}
                   {ps.cityTownVillage && <Field label="City/Town/Village" value={ps.cityTownVillage} />}
+                  {ps.otherStateLocation && <Field label="Other State?" value={ps.otherStateLocation} />}
                   <Field label="From" value={fmt(ps.fromDate)} />
                   <Field label="To" value={fmt(ps.toDate)} />
                   <Field label="Tenure" value={ps.tenure} />

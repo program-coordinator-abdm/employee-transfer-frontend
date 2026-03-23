@@ -32,11 +32,11 @@ const EMPTY_PAST_SERVICE: () => PastServiceEntry = () => ({
   postHeld: "", postGroup: "", postSubGroup: "", firstPostHeld: "", firstPostHeldOther: "",
   institutionType: "", hfrId: "",
   institution: "", district: "", taluk: "", cityTownVillage: "",
-  fromDate: "", toDate: "", tenure: "",
+  fromDate: "", toDate: "", tenure: "", otherStateLocation: "",
 });
 
 const EMPTY_EDUCATION: () => EducationFormEntry = () => ({
-  level: "", institution: "", yearOfPassing: "", gradePercentage: "", documentProof: "", specialization: "",
+  level: "", institution: "", yearOfPassing: "", gradePercentage: "", documentProof: "", specialization: "", otherStateLocation: "",
 });
 
 const INSTITUTION_TYPES = [
@@ -119,6 +119,7 @@ const EmployeeCreate: React.FC = () => {
   const [currentWorkingSince, setCurrentWorkingSince] = useState<Date>();
   const [currentZone, setCurrentZone] = useState("");
   const [currentAreaType, setCurrentAreaType] = useState("");
+  const [currentOtherStateLocation, setCurrentOtherStateLocation] = useState("");
   const [cltCompletionDate, setCltCompletionDate] = useState<Date>();
 
   // Spouse working details
@@ -258,6 +259,7 @@ const EmployeeCreate: React.FC = () => {
       if (existing.spouseTaluk) setSpouseTaluk(existing.spouseTaluk);
       if (existing.spouseCityTownVillage) setSpouseCityTownVillage(existing.spouseCityTownVillage);
       if (existing.currentAreaType) setCurrentAreaType(existing.currentAreaType);
+      if (existing.currentOtherStateLocation) setCurrentOtherStateLocation(existing.currentOtherStateLocation);
       if (existing.timeboundApplicable !== undefined) setTimeboundApplicable(existing.timeboundApplicable);
       if (existing.timeboundCategory) setTimeboundCategory(existing.timeboundCategory);
       if (existing.timeboundYears) setTimeboundYears(existing.timeboundYears);
@@ -327,7 +329,7 @@ const EmployeeCreate: React.FC = () => {
     currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld, currentFirstPostHeldOther,
     currentInstitution, currentInstitutionType, currentHfrId,
     currentDistrict, currentTaluk, currentCityTownVillage,
-    currentWorkingSince: formatLocalDate(currentWorkingSince), currentZone, currentAreaType,
+    currentWorkingSince: formatLocalDate(currentWorkingSince), currentZone, currentAreaType, currentOtherStateLocation,
     spouseDesignation, spouseDistrict, spouseTaluk, spouseCityTownVillage,
     pastServices, pastZones, pastServiceDocs,
     pastFromDates: pastFromDates.map(d => formatLocalDate(d)),
@@ -383,7 +385,7 @@ const EmployeeCreate: React.FC = () => {
     setCurrentHfrId(s("currentHfrId")); setCurrentDistrict(s("currentDistrict"));
     setCurrentTaluk(s("currentTaluk")); setCurrentCityTownVillage(s("currentCityTownVillage"));
     setCurrentWorkingSince(dt("currentWorkingSince")); setCurrentZone(s("currentZone"));
-    setCurrentAreaType(s("currentAreaType"));
+    setCurrentAreaType(s("currentAreaType")); setCurrentOtherStateLocation(s("currentOtherStateLocation"));
     setSpouseDesignation(s("spouseDesignation")); setSpouseDistrict(s("spouseDistrict"));
     setSpouseTaluk(s("spouseTaluk")); setSpouseCityTownVillage(s("spouseCityTownVillage"));
     if (d.pastServices?.length) setPastServices(d.pastServices);
@@ -595,9 +597,10 @@ const EmployeeCreate: React.FC = () => {
     if (!officePhoneNumber.trim()) errs.officePhoneNumber = "Office phone number is required";
     if (!currentPostHeld) errs.currentPostHeld = "Current post is required";
     if (!currentInstitution.trim()) errs.currentInstitution = "Institution is required";
-    if (!currentDistrict) errs.currentDistrict = "District is required";
-    if (!currentTaluk.trim()) errs.currentTaluk = "Taluk is required";
-    if (!currentCityTownVillage.trim()) errs.currentCityTownVillage = "City/Town/Village is required";
+    const currentHasOtherState = currentOtherStateLocation.trim().length > 0;
+    if (!currentHasOtherState && !currentDistrict) errs.currentDistrict = "District is required";
+    if (!currentHasOtherState && !currentTaluk.trim()) errs.currentTaluk = "Taluk is required";
+    if (!currentHasOtherState && !currentCityTownVillage.trim()) errs.currentCityTownVillage = "City/Town/Village is required";
     if (!currentWorkingSince) errs.currentWorkingSince = "Working since date is required";
     if (terminallyIll && !terminallyIllDoc) errs.terminallyIllDoc = "Documentary proof is required";
     if (pregnantOrChildUnderOne && !pregnantOrChildUnderOneDoc) errs.pregnantOrChildUnderOneDoc = "Documentary proof is required";
@@ -624,7 +627,8 @@ const EmployeeCreate: React.FC = () => {
     pastServices.forEach((s, i) => {
       if (!s.postHeld) errs[`past_${i}_postHeld`] = "Post is required";
       if (!s.institution) errs[`past_${i}_institution`] = "Institution is required";
-      if (!s.district) errs[`past_${i}_district`] = "District is required";
+      const pastHasOtherState = (s.otherStateLocation || "").trim().length > 0;
+      if (!pastHasOtherState && !s.district) errs[`past_${i}_district`] = "District is required";
       if (!s.fromDate) errs[`past_${i}_fromDate`] = "From date is required";
       if (!s.toDate) errs[`past_${i}_toDate`] = "To date is required";
       if (s.firstPostHeld === "Others" && !(s.firstPostHeldOther || "").trim()) {
@@ -683,7 +687,7 @@ const EmployeeCreate: React.FC = () => {
     officeAddress, officePinCode, officeEmail, officePhoneNumber, officeTelephoneNumber,
     currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld,
     currentInstitution, currentDistrict, currentTaluk, currentCityTownVillage,
-    currentWorkingSince, currentAreaType, pastServices, educationDetails,
+    currentWorkingSince, currentAreaType, currentOtherStateLocation, pastServices, educationDetails,
     timeboundApplicable, timeboundCategory, timeboundYears, timeboundDoc,
     timeboundDate, promotionRejected, promotionRejectedDate, pgBond, pgBondDoc, pgBondCompletionDate,
     recruitmentType, contractRegularised, contractRegularisedDoc,
@@ -732,7 +736,7 @@ const EmployeeCreate: React.FC = () => {
       currentInstitution, currentInstitutionType, currentHfrId,
       currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: formatLocalDate(currentWorkingSince!),
-      currentAreaType,
+      currentAreaType, currentOtherStateLocation: currentOtherStateLocation.trim() || undefined,
       pastServices: pastServices.map((s) => ({
         postHeld: s.postHeld,
         postGroup: s.postGroup,
@@ -747,8 +751,12 @@ const EmployeeCreate: React.FC = () => {
         fromDate: s.fromDate,
         toDate: s.toDate,
         tenure: s.tenure,
+        otherStateLocation: (s.otherStateLocation || "").trim() || undefined,
       })),
-      educationDetails,
+      educationDetails: educationDetails.map(e => ({
+        ...e,
+        otherStateLocation: (e.otherStateLocation || "").trim() || undefined,
+      })),
       timeboundApplicable,
       timeboundCategory: timeboundApplicable ? timeboundCategory : "",
       timeboundYears: timeboundApplicable ? (deriveTimeboundYears() || timeboundYears) : "",
@@ -1608,6 +1616,10 @@ const EmployeeCreate: React.FC = () => {
                         <input value={edu.specialization || ""} onChange={(e) => updateEducation(idx, "specialization", e.target.value)} className="input-field" placeholder="e.g. Cardiology, Computer Science" />
                       </div>
                     )}
+                    <div>
+                      <label className="input-label">Other state?</label>
+                      <input value={edu.otherStateLocation || ""} onChange={(e) => updateEducation(idx, "otherStateLocation", e.target.value)} className="input-field" placeholder="Enter as State - city/village" />
+                    </div>
                   </div>
                   {edu.level !== "Unschooled/UnEducated" && (
                     <div className="mt-4">
@@ -1829,6 +1841,10 @@ const EmployeeCreate: React.FC = () => {
                   ))}
                 </div>
               </div>
+              <div>
+                <label className="input-label">Other state?</label>
+                <input value={currentOtherStateLocation} onChange={(e) => { setCurrentOtherStateLocation(e.target.value); if (e.target.value.trim()) { clearError("currentDistrict"); clearError("currentTaluk"); clearError("currentCityTownVillage"); } }} className="input-field" placeholder="Enter as State - city/village" />
+              </div>
               <div className="max-w-sm">
                 <label className="input-label">Working in this post since (Regular only) <span className="text-destructive">*</span></label>
                 <DatePickerField value={currentWorkingSince} onChange={(d) => { setCurrentWorkingSince(d); clearError("currentWorkingSince"); }} placeholder="Select date" disabled={(d) => d > new Date()} />
@@ -1975,6 +1991,10 @@ const EmployeeCreate: React.FC = () => {
                           );
                         })()}
                       </div>
+                    </div>
+                    <div>
+                      <label className="input-label">Other state?</label>
+                      <input value={service.otherStateLocation || ""} onChange={(e) => { updatePastService(idx, "otherStateLocation", e.target.value); if (e.target.value.trim()) { clearError(`past_${idx}_district`); } }} className="input-field" placeholder="Enter as State - city/village" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
