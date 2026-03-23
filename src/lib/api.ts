@@ -494,6 +494,7 @@ export interface EducationFormEntry {
   gradePercentage: string;
   documentProof: string;
   specialization: string;
+  otherStateLocation?: string;
 }
 
 export interface NewEmployee {
