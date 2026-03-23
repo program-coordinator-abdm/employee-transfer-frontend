@@ -249,6 +249,7 @@ const EmployeeCreate: React.FC = () => {
       setCurrentWorkingSince(parseLocalDate(existing.currentWorkingSince));
       if (existing.cltCompletionDate) setCltCompletionDate(parseLocalDate(existing.cltCompletionDate));
       setPastServices(existing.pastServices);
+      setPastOtherStateFlags(existing.pastServices.map(s => !!(s.otherStateLocation || "").trim()));
       setPastFromDates(existing.pastServices.map(s => s.fromDate ? parseLocalDate(s.fromDate) : undefined));
       setPastToDates(existing.pastServices.map(s => s.toDate ? parseLocalDate(s.toDate) : undefined));
       setTerminallyIll(existing.terminallyIll); setTerminallyIllDoc(existing.terminallyIllDoc);
