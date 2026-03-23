@@ -19,6 +19,7 @@ const JRO_OFFICER_POSITIONS = [
   "Administrative Officer",
   "Deputy Chief Medical Officer",
   "Chief Medical Officer",
+  "Chief Dental Health Officer",
 ];
 
 const LRO_POSITIONS = [
