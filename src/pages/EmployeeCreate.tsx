@@ -329,7 +329,7 @@ const EmployeeCreate: React.FC = () => {
     currentPostHeld, currentPostGroup, currentPostSubGroup, currentFirstPostHeld, currentFirstPostHeldOther,
     currentInstitution, currentInstitutionType, currentHfrId,
     currentDistrict, currentTaluk, currentCityTownVillage,
-    currentWorkingSince: formatLocalDate(currentWorkingSince), currentZone, currentAreaType,
+    currentWorkingSince: formatLocalDate(currentWorkingSince), currentZone, currentAreaType, currentOtherStateLocation,
     spouseDesignation, spouseDistrict, spouseTaluk, spouseCityTownVillage,
     pastServices, pastZones, pastServiceDocs,
     pastFromDates: pastFromDates.map(d => formatLocalDate(d)),
