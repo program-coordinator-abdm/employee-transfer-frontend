@@ -500,6 +500,7 @@ const EmployeeCreate: React.FC = () => {
     setPastToDates([...pastToDates, undefined]);
     setPastZones([...pastZones, ""]);
     setPastVillageOtherModes([...pastVillageOtherModes, false]);
+    setPastOtherStateFlags([...pastOtherStateFlags, false]);
     setPastServiceDocs([...pastServiceDocs, ""]);
   };
 
