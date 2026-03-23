@@ -572,6 +572,7 @@ const EmployeeView: React.FC = () => {
                     <Field label="District" value={ps.district} />
                     {ps.taluk && <Field label="Taluk" value={ps.taluk} />}
                     {ps.cityTownVillage && <Field label="City/Town/Village" value={ps.cityTownVillage} />}
+                    {ps.otherStateLocation && <Field label="Other State?" value={ps.otherStateLocation} />}
                     <Field label="From (Regular posts only)" value={fmt(ps.fromDate)} />
                     <Field label="To" value={fmt(ps.toDate)} />
                     <Field label="Tenure" value={ps.tenure} />
