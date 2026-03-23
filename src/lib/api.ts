@@ -483,6 +483,7 @@ export interface PastServiceEntry {
   fromDate: string;
   toDate: string;
   tenure: string;
+  otherStateLocation?: string;
 }
 
 export interface EducationFormEntry {
