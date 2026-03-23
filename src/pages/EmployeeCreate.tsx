@@ -2042,23 +2042,6 @@ const EmployeeCreate: React.FC = () => {
                         })()}
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 pt-2">
-                      <Switch
-                        checked={!!pastOtherStateFlags[idx]}
-                        onCheckedChange={(checked) => {
-                          setPastOtherStateFlags(prev => prev.map((v, i) => i === idx ? checked : v));
-                          if (!checked) updatePastService(idx, "otherStateLocation", "");
-                          if (checked) clearError(`past_${idx}_district`);
-                        }}
-                      />
-                      <Label className="text-sm font-medium">Other State?</Label>
-                    </div>
-                    {pastOtherStateFlags[idx] && (
-                      <div>
-                        <label className="input-label">Other state location</label>
-                        <input value={service.otherStateLocation || ""} onChange={(e) => { updatePastService(idx, "otherStateLocation", e.target.value); if (e.target.value.trim()) { clearError(`past_${idx}_district`); } }} className="input-field" placeholder="Enter State - City/Village" />
-                      </div>
-                    )}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
                         <label className="input-label">From Date (Regular only) <span className="text-destructive">*</span></label>
