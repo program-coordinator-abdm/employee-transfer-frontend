@@ -36,7 +36,7 @@ const EMPTY_PAST_SERVICE: () => PastServiceEntry = () => ({
 });
 
 const EMPTY_EDUCATION: () => EducationFormEntry = () => ({
-  level: "", institution: "", yearOfPassing: "", gradePercentage: "", documentProof: "", specialization: "",
+  level: "", institution: "", yearOfPassing: "", gradePercentage: "", documentProof: "", specialization: "", otherStateLocation: "",
 });
 
 const INSTITUTION_TYPES = [
