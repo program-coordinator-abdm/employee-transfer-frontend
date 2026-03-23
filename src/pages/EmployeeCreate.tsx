@@ -757,9 +757,9 @@ const EmployeeCreate: React.FC = () => {
         tenure: s.tenure,
         otherStateLocation: pastOtherStateFlags[i] ? ((s.otherStateLocation || "").trim() || undefined) : undefined,
       })),
-      educationDetails: educationDetails.map(e => ({
+      educationDetails: educationDetails.map((e, i) => ({
         ...e,
-        otherStateLocation: (e.otherStateLocation || "").trim() || undefined,
+        otherStateLocation: eduOtherStateFlags[i] ? ((e.otherStateLocation || "").trim() || undefined) : undefined,
       })),
       timeboundApplicable,
       timeboundCategory: timeboundApplicable ? timeboundCategory : "",
