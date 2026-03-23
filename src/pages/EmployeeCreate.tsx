@@ -741,7 +741,7 @@ const EmployeeCreate: React.FC = () => {
       currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: formatLocalDate(currentWorkingSince!),
       currentAreaType, currentOtherStateLocation: currentIsOtherState ? (currentOtherStateLocation.trim() || undefined) : undefined,
-      pastServices: pastServices.map((s) => ({
+      pastServices: pastServices.map((s, i) => ({
         postHeld: s.postHeld,
         postGroup: s.postGroup,
         postSubGroup: s.postSubGroup,
