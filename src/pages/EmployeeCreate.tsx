@@ -751,8 +751,12 @@ const EmployeeCreate: React.FC = () => {
         fromDate: s.fromDate,
         toDate: s.toDate,
         tenure: s.tenure,
+        otherStateLocation: (s.otherStateLocation || "").trim() || undefined,
       })),
-      educationDetails,
+      educationDetails: educationDetails.map(e => ({
+        ...e,
+        otherStateLocation: (e.otherStateLocation || "").trim() || undefined,
+      })),
       timeboundApplicable,
       timeboundCategory: timeboundApplicable ? timeboundCategory : "",
       timeboundYears: timeboundApplicable ? (deriveTimeboundYears() || timeboundYears) : "",
