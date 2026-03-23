@@ -310,7 +310,10 @@ const EmployeeCreate: React.FC = () => {
       if (existing.remarks) setRemarks(existing.remarks);
       if (existing.cgPost) setCgPost(existing.cgPost);
       if (existing.cgDesignation) setCgDesignation(existing.cgDesignation);
-      if (existing.educationDetails && existing.educationDetails.length > 0) setEducationDetails(existing.educationDetails);
+      if (existing.educationDetails && existing.educationDetails.length > 0) {
+        setEducationDetails(existing.educationDetails);
+        setEduOtherStateFlags(existing.educationDetails.map(e => !!(e.otherStateLocation || "").trim()));
+      }
       setEmpDeclAgreed(existing.empDeclAgreed); setEmpDeclName(existing.empDeclName);
       if (existing.empDeclDate) setEmpDeclDate(parseLocalDate(existing.empDeclDate));
       setOfficerDeclAgreed(existing.officerDeclAgreed); setOfficerDeclName(existing.officerDeclName);
