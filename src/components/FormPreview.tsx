@@ -78,6 +78,7 @@ export interface FormPreviewData {
   currentCityTownVillage: string;
   currentWorkingSince?: Date;
   currentAreaType: string;
+  currentOtherStateLocation?: string;
   pastServices: PastServiceEntry[];
   educationDetails: EducationFormEntry[];
   terminallyIll: boolean;
