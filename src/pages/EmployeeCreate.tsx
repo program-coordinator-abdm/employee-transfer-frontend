@@ -1845,6 +1845,7 @@ const EmployeeCreate: React.FC = () => {
                 <label className="input-label">Other state?</label>
                 <input value={currentOtherStateLocation} onChange={(e) => { setCurrentOtherStateLocation(e.target.value); if (e.target.value.trim()) { clearError("currentDistrict"); clearError("currentTaluk"); clearError("currentCityTownVillage"); } }} className="input-field" placeholder="Enter as State - city/village" />
               </div>
+              <div className="max-w-sm">
                 <label className="input-label">Working in this post since (Regular only) <span className="text-destructive">*</span></label>
                 <DatePickerField value={currentWorkingSince} onChange={(d) => { setCurrentWorkingSince(d); clearError("currentWorkingSince"); }} placeholder="Select date" disabled={(d) => d > new Date()} />
                 <FieldError error={errors.currentWorkingSince} />
