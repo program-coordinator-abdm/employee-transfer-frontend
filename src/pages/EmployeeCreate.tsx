@@ -2017,10 +2017,23 @@ const EmployeeCreate: React.FC = () => {
                         })()}
                       </div>
                     </div>
-                    <div>
-                      <label className="input-label">Other state?</label>
-                      <input value={service.otherStateLocation || ""} onChange={(e) => { updatePastService(idx, "otherStateLocation", e.target.value); if (e.target.value.trim()) { clearError(`past_${idx}_district`); } }} className="input-field" placeholder="Enter as State - city/village" />
+                    <div className="flex items-center gap-3 pt-2">
+                      <Switch
+                        checked={!!(service.otherStateLocation || "").trim()}
+                        onCheckedChange={(checked) => {
+                          if (!checked) updatePastService(idx, "otherStateLocation", "");
+                          else updatePastService(idx, "otherStateLocation", " ");
+                          if (checked) clearError(`past_${idx}_district`);
+                        }}
+                      />
+                      <Label className="text-sm font-medium">Other State?</Label>
                     </div>
+                    {(service.otherStateLocation || "").trim() ? (
+                      <div>
+                        <label className="input-label">Other state?</label>
+                        <input value={service.otherStateLocation || ""} onChange={(e) => { updatePastService(idx, "otherStateLocation", e.target.value); if (e.target.value.trim()) { clearError(`past_${idx}_district`); } }} className="input-field" placeholder="Enter State - City/Village" />
+                      </div>
+                    ) : null}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                       <div>
                         <label className="input-label">From Date (Regular only) <span className="text-destructive">*</span></label>
