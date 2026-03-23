@@ -452,6 +452,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({ data, onEdit, onProceed }) =>
                   <Field label="District" value={ps.district} />
                   {ps.taluk && <Field label="Taluk" value={ps.taluk} />}
                   {ps.cityTownVillage && <Field label="City/Town/Village" value={ps.cityTownVillage} />}
+                  {ps.otherStateLocation && <Field label="Other State?" value={ps.otherStateLocation} />}
                   <Field label="From" value={fmt(ps.fromDate)} />
                   <Field label="To" value={fmt(ps.toDate)} />
                   <Field label="Tenure" value={ps.tenure} />
