@@ -510,6 +510,7 @@ const EmployeeCreate: React.FC = () => {
     setPastToDates(pastToDates.filter((_, i) => i !== idx));
     setPastZones(pastZones.filter((_, i) => i !== idx));
     setPastVillageOtherModes(pastVillageOtherModes.filter((_, i) => i !== idx));
+    setPastOtherStateFlags(pastOtherStateFlags.filter((_, i) => i !== idx));
     setPastServiceDocs(pastServiceDocs.filter((_, i) => i !== idx));
   };
 
