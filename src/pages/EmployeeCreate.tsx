@@ -1790,8 +1790,25 @@ const EmployeeCreate: React.FC = () => {
                     <FieldError error={errors.currentHfrId} />
                   </div>
                 )}
+                <div className="flex items-center gap-3 sm:col-span-2">
+                  <Switch
+                    checked={currentIsOtherState}
+                    onCheckedChange={(checked) => {
+                      setCurrentIsOtherState(checked);
+                      if (!checked) { setCurrentOtherStateLocation(""); }
+                      if (checked) { clearError("currentDistrict"); clearError("currentTaluk"); clearError("currentCityTownVillage"); clearError("currentZone"); }
+                    }}
+                  />
+                  <Label className="text-sm font-medium">Other State?</Label>
+                </div>
+                {currentIsOtherState && (
+                  <div>
+                    <label className="input-label">Other state?</label>
+                    <input value={currentOtherStateLocation} onChange={(e) => setCurrentOtherStateLocation(e.target.value)} className="input-field" placeholder="Enter State - City/Village" />
+                  </div>
+                )}
                 <div>
-                  <label className="input-label">District <span className="text-destructive">*</span></label>
+                  <label className="input-label">District {!currentIsOtherState && <span className="text-destructive">*</span>}</label>
                   <select value={currentDistrict} onChange={(e) => { setCurrentDistrict(e.target.value); setCurrentTaluk(""); setCurrentCityTownVillage(""); setCurrentVillageOtherMode(false); clearError("currentDistrict"); }} className={`input-field ${errors.currentDistrict ? "border-destructive" : ""}`}>
                     <option value="">Select District</option>
                     {KARNATAKA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
