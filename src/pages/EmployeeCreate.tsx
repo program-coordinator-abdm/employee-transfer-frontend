@@ -1816,7 +1816,7 @@ const EmployeeCreate: React.FC = () => {
                   <FieldError error={errors.currentDistrict} />
                 </div>
                 <div>
-                  <label className="input-label">Taluk <span className="text-destructive">*</span></label>
+                  <label className="input-label">Taluk {!currentIsOtherState && <span className="text-destructive">*</span>}</label>
                   <select value={currentTaluk} onChange={(e) => { setCurrentTaluk(e.target.value); setCurrentCityTownVillage(""); setCurrentVillageOtherMode(false); clearError("currentTaluk"); }} className={`input-field ${errors.currentTaluk ? "border-destructive" : ""}`} disabled={!currentDistrict}>
                     <option value="">{currentDistrict ? "Select Taluk" : "Select District first"}</option>
                     {getTaluks(currentDistrict).map((t) => <option key={t} value={t}>{t}</option>)}
