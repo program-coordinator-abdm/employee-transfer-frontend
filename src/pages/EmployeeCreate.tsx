@@ -32,7 +32,7 @@ const EMPTY_PAST_SERVICE: () => PastServiceEntry = () => ({
   postHeld: "", postGroup: "", postSubGroup: "", firstPostHeld: "", firstPostHeldOther: "",
   institutionType: "", hfrId: "",
   institution: "", district: "", taluk: "", cityTownVillage: "",
-  fromDate: "", toDate: "", tenure: "",
+  fromDate: "", toDate: "", tenure: "", otherStateLocation: "",
 });
 
 const EMPTY_EDUCATION: () => EducationFormEntry = () => ({
