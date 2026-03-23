@@ -1968,8 +1968,25 @@ const EmployeeCreate: React.FC = () => {
                           <FieldError error={errors[`past_${idx}_hfrId`]} />
                         </div>
                       )}
+                      <div className="flex items-center gap-3 sm:col-span-2">
+                        <Switch
+                          checked={!!pastOtherStateFlags[idx]}
+                          onCheckedChange={(checked) => {
+                            setPastOtherStateFlags(prev => prev.map((v, i) => i === idx ? checked : v));
+                            if (!checked) updatePastService(idx, "otherStateLocation", "");
+                            if (checked) { clearError(`past_${idx}_district`); clearError(`past_${idx}_zone`); }
+                          }}
+                        />
+                        <Label className="text-sm font-medium">Other State?</Label>
+                      </div>
+                      {pastOtherStateFlags[idx] && (
+                        <div>
+                          <label className="input-label">Other state?</label>
+                          <input value={service.otherStateLocation || ""} onChange={(e) => { updatePastService(idx, "otherStateLocation", e.target.value); if (e.target.value.trim()) { clearError(`past_${idx}_district`); } }} className="input-field" placeholder="Enter State - City/Village" />
+                        </div>
+                      )}
                       <div>
-                        <label className="input-label">District <span className="text-destructive">*</span></label>
+                        <label className="input-label">District {!pastOtherStateFlags[idx] && <span className="text-destructive">*</span>}</label>
                         <select value={service.district} onChange={(e) => updatePastServiceMulti(idx, { district: e.target.value, taluk: "", cityTownVillage: "" })} className={`input-field ${errors[`past_${idx}_district`] ? "border-destructive" : ""}`}>
                           <option value="">Select District</option>
                           {KARNATAKA_DISTRICTS.map((d) => <option key={d} value={d}>{d}</option>)}
