@@ -1824,7 +1824,7 @@ const EmployeeCreate: React.FC = () => {
                   <FieldError error={errors.currentTaluk} />
                 </div>
                 <div>
-                  <label className="input-label">City / Town / Village <span className="text-destructive">*</span></label>
+                  <label className="input-label">City / Town / Village {!currentIsOtherState && <span className="text-destructive">*</span>}</label>
                   {(() => {
                     const cities = getCities(currentDistrict, currentTaluk);
                     return (
