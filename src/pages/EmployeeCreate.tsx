@@ -1616,6 +1616,10 @@ const EmployeeCreate: React.FC = () => {
                         <input value={edu.specialization || ""} onChange={(e) => updateEducation(idx, "specialization", e.target.value)} className="input-field" placeholder="e.g. Cardiology, Computer Science" />
                       </div>
                     )}
+                    <div>
+                      <label className="input-label">Other state?</label>
+                      <input value={edu.otherStateLocation || ""} onChange={(e) => updateEducation(idx, "otherStateLocation", e.target.value)} className="input-field" placeholder="Enter as State - city/village" />
+                    </div>
                   </div>
                   {edu.level !== "Unschooled/UnEducated" && (
                     <div className="mt-4">
