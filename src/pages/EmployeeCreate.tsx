@@ -120,6 +120,7 @@ const EmployeeCreate: React.FC = () => {
   const [currentZone, setCurrentZone] = useState("");
   const [currentAreaType, setCurrentAreaType] = useState("");
   const [currentOtherStateLocation, setCurrentOtherStateLocation] = useState("");
+  const [currentIsOtherState, setCurrentIsOtherState] = useState(false);
   const [cltCompletionDate, setCltCompletionDate] = useState<Date>();
 
   // Spouse working details
