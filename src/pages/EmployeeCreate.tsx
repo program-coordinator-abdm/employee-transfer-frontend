@@ -529,8 +529,8 @@ const EmployeeCreate: React.FC = () => {
   };
 
   // Education helpers
-  const addEducation = () => setEducationDetails([...educationDetails, EMPTY_EDUCATION()]);
-  const removeEducation = (idx: number) => setEducationDetails(educationDetails.filter((_, i) => i !== idx));
+  const addEducation = () => { setEducationDetails([...educationDetails, EMPTY_EDUCATION()]); setEduOtherStateFlags([...eduOtherStateFlags, false]); };
+  const removeEducation = (idx: number) => { setEducationDetails(educationDetails.filter((_, i) => i !== idx)); setEduOtherStateFlags(eduOtherStateFlags.filter((_, i) => i !== idx)); };
   const updateEducation = (idx: number, field: keyof EducationFormEntry, value: string) => {
     setEducationDetails(prev => prev.map((e, i) => i === idx ? { ...e, [field]: value } : e));
   };
