@@ -1616,10 +1616,22 @@ const EmployeeCreate: React.FC = () => {
                         <input value={edu.specialization || ""} onChange={(e) => updateEducation(idx, "specialization", e.target.value)} className="input-field" placeholder="e.g. Cardiology, Computer Science" />
                       </div>
                     )}
-                    <div>
-                      <label className="input-label">Other state?</label>
-                      <input value={edu.otherStateLocation || ""} onChange={(e) => updateEducation(idx, "otherStateLocation", e.target.value)} className="input-field" placeholder="Enter as State - city/village" />
+                    <div className="flex items-center gap-3 pt-2">
+                      <Switch
+                        checked={!!(edu.otherStateLocation || "").trim()}
+                        onCheckedChange={(checked) => {
+                          if (!checked) updateEducation(idx, "otherStateLocation", "");
+                          else updateEducation(idx, "otherStateLocation", " ");
+                        }}
+                      />
+                      <Label className="text-sm font-medium">Other State?</Label>
                     </div>
+                    {(edu.otherStateLocation || "").trim() ? (
+                      <div>
+                        <label className="input-label">Other state?</label>
+                        <input value={edu.otherStateLocation || ""} onChange={(e) => updateEducation(idx, "otherStateLocation", e.target.value)} className="input-field" placeholder="Enter State - City/Village" />
+                      </div>
+                    ) : null}
                   </div>
                   {edu.level !== "Unschooled/UnEducated" && (
                     <div className="mt-4">
