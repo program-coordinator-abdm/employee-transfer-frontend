@@ -631,7 +631,7 @@ const EmployeeCreate: React.FC = () => {
     pastServices.forEach((s, i) => {
       if (!s.postHeld) errs[`past_${i}_postHeld`] = "Post is required";
       if (!s.institution) errs[`past_${i}_institution`] = "Institution is required";
-      const pastIsOtherState = (s.otherStateLocation || "").trim().length > 0;
+      const pastIsOtherState = !!pastOtherStateFlags[i];
       if (!pastIsOtherState && !s.district) errs[`past_${i}_district`] = "District is required";
       if (!s.fromDate) errs[`past_${i}_fromDate`] = "From date is required";
       if (!s.toDate) errs[`past_${i}_toDate`] = "To date is required";
