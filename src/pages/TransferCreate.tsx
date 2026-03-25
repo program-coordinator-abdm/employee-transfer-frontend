@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { CATEGORY_ROLE_MAP } from "@/lib/constants";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -42,8 +42,10 @@ interface FormErrors {
 
 const TransferCreate: React.FC = () => {
   const navigate = useNavigate();
-  const { id: editId } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get("edit") || undefined;
   const isEditMode = !!editId;
+  const isViewMode = isEditMode; // When loading an existing record, start in view/preview
   const { toast, showToast, hideToast } = useToastState();
 
   const [formData, setFormData] = useState<TransferFormData>(EMPTY_TRANSFER_FORM());
@@ -53,18 +55,28 @@ const TransferCreate: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [recordId, setRecordId] = useState<string | null>(editId || null);
   const [roleOther, setRoleOther] = useState(false);
+  const [loadingRecord, setLoadingRecord] = useState(false);
+  const [recordStatus, setRecordStatus] = useState<"draft" | "submitted" | null>(null);
+  const isReadOnly = recordStatus === "submitted";
 
   // Pending file objects for upload on save
   const [pendingFiles, setPendingFiles] = useState<Record<string, File>>({});
 
   useEffect(() => {
     if (editId) {
+      setLoadingRecord(true);
       getTransferById(editId)
         .then((rec) => {
           setFormData(rec.formData);
           setRecordId(rec.id);
+          setRecordStatus(rec.status);
+          // If submitted, open in preview (read-only); if draft, open in fill mode for editing
+          if (rec.status === "submitted") {
+            setStep("preview");
+          }
         })
-        .catch((err) => showToast(err.message || "Failed to load transfer", "error"));
+        .catch((err) => showToast(err.message || "Failed to load transfer", "error"))
+        .finally(() => setLoadingRecord(false));
     }
   }, [editId]);
 
@@ -213,6 +225,21 @@ const TransferCreate: React.FC = () => {
   const labelClass = "input-label text-xs font-semibold text-foreground mb-1 block";
   const errorClass = "text-xs text-destructive mt-1";
 
+  // ====== LOADING STATE ======
+  if (loadingRecord) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl flex items-center justify-center">
+          <div className="text-center space-y-3">
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-muted-foreground">Loading transfer details...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   // ====== PREVIEW MODE ======
   if (step === "preview") {
     return (
@@ -221,10 +248,19 @@ const TransferCreate: React.FC = () => {
         <Toast message={toast.message} type={toast.type} isVisible={toast.isVisible} onClose={hideToast} />
         <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-foreground">Transfer Application — Preview</h1>
-            <Button variant="outline" className="gap-1.5" onClick={() => { setStep("fill"); window.scrollTo(0, 0); }}>
-              <ArrowLeft className="w-4 h-4" /> Edit
-            </Button>
+            <h1 className="text-2xl font-bold text-foreground">
+              {isReadOnly ? "Transfer Application — View" : "Transfer Application — Preview"}
+            </h1>
+            {!isReadOnly && (
+              <Button variant="outline" className="gap-1.5" onClick={() => { setStep("fill"); window.scrollTo(0, 0); }}>
+                <ArrowLeft className="w-4 h-4" /> Edit
+              </Button>
+            )}
+            {isReadOnly && (
+              <Button variant="outline" className="gap-1.5" onClick={() => navigate("/transfers")}>
+                <ArrowLeft className="w-4 h-4" /> Back to List
+              </Button>
+            )}
           </div>
 
           <Card className="p-6 space-y-6">
@@ -303,14 +339,22 @@ const TransferCreate: React.FC = () => {
             </div>
           </Card>
 
-          <div className="flex items-center justify-end gap-3 mt-6">
-            <Button variant="outline" onClick={() => { setStep("fill"); window.scrollTo(0, 0); }} className="gap-1.5">
-              <ArrowLeft className="w-4 h-4" /> Edit
-            </Button>
-            <Button onClick={handleSubmitFinal} disabled={submitting} className="btn-primary gap-1.5">
-              <Send className="w-4 h-4" /> {submitting ? "Submitting..." : "Submit Final"}
-            </Button>
-          </div>
+          {isReadOnly ? (
+            <div className="flex items-center justify-end gap-3 mt-6">
+              <Button variant="outline" onClick={() => navigate("/transfers")} className="gap-1.5">
+                <ArrowLeft className="w-4 h-4" /> Back to List
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-end gap-3 mt-6">
+              <Button variant="outline" onClick={() => { setStep("fill"); window.scrollTo(0, 0); }} className="gap-1.5">
+                <ArrowLeft className="w-4 h-4" /> Edit
+              </Button>
+              <Button onClick={handleSubmitFinal} disabled={submitting} className="btn-primary gap-1.5">
+                <Send className="w-4 h-4" /> {submitting ? "Submitting..." : "Submit Final"}
+              </Button>
+            </div>
+          )}
         </main>
       </div>
     );
