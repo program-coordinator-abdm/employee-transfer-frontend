@@ -736,6 +736,10 @@ const EmployeeCreate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isAnyUploadInProgress) {
+      showToast("Please wait for document uploads to complete", "error");
+      return;
+    }
     if (!validateSections1to7()) {
       showToast("Please fix required fields before submitting", "error");
       return;
