@@ -838,6 +838,12 @@ const EmployeeCreate: React.FC = () => {
       cgDesignation: recruitmentType === "CG Grounds" ? cgDesignation : "",
       empDeclAgreed, empDeclName, empDeclDate: formatLocalDate(empDeclDate),
       officerDeclAgreed, officerDeclName, officerDeclDate: formatLocalDate(officerDeclDate),
+      // Include uploaded document references (S3 URLs/keys)
+      uploadedDocuments: Object.keys(uploadedRefs).length > 0
+        ? Object.fromEntries(
+            Object.entries(uploadedRefs).map(([field, ref]) => [field, { url: ref.url, key: ref.key, fileName: ref.fileName }])
+          )
+        : undefined,
     };
 
     if (kgidDuplicate) {
