@@ -222,6 +222,21 @@ const TransferCreate: React.FC = () => {
   const labelClass = "input-label text-xs font-semibold text-foreground mb-1 block";
   const errorClass = "text-xs text-destructive mt-1";
 
+  // ====== LOADING STATE ======
+  if (loadingRecord) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Header />
+        <main className="flex-1 container mx-auto px-4 py-8 max-w-4xl flex items-center justify-center">
+          <div className="text-center space-y-3">
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="text-muted-foreground">Loading transfer details...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   // ====== PREVIEW MODE ======
   if (step === "preview") {
     return (
