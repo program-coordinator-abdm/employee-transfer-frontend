@@ -69,6 +69,7 @@ const TransferCreate: React.FC = () => {
         .then((rec) => {
           setFormData(rec.formData);
           setRecordId(rec.id);
+          setRecordStatus(rec.status);
           // If submitted, open in preview (read-only); if draft, open in fill mode for editing
           if (rec.status === "submitted") {
             setStep("preview");
