@@ -42,8 +42,10 @@ interface FormErrors {
 
 const TransferCreate: React.FC = () => {
   const navigate = useNavigate();
-  const { id: editId } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get("edit") || undefined;
   const isEditMode = !!editId;
+  const isViewMode = isEditMode; // When loading an existing record, start in view/preview
   const { toast, showToast, hideToast } = useToastState();
 
   const [formData, setFormData] = useState<TransferFormData>(EMPTY_TRANSFER_FORM());
@@ -53,18 +55,25 @@ const TransferCreate: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [recordId, setRecordId] = useState<string | null>(editId || null);
   const [roleOther, setRoleOther] = useState(false);
+  const [loadingRecord, setLoadingRecord] = useState(false);
 
   // Pending file objects for upload on save
   const [pendingFiles, setPendingFiles] = useState<Record<string, File>>({});
 
   useEffect(() => {
     if (editId) {
+      setLoadingRecord(true);
       getTransferById(editId)
         .then((rec) => {
           setFormData(rec.formData);
           setRecordId(rec.id);
+          // If submitted, open in preview (read-only); if draft, open in fill mode for editing
+          if (rec.status === "submitted") {
+            setStep("preview");
+          }
         })
-        .catch((err) => showToast(err.message || "Failed to load transfer", "error"));
+        .catch((err) => showToast(err.message || "Failed to load transfer", "error"))
+        .finally(() => setLoadingRecord(false));
     }
   }, [editId]);
 
