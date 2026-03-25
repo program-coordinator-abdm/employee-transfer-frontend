@@ -1370,8 +1370,8 @@ const EmployeeCreate: React.FC = () => {
                                   label={`Upload ${item.label} Document`}
                                   required={true}
                                   fieldName={`timebound_${item.label.replace(/\s+/g, "_")}`}
-                                  onUploadComplete={(result) => handleUploadComplete({`timebound_${item.label.replace(/\s+/g, "_")}`}, result)}
-                                  onUploadingChange={(u) => handleUploadingChange({`timebound_${item.label.replace(/\s+/g, "_")}`}, u)}
+                                  onUploadComplete={(result) => handleUploadComplete(`timebound_${item.label.replace(/\s+/g, "_")}`, result)}
+                                  onUploadingChange={(u) => handleUploadingChange(`timebound_${item.label.replace(/\s+/g, "_")}`, u)}
                                 />
                               </div>
                             )}
@@ -1413,8 +1413,8 @@ const EmployeeCreate: React.FC = () => {
                                   label={`Upload ${item.label} Document`}
                                   required={true}
                                   fieldName={`timebound_${item.label.replace(/\s+/g, "_")}`}
-                                  onUploadComplete={(result) => handleUploadComplete({`timebound_${item.label.replace(/\s+/g, "_")}`}, result)}
-                                  onUploadingChange={(u) => handleUploadingChange({`timebound_${item.label.replace(/\s+/g, "_")}`}, u)}
+                                  onUploadComplete={(result) => handleUploadComplete(`timebound_${item.label.replace(/\s+/g, "_")}`, result)}
+                                  onUploadingChange={(u) => handleUploadingChange(`timebound_${item.label.replace(/\s+/g, "_")}`, u)}
                                 />
                               </div>
                             )}
@@ -1696,8 +1696,8 @@ const EmployeeCreate: React.FC = () => {
                         required={false}
                         hint="Upload certificate, marksheet, or convocation certificate. Max file size: 5 MB."
                         fieldName={`education_${idx}`}
-                        onUploadComplete={(result) => handleUploadComplete({`education_${idx}`}, result)}
-                        onUploadingChange={(u) => handleUploadingChange({`education_${idx}`}, u)}
+                        onUploadComplete={(result) => handleUploadComplete(`education_${idx}`, result)}
+                        onUploadingChange={(u) => handleUploadingChange(`education_${idx}`, u)}
                       />
                     </div>
                   )}
@@ -2132,8 +2132,8 @@ const EmployeeCreate: React.FC = () => {
                         required={false}
                         hint="Upload joining CTC, movement order or SR copy. Max file size: 5 MB."
                         fieldName={`pastService_${idx}`}
-                        onUploadComplete={(result) => handleUploadComplete({`pastService_${idx}`}, result)}
-                        onUploadingChange={(u) => handleUploadingChange({`pastService_${idx}`}, u)}
+                        onUploadComplete={(result) => handleUploadComplete(`pastService_${idx}`, result)}
+                        onUploadingChange={(u) => handleUploadingChange(`pastService_${idx}`, u)}
                       />
                     </div>
                   </div>
