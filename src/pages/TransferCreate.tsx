@@ -339,14 +339,22 @@ const TransferCreate: React.FC = () => {
             </div>
           </Card>
 
-          <div className="flex items-center justify-end gap-3 mt-6">
-            <Button variant="outline" onClick={() => { setStep("fill"); window.scrollTo(0, 0); }} className="gap-1.5">
-              <ArrowLeft className="w-4 h-4" /> Edit
-            </Button>
-            <Button onClick={handleSubmitFinal} disabled={submitting} className="btn-primary gap-1.5">
-              <Send className="w-4 h-4" /> {submitting ? "Submitting..." : "Submit Final"}
-            </Button>
-          </div>
+          {isReadOnly ? (
+            <div className="flex items-center justify-end gap-3 mt-6">
+              <Button variant="outline" onClick={() => navigate("/transfers")} className="gap-1.5">
+                <ArrowLeft className="w-4 h-4" /> Back to List
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-end gap-3 mt-6">
+              <Button variant="outline" onClick={() => { setStep("fill"); window.scrollTo(0, 0); }} className="gap-1.5">
+                <ArrowLeft className="w-4 h-4" /> Edit
+              </Button>
+              <Button onClick={handleSubmitFinal} disabled={submitting} className="btn-primary gap-1.5">
+                <Send className="w-4 h-4" /> {submitting ? "Submitting..." : "Submit Final"}
+              </Button>
+            </div>
+          )}
         </main>
       </div>
     );
