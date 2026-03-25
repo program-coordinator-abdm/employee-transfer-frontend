@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { CATEGORY_ROLE_MAP } from "@/lib/constants";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
