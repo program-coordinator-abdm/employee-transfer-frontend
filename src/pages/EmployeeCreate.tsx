@@ -1229,6 +1229,9 @@ const EmployeeCreate: React.FC = () => {
                           onChange={(name) => setContractRegularisedDoc(name)}
                           label="Upload Regularisation Document"
                           required={false}
+                          fieldName="contractRegularisedDoc"
+                          onUploadComplete={(result) => handleUploadComplete("contractRegularisedDoc", result)}
+                          onUploadingChange={(u) => handleUploadingChange("contractRegularisedDoc", u)}
                         />
                       </>
                     )}
@@ -1366,6 +1369,9 @@ const EmployeeCreate: React.FC = () => {
                                   onChange={(name) => item.setDoc(name)}
                                   label={`Upload ${item.label} Document`}
                                   required={true}
+                                  fieldName={`timebound_${item.label.replace(/\s+/g, "_")}`}
+                                  onUploadComplete={(result) => handleUploadComplete({`timebound_${item.label.replace(/\s+/g, "_")}`}, result)}
+                                  onUploadingChange={(u) => handleUploadingChange({`timebound_${item.label.replace(/\s+/g, "_")}`}, u)}
                                 />
                               </div>
                             )}
@@ -1406,6 +1412,9 @@ const EmployeeCreate: React.FC = () => {
                                   onChange={(name) => item.setDoc(name)}
                                   label={`Upload ${item.label} Document`}
                                   required={true}
+                                  fieldName={`timebound_${item.label.replace(/\s+/g, "_")}`}
+                                  onUploadComplete={(result) => handleUploadComplete({`timebound_${item.label.replace(/\s+/g, "_")}`}, result)}
+                                  onUploadingChange={(u) => handleUploadingChange({`timebound_${item.label.replace(/\s+/g, "_")}`}, u)}
                                 />
                               </div>
                             )}
@@ -1461,6 +1470,9 @@ const EmployeeCreate: React.FC = () => {
                       onChange={(name) => setPgBondDoc(name)}
                       label="Upload Completion Certificate"
                       required={false}
+                      fieldName="pgBondDoc"
+                      onUploadComplete={(result) => handleUploadComplete("pgBondDoc", result)}
+                      onUploadingChange={(u) => handleUploadingChange("pgBondDoc", u)}
                     />
                     <div>
                       <label className="input-label">Date of Completion</label>
@@ -1522,6 +1534,9 @@ const EmployeeCreate: React.FC = () => {
                       value={probationaryPeriodDoc}
                       onChange={(name) => { setProbationaryPeriodDoc(name); clearError("probationaryPeriodDoc"); }}
                       error={errors.probationaryPeriodDoc}
+                      fieldName="probationaryPeriodDoc"
+                      onUploadComplete={(result) => handleUploadComplete("probationaryPeriodDoc", result)}
+                      onUploadingChange={(u) => handleUploadingChange("probationaryPeriodDoc", u)}
                     />
                     <div>
                       <label className="input-label">Probation Declaration Date</label>
@@ -1550,6 +1565,9 @@ const EmployeeCreate: React.FC = () => {
                       label="Upload CLT Document"
                       required={true}
                       error={errors.cltCompletedDoc}
+                      fieldName="cltCompletedDoc"
+                      onUploadComplete={(result) => handleUploadComplete("cltCompletedDoc", result)}
+                      onUploadingChange={(u) => handleUploadingChange("cltCompletedDoc", u)}
                     />
                     <div>
                       <label className="input-label">CLT Completion Date</label>
@@ -1580,6 +1598,9 @@ const EmployeeCreate: React.FC = () => {
                       onChange={(name) => setDeptExamDoc(name)}
                       label="Upload Document"
                       required={false}
+                      fieldName="deptExamDoc"
+                      onUploadComplete={(result) => handleUploadComplete("deptExamDoc", result)}
+                      onUploadingChange={(u) => handleUploadingChange("deptExamDoc", u)}
                     />
                   </div>
                 )}
@@ -1674,6 +1695,9 @@ const EmployeeCreate: React.FC = () => {
                         label="Upload Certificate / Marksheet / Convocation Certificate"
                         required={false}
                         hint="Upload certificate, marksheet, or convocation certificate. Max file size: 5 MB."
+                        fieldName={`education_${idx}`}
+                        onUploadComplete={(result) => handleUploadComplete({`education_${idx}`}, result)}
+                        onUploadingChange={(u) => handleUploadingChange({`education_${idx}`}, u)}
                       />
                     </div>
                   )}
@@ -1927,6 +1951,9 @@ const EmployeeCreate: React.FC = () => {
                   label="Upload CTC / Movement Order / SR Copy related to joining in the post"
                   required={false}
                   hint="Upload joining order, movement order, or service record copy. Max file size: 5 MB."
+                  fieldName="currentServiceDoc"
+                  onUploadComplete={(result) => handleUploadComplete("currentServiceDoc", result)}
+                  onUploadingChange={(u) => handleUploadingChange("currentServiceDoc", u)}
                 />
               </div>
             </div>
@@ -2104,6 +2131,9 @@ const EmployeeCreate: React.FC = () => {
                         label="Upload Joining CTC / Movement Order / SR Copy related to joining in the post"
                         required={false}
                         hint="Upload joining CTC, movement order or SR copy. Max file size: 5 MB."
+                        fieldName={`pastService_${idx}`}
+                        onUploadComplete={(result) => handleUploadComplete({`pastService_${idx}`}, result)}
+                        onUploadingChange={(u) => handleUploadingChange({`pastService_${idx}`}, u)}
                       />
                     </div>
                   </div>
@@ -2147,6 +2177,9 @@ const EmployeeCreate: React.FC = () => {
                       value={spouseGovtServantDoc}
                       onChange={(name) => { setSpouseGovtServantDoc(name); clearError("spouseGovtServantDoc"); }}
                       error={errors.spouseGovtServantDoc}
+                      fieldName="spouseGovtServantDoc"
+                      onUploadComplete={(result) => handleUploadComplete("spouseGovtServantDoc", result)}
+                      onUploadingChange={(u) => handleUploadingChange("spouseGovtServantDoc", u)}
                     />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -2238,6 +2271,9 @@ const EmployeeCreate: React.FC = () => {
                       value={terminallyIllDoc}
                       onChange={(name) => { setTerminallyIllDoc(name); clearError("terminallyIllDoc"); }}
                       error={errors.terminallyIllDoc}
+                      fieldName="terminallyIllDoc"
+                      onUploadComplete={(result) => handleUploadComplete("terminallyIllDoc", result)}
+                      onUploadingChange={(u) => handleUploadingChange("terminallyIllDoc", u)}
                     />
                 )}
               </div>
@@ -2256,6 +2292,9 @@ const EmployeeCreate: React.FC = () => {
                       value={pregnantOrChildUnderOneDoc}
                       onChange={(name) => { setPregnantOrChildUnderOneDoc(name); clearError("pregnantOrChildUnderOneDoc"); }}
                       error={errors.pregnantOrChildUnderOneDoc}
+                      fieldName="pregnantOrChildUnderOneDoc"
+                      onUploadComplete={(result) => handleUploadComplete("pregnantOrChildUnderOneDoc", result)}
+                      onUploadingChange={(u) => handleUploadingChange("pregnantOrChildUnderOneDoc", u)}
                     />
                 )}
               </div>
@@ -2274,6 +2313,9 @@ const EmployeeCreate: React.FC = () => {
                       value={retiringWithinTwoYearsDoc}
                       onChange={(name) => { setRetiringWithinTwoYearsDoc(name); clearError("retiringWithinTwoYearsDoc"); }}
                       error={errors.retiringWithinTwoYearsDoc}
+                      fieldName="retiringWithinTwoYearsDoc"
+                      onUploadComplete={(result) => handleUploadComplete("retiringWithinTwoYearsDoc", result)}
+                      onUploadingChange={(u) => handleUploadingChange("retiringWithinTwoYearsDoc", u)}
                     />
                 )}
               </div>
@@ -2292,6 +2334,9 @@ const EmployeeCreate: React.FC = () => {
                       value={childSpouseDisabilityDoc}
                       onChange={(name) => { setChildSpouseDisabilityDoc(name); clearError("childSpouseDisabilityDoc"); }}
                       error={errors.childSpouseDisabilityDoc}
+                      fieldName="childSpouseDisabilityDoc"
+                      onUploadComplete={(result) => handleUploadComplete("childSpouseDisabilityDoc", result)}
+                      onUploadingChange={(u) => handleUploadingChange("childSpouseDisabilityDoc", u)}
                     />
                 )}
               </div>
@@ -2310,6 +2355,9 @@ const EmployeeCreate: React.FC = () => {
                       value={divorceeWidowWithChildDoc}
                       onChange={(name) => { setDivorceeWidowWithChildDoc(name); clearError("divorceeWidowWithChildDoc"); }}
                       error={errors.divorceeWidowWithChildDoc}
+                      fieldName="divorceeWidowWithChildDoc"
+                      onUploadComplete={(result) => handleUploadComplete("divorceeWidowWithChildDoc", result)}
+                      onUploadingChange={(u) => handleUploadingChange("divorceeWidowWithChildDoc", u)}
                     />
                 )}
               </div>
@@ -2340,6 +2388,9 @@ const EmployeeCreate: React.FC = () => {
                     onChange={(name) => { setNgoBenefitsDoc(name); clearError("ngoBenefitsDoc"); }}
                     accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls,.csv"
                     error={errors.ngoBenefitsDoc}
+                    fieldName="ngoBenefitsDoc"
+                    onUploadComplete={(result) => handleUploadComplete("ngoBenefitsDoc", result)}
+                    onUploadingChange={(u) => handleUploadingChange("ngoBenefitsDoc", u)}
                   />
                 </div>
               )}
