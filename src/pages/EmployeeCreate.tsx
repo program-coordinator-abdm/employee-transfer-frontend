@@ -2495,8 +2495,8 @@ const EmployeeCreate: React.FC = () => {
           )}
           <div className="flex items-center justify-end gap-3 pb-8">
             <button type="button" onClick={() => { setFormStep("preview"); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="btn-ghost px-8 py-3">Back to Preview</button>
-            <button type="submit" className="btn-primary flex items-center gap-2 px-8 py-3 text-base">
-              <Save className="w-5 h-5" /> Submit Employee Details
+            <button type="submit" disabled={submitting || isAnyUploadInProgress} className={cn("btn-primary flex items-center gap-2 px-8 py-3 text-base", (submitting || isAnyUploadInProgress) && "opacity-60 cursor-not-allowed")}>
+              <Save className="w-5 h-5" /> {submitting ? "Submitting..." : isAnyUploadInProgress ? "Upload in progress..." : "Submit Employee Details"}
             </button>
           </div>
           </div>
