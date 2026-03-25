@@ -1,7 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { displayValue } from "@/lib/dataSanitizer";
 import { parseLocalDate, formatLocalDate } from "@/lib/dateUtils";
 import FileUploadField from "@/components/FileUploadField";
+import { type UploadResult } from "@/lib/fileUpload";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Save, Plus, Trash2, Upload, Download, Printer, CheckCircle2, FileText } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
