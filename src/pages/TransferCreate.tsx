@@ -55,7 +55,8 @@ const TransferCreate: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [recordId, setRecordId] = useState<string | null>(editId || null);
   const [roleOther, setRoleOther] = useState(false);
-  const [loadingRecord, setLoadingRecord] = useState(false);
+  const [recordStatus, setRecordStatus] = useState<"draft" | "submitted" | null>(null);
+  const isReadOnly = recordStatus === "submitted";
 
   // Pending file objects for upload on save
   const [pendingFiles, setPendingFiles] = useState<Record<string, File>>({});
