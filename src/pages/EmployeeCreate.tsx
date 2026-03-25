@@ -216,7 +216,25 @@ const EmployeeCreate: React.FC = () => {
   const [officerDeclName, setOfficerDeclName] = useState("");
   const [officerDeclDate, setOfficerDeclDate] = useState<Date>();
 
-  // Load existing employee data in edit mode
+  // ===== Document upload references (S3 URLs/keys) =====
+  const [uploadedRefs, setUploadedRefs] = useState<Record<string, UploadResult>>({});
+  const [uploadsInProgress, setUploadsInProgress] = useState<Set<string>>(new Set());
+
+  const handleUploadComplete = useCallback((fieldName: string, result: UploadResult) => {
+    setUploadedRefs(prev => ({ ...prev, [fieldName]: result }));
+  }, []);
+
+  const handleUploadingChange = useCallback((fieldName: string, uploading: boolean) => {
+    setUploadsInProgress(prev => {
+      const next = new Set(prev);
+      if (uploading) next.add(fieldName);
+      else next.delete(fieldName);
+      return next;
+    });
+  }, []);
+
+  const isAnyUploadInProgress = uploadsInProgress.size > 0;
+
   useEffect(() => {
     if (!editId) return;
     getNewEmployeeById(editId).then((existing) => {
