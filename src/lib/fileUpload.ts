@@ -11,37 +11,52 @@ export interface UploadResult {
  * Upload a document file to the backend as multipart/form-data.
  * Returns the uploaded file reference (url/key) to store in form state.
  */
+const FRIENDLY_MESSAGES: Record<number, string> = {
+  413: "File is too large. Maximum allowed size is 5 MB.",
+  415: "Unsupported file format. Please upload PDF, DOC, DOCX, JPG, or JPEG.",
+  401: "Session expired. Please log in again.",
+  403: "You do not have permission to upload files.",
+};
+
+const NETWORK_ERROR_MSG =
+  "Unable to upload document. Please check your internet connection or try again.";
+const FALLBACK_MSG = "Document upload failed. Please try again.";
+
 export async function uploadDocument(
   file: File,
   fieldName: string
 ): Promise<UploadResult> {
   const token = getToken();
-  if (!token) throw new Error("Not authenticated");
+  if (!token) throw new Error("Session expired. Please log in again.");
 
   console.log("[FileUpload] start", { field: fieldName, name: file.name, size: file.size, type: file.type });
 
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch(`${API_BASE_URL}/uploads`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/uploads`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+  } catch (networkErr) {
+    console.log("[FileUpload] network error", networkErr);
+    throw new Error(NETWORK_ERROR_MSG);
+  }
 
   console.log("[FileUpload] response status", response.status);
 
   if (!response.ok) {
     let parsedError: any = null;
-    let errorMsg = `File upload failed: server returned ${response.status}`;
+    let errorMsg = FRIENDLY_MESSAGES[response.status] || FALLBACK_MSG;
     try {
       parsedError = await response.json();
-      if (parsedError?.message) errorMsg = `File upload failed: ${parsedError.message}`;
-      else if (parsedError?.error) errorMsg = `File upload failed: ${parsedError.error}`;
+      if (parsedError?.message) errorMsg = parsedError.message;
+      else if (parsedError?.error) errorMsg = parsedError.error;
     } catch {
-      // response wasn't JSON — keep generic message
+      // response wasn't JSON — use friendly mapped message
     }
     console.log("[FileUpload] response body (error)", parsedError);
     throw new Error(errorMsg);
