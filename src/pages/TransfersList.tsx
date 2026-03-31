@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -11,9 +10,9 @@ import { getTransfers, type TransferRecord } from "@/lib/transfersApi";
 import Toast, { useToastState } from "@/components/Toast";
 import { format } from "date-fns";
 
+
 const TransfersList: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { toast, showToast, hideToast } = useToastState();
   const [transfers, setTransfers] = useState<TransferRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,52 +61,61 @@ const TransfersList: React.FC = () => {
               <p className="text-sm mt-1">Click "Create Transfer" to start a new application</p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/30">
-                  <TableHead>Sl. No.</TableHead>
-                  <TableHead>Employee Name</TableHead>
-                  <TableHead>KGID Number</TableHead>
-                  <TableHead>Group</TableHead>
-                  <TableHead>Designation</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {transfers.map((t, idx) => (
-                  <TableRow key={t.id} className="hover:bg-muted/20">
-                    <TableCell className="font-medium">{idx + 1}</TableCell>
-                    <TableCell className="font-medium">{t.name || "—"}</TableCell>
-                    <TableCell>{t.kgidNumber || "—"}</TableCell>
-                    <TableCell>{t.group || "—"}</TableCell>
-                    <TableCell>{t.designation || "—"}</TableCell>
-                    <TableCell>
-                      <Badge variant={t.status === "submitted" ? "default" : "secondary"}>
-                        {t.status === "submitted" ? "Submitted" : "Draft"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {t.createdAt ? format(new Date(t.createdAt), "dd MMM yyyy") : "—"}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        {t.status === "draft" ? (
-                          <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfer-create?edit=${t.id}`)}>
-                            <Edit2 className="w-3.5 h-3.5" /> Edit
-                          </Button>
-                        ) : (
-                          <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfer-create?edit=${t.id}`)}>
-                            <Eye className="w-3.5 h-3.5" /> View
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/30">
+                    <TableHead>Sl. No.</TableHead>
+                    <TableHead>Employee Name</TableHead>
+                    <TableHead>KGID</TableHead>
+                    <TableHead>Current District</TableHead>
+                    <TableHead>Designation</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Total Marks</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {transfers.map((t, idx) => {
+                    const fd = t.formData || {} as any;
+                    return (
+                      <TableRow key={t.id} className="hover:bg-muted/20">
+                        <TableCell className="font-medium">{fd.slNo || idx + 1}</TableCell>
+                        <TableCell className="font-medium">{fd.employeeName || t.employeeName || "—"}</TableCell>
+                        <TableCell>{fd.kgid || t.kgid || "—"}</TableCell>
+                        <TableCell>{fd.currentDistrict || t.currentDistrict || "—"}</TableCell>
+                        <TableCell>{fd.designation || t.designation || "—"}</TableCell>
+                        <TableCell>{fd.categoryName || t.categoryName || "—"}</TableCell>
+                        <TableCell>{fd.totalMarks || "—"}</TableCell>
+                        <TableCell>
+                          <Badge variant={t.status === "submitted" ? "default" : "secondary"}>
+                            {t.status === "submitted" ? "Submitted" : "Draft"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {t.createdAt ? format(new Date(t.createdAt), "dd MMM yyyy") : "—"}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {t.status === "draft" ? (
+                              <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfer-create?edit=${t.id}`)}>
+                                <Edit2 className="w-3.5 h-3.5" /> Edit
+                              </Button>
+                            ) : (
+                              <Button size="sm" variant="outline" className="gap-1" onClick={() => navigate(`/transfer-create?edit=${t.id}`)}>
+                                <Eye className="w-3.5 h-3.5" /> View
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </Card>
       </main>
