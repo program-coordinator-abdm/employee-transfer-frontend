@@ -183,8 +183,8 @@ const TransferCreate: React.FC = () => {
                 <PreviewField label="Category Sl. No." value={formData.categorySlNo} />
                 <PreviewField label="KGID" value={formData.kgid} />
                 <PreviewField label="Employee Name" value={formData.employeeName} />
-                <PreviewField label="Date of Birth" value={formData.dateOfBirth ? formatDateOnly(formData.dateOfBirth) : ""} />
-                <PreviewField label="Date of Entry into Service" value={formData.dateOfEntryIntoService ? formatDateOnly(formData.dateOfEntryIntoService) : ""} />
+                <PreviewField label="Date of Birth" value={formData.dateOfBirth ? formatDateDisplay(formData.dateOfBirth) : ""} />
+                <PreviewField label="Date of Entry into Service" value={formData.dateOfEntryIntoService ? formatDateDisplay(formData.dateOfEntryIntoService) : ""} />
                 <PreviewField label="Current District" value={formData.currentDistrict} />
                 <PreviewField label="Present Place of Working" value={formData.presentPlaceOfWorking} />
                 <PreviewField label="Designation" value={formData.designation} />
