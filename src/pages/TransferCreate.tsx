@@ -639,7 +639,7 @@ const TransferCreate: React.FC = () => {
                     value={formData.ngoBenefitsDoc}
                     onChange={(fileName, file) => handleFileSelect("ngoBenefitsDoc", fileName, file)}
                     accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls,.csv"
-                    error={errors.ngoBenefitsDoc}
+                    error={uploadErrors["ngoBenefitsDoc"] || errors.ngoBenefitsDoc}
                   />
                 </div>
               )}
