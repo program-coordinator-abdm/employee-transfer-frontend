@@ -662,13 +662,13 @@ const TransferCreate: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex items-center justify-end gap-3 pb-8">
-            <Button variant="outline" onClick={handleSaveDraft} disabled={saving} className="gap-1.5">
+            <Button variant="outline" onClick={handleSaveDraft} disabled={saving || isAnyUploading} className="gap-1.5">
               <Save className="w-4 h-4" /> {saving ? "Saving..." : "Save Draft"}
             </Button>
-            <Button variant="outline" onClick={handlePreview} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
+            <Button variant="outline" onClick={handlePreview} disabled={isAnyUploading} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
               <Eye className="w-4 h-4" /> Preview
             </Button>
-            <Button onClick={handleSubmitFinal} disabled={submitting} className="btn-primary gap-1.5">
+            <Button onClick={handleSubmitFinal} disabled={submitting || isAnyUploading} className="btn-primary gap-1.5">
               <Send className="w-4 h-4" /> {submitting ? "Submitting..." : "Submit Final"}
             </Button>
           </div>
