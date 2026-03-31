@@ -611,7 +611,7 @@ const TransferCreate: React.FC = () => {
                         onChange={(fileName, file) => handleFileSelect(docKey, fileName, file)}
                         label={docLabel}
                         required={false}
-                        error={errors[docKey]}
+                        error={uploadErrors[docKey] || errors[docKey]}
                       />
                     </div>
                   )}
