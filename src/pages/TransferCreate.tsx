@@ -8,6 +8,7 @@ import DatePickerField from "@/components/DatePickerField";
 import PositionDropdown from "@/components/PositionDropdown";
 import Toast, { useToastState } from "@/components/Toast";
 import { cn } from "@/lib/utils";
+import SpecialCategorySection, { SPECIAL_CATEGORY_LABELS } from "@/components/SpecialCategorySection";
 import { KARNATAKA_DISTRICTS } from "@/lib/positions";
 import { ArrowLeft, Eye, Save, Send } from "lucide-react";
 import {
