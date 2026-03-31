@@ -367,6 +367,12 @@ const TransferCreate: React.FC = () => {
             </div>
           </Card>
 
+          {/* Special Categories */}
+          <SpecialCategorySection
+            value={formData.specialCategories}
+            onChange={(val) => updateField("specialCategories", val)}
+          />
+
           {/* Remarks */}
           <Card className="p-6">
             <h2 className="text-lg font-bold text-primary mb-4">Remarks</h2>
