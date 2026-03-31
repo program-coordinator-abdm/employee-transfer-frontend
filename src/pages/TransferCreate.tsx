@@ -106,25 +106,40 @@ const TransferCreate: React.FC = () => {
     setFormData((prev) => ({ ...prev, workDetails: prev.workDetails.filter((_, i) => i !== idx) }));
   };
 
-  const handleFileSelect = (fieldKey: string, fileName: string, file?: File) => {
-    if (file) {
-      setPendingFiles((prev) => ({ ...prev, [fieldKey]: file }));
+  const [uploadingFields, setUploadingFields] = useState<Record<string, boolean>>({});
+  const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
+
+  const handleFileSelect = async (fieldKey: string, fileName: string, file?: File) => {
+    // Clear previous error for this field
+    setUploadErrors((prev) => { const n = { ...prev }; delete n[fieldKey]; return n; });
+
+    if (!file) {
+      // File cleared
+      updateField(fieldKey as keyof TransferFormData, "" as any);
+      return;
     }
-    updateField(fieldKey as keyof TransferFormData, fileName as any);
+
+    // Immediate upload
+    setUploadingFields((prev) => ({ ...prev, [fieldKey]: true }));
+    try {
+      const res = await uploadTransferDocument(file, fieldKey);
+      updateField(fieldKey as keyof TransferFormData, (res.url || res.fileName) as any);
+      showToast(`Document uploaded successfully`, "success");
+    } catch (err: any) {
+      const msg = err?.message || "Document upload failed. Please try again.";
+      setUploadErrors((prev) => ({ ...prev, [fieldKey]: msg }));
+      updateField(fieldKey as keyof TransferFormData, "" as any);
+    } finally {
+      setUploadingFields((prev) => { const n = { ...prev }; delete n[fieldKey]; return n; });
+    }
   };
 
+  const isAnyUploading = Object.values(uploadingFields).some(Boolean);
+
   const uploadPendingFiles = async (): Promise<TransferFormData> => {
-    let updatedData = { ...formData };
-    for (const [key, file] of Object.entries(pendingFiles)) {
-      try {
-        const res = await uploadTransferDocument(file);
-        (updatedData as any)[key] = res.url || res.fileName;
-      } catch (err: any) {
-        showToast(`Failed to upload ${file.name}: ${err.message}`, "error");
-      }
-    }
+    // Uploads are now immediate; this is kept for compatibility
     setPendingFiles({});
-    return updatedData;
+    return { ...formData };
   };
 
   // Validation

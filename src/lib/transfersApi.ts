@@ -129,13 +129,59 @@ export const submitTransferFinal = async (id: string): Promise<TransferRecord> =
   });
 };
 
-export const uploadTransferDocument = async (file: File): Promise<{ url: string; fileName: string }> => {
+const UPLOAD_FRIENDLY_MESSAGES: Record<number, string> = {
+  413: "File is too large. Maximum allowed size is 5 MB.",
+  415: "Unsupported file format. Please upload PDF, DOC, DOCX, JPG, or JPEG.",
+  401: "Session expired. Please log in again.",
+  403: "You do not have permission to upload files.",
+};
+
+const UPLOAD_NETWORK_ERROR = "Unable to upload document. Please check your internet connection or try again.";
+const UPLOAD_FALLBACK = "Document upload failed. Please try again.";
+
+export const uploadTransferDocument = async (file: File, fieldName?: string): Promise<{ url: string; fileName: string }> => {
+  const token = getToken();
+  if (!token) throw new Error("Session expired. Please log in again.");
+
+  console.log("[TransferUpload] start", { field: fieldName, name: file.name, size: file.size, type: file.type });
+
   const formData = new FormData();
   formData.append("file", file);
-  return transferApiClient<{ url: string; fileName: string }>("/transfers/upload", {
-    method: "POST",
-    body: formData,
-  });
+
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}/transfers/upload`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+  } catch (networkErr) {
+    console.log("[TransferUpload] network error", networkErr);
+    throw new Error(UPLOAD_NETWORK_ERROR);
+  }
+
+  console.log("[TransferUpload] response status", response.status);
+
+  if (!response.ok) {
+    let errorMsg = UPLOAD_FRIENDLY_MESSAGES[response.status] || UPLOAD_FALLBACK;
+    try {
+      const parsed = await response.json();
+      console.log("[TransferUpload] error body", parsed);
+      if (parsed?.message) errorMsg = parsed.message;
+      else if (parsed?.error) errorMsg = parsed.error;
+    } catch {
+      // not JSON, use friendly mapped message
+    }
+    throw new Error(errorMsg);
+  }
+
+  const result = await response.json();
+  console.log("[TransferUpload] success", result);
+
+  return {
+    url: result.url || result.fileUrl || result.downloadUrl || "",
+    fileName: result.fileName || result.originalName || file.name,
+  };
 };
 
 export const EMPTY_WORK_DETAIL: () => TransferWorkDetail = () => ({
