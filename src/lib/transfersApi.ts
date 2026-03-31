@@ -2,6 +2,11 @@ import { API_BASE_URL } from "./constants";
 import { getToken, removeToken, removeUser } from "./api";
 
 // New flat transfer record structure
+export interface SpecialCategoryPayload {
+  selected: boolean[];
+  documents: string[];
+}
+
 export interface TransferFormData {
   slNo: string;
   categorySlNo: string;
@@ -25,6 +30,7 @@ export interface TransferFormData {
   remarks: string;
   designation: string;
   specialization: string;
+  specialCategories: SpecialCategoryPayload;
 }
 
 export interface TransferRecord {
@@ -68,6 +74,7 @@ export const EMPTY_TRANSFER_FORM = (): TransferFormData => ({
   remarks: "",
   designation: "",
   specialization: "",
+  specialCategories: { selected: [false, false, false, false, false, false, false], documents: ["", "", "", "", "", "", ""] },
 });
 
 const transferApiClient = async <T>(

@@ -8,6 +8,7 @@ import DatePickerField from "@/components/DatePickerField";
 import PositionDropdown from "@/components/PositionDropdown";
 import Toast, { useToastState } from "@/components/Toast";
 import { cn } from "@/lib/utils";
+import SpecialCategorySection, { SPECIAL_CATEGORY_LABELS } from "@/components/SpecialCategorySection";
 import { KARNATAKA_DISTRICTS } from "@/lib/positions";
 import { ArrowLeft, Eye, Save, Send } from "lucide-react";
 import {
@@ -209,6 +210,25 @@ const TransferCreate: React.FC = () => {
               </div>
             </div>
             <Separator />
+            {/* Special Categories in preview */}
+            {formData.specialCategories.selected.some(Boolean) && (
+              <div>
+                <h3 className="text-lg font-semibold text-primary mb-3">Special Categories</h3>
+                <ul className="space-y-2 text-sm">
+                  {formData.specialCategories.selected.map((sel, idx) =>
+                    sel ? (
+                      <li key={idx} className="flex flex-col gap-0.5">
+                        <span className="text-foreground">• {SPECIAL_CATEGORY_LABELS[idx]}</span>
+                        {formData.specialCategories.documents[idx] && (
+                          <span className="text-primary text-xs ml-4">📎 {formData.specialCategories.documents[idx]}</span>
+                        )}
+                      </li>
+                    ) : null
+                  )}
+                </ul>
+              </div>
+            )}
+            <Separator />
             <div>
               <h3 className="text-lg font-semibold text-primary mb-3">Remarks</h3>
               <p className="text-foreground">{formData.remarks || "—"}</p>
@@ -365,6 +385,12 @@ const TransferCreate: React.FC = () => {
               </div>
             </div>
           </Card>
+
+          {/* Special Categories */}
+          <SpecialCategorySection
+            value={formData.specialCategories}
+            onChange={(val) => updateField("specialCategories", val)}
+          />
 
           {/* Remarks */}
           <Card className="p-6">
