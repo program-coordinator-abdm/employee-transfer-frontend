@@ -9,7 +9,7 @@ import { Plus, Eye, Edit2, ArrowLeft } from "lucide-react";
 import { getTransfers, type TransferRecord } from "@/lib/transfersApi";
 import Toast, { useToastState } from "@/components/Toast";
 import { format } from "date-fns";
-import { formatDateOnly } from "@/lib/dateUtils";
+
 
 const TransfersList: React.FC = () => {
   const navigate = useNavigate();

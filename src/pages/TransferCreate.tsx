@@ -18,7 +18,7 @@ import {
   updateTransfer,
   submitTransferFinal,
 } from "@/lib/transfersApi";
-import { formatDateOnly } from "@/lib/dateUtils";
+import { formatDateDisplay } from "@/lib/dateUtils";
 
 interface FormErrors {
   [key: string]: string;
