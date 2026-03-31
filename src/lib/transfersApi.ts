@@ -74,6 +74,7 @@ export const EMPTY_TRANSFER_FORM = (): TransferFormData => ({
   remarks: "",
   designation: "",
   specialization: "",
+  specialCategories: { selected: [false, false, false, false, false, false, false], documents: ["", "", "", "", "", "", ""] },
 });
 
 const transferApiClient = async <T>(
