@@ -22,6 +22,7 @@ import DistrictEntryTracker from "./pages/DistrictEntryTracker";
 import TransfersList from "./pages/TransfersList";
 import TransferCreate from "./pages/TransferCreate";
 import NotFound from "./pages/NotFound";
+import DataFreezePage from "./pages/DataFreezePage";
 
 const queryClient = new QueryClient();
 
