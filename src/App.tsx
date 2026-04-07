@@ -22,6 +22,7 @@ import DistrictEntryTracker from "./pages/DistrictEntryTracker";
 import TransfersList from "./pages/TransfersList";
 import TransferCreate from "./pages/TransferCreate";
 import NotFound from "./pages/NotFound";
+import DataFreezePage from "./pages/DataFreezePage";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => {
               <Route path="/district-entry-tracker" element={<ProtectedRoute><DistrictEntryTracker /></ProtectedRoute>} />
               <Route path="/transfers" element={<ProtectedRoute allowedRoles={["ADMIN", "TRANSFER_OPERATOR"]}><TransfersList /></ProtectedRoute>} />
               <Route path="/transfer-create" element={<ProtectedRoute allowedRoles={["ADMIN", "TRANSFER_OPERATOR"]}><TransferCreate /></ProtectedRoute>} />
+              <Route path="/data-freeze" element={<DataFreezePage />} />
               <Route path="/" element={<Navigate to="/login" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
