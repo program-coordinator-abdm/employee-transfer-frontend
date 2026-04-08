@@ -300,10 +300,15 @@ const ViewVacancies: React.FC = () => {
 
         {!loadingData && sortedSubmissions.length === 1 && (
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-base">
                 Submitted on {new Date(sortedSubmissions[0].createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
               </CardTitle>
+              {canEdit && (
+                <Button variant="outline" size="sm" onClick={() => navigate(`/add-vacancies`)} className="gap-2">
+                  <Pencil className="w-4 h-4" /> Edit
+                </Button>
+              )}
             </CardHeader>
             <CardContent>
               {sortedSubmissions[0].lines.length > 0 ? renderTable(sortedSubmissions[0].lines) : <p className="text-muted-foreground text-sm">No vacancy lines found.</p>}
