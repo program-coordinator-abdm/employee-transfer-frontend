@@ -8,12 +8,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, Building2, MapPin, Loader2, ChevronsUpDown, Check, FilterX } from "lucide-react";
+import { ArrowLeft, Building2, MapPin, Loader2, ChevronsUpDown, Check, FilterX, Pencil } from "lucide-react";
 import { fetchVacancyInstitutions, fetchVacanciesByInstitution, type VacancyInstitution, type VacancySubmission } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ViewVacancies: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const canEdit = user?.role === "ADMIN" || user?.role === "DATA_OFFICER";
   const [institutions, setInstitutions] = useState<VacancyInstitution[]>([]);
   const [loadingInst, setLoadingInst] = useState(true);
   const [selectedKey, setSelectedKey] = useState("");
@@ -297,10 +300,15 @@ const ViewVacancies: React.FC = () => {
 
         {!loadingData && sortedSubmissions.length === 1 && (
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-base">
                 Submitted on {new Date(sortedSubmissions[0].createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
               </CardTitle>
+              {canEdit && (
+                <Button variant="outline" size="sm" onClick={() => navigate(`/add-vacancies`)} className="gap-2">
+                  <Pencil className="w-4 h-4" /> Edit
+                </Button>
+              )}
             </CardHeader>
             <CardContent>
               {sortedSubmissions[0].lines.length > 0 ? renderTable(sortedSubmissions[0].lines) : <p className="text-muted-foreground text-sm">No vacancy lines found.</p>}
@@ -313,9 +321,16 @@ const ViewVacancies: React.FC = () => {
             {sortedSubmissions.map((sub, idx) => (
               <AccordionItem key={sub.id || idx} value={sub.id || String(idx)} className="border rounded-lg overflow-hidden">
                 <AccordionTrigger className="px-4 hover:no-underline">
-                  <span className="text-sm font-medium">
-                    Submitted on {new Date(sub.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
-                  </span>
+                  <div className="flex items-center justify-between w-full pr-2">
+                    <span className="text-sm font-medium">
+                      Submitted on {new Date(sub.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                    </span>
+                    {canEdit && (
+                      <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); navigate(`/add-vacancies`); }} className="gap-2 ml-4">
+                        <Pencil className="w-4 h-4" /> Edit
+                      </Button>
+                    )}
+                  </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   {sub.lines.length > 0 ? renderTable(sub.lines) : <p className="text-muted-foreground text-sm">No vacancy lines found.</p>}
