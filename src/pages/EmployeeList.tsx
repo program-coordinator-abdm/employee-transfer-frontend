@@ -224,7 +224,7 @@ const EmployeeList: React.FC = () => {
                           <span className="block text-xs text-primary">{emp.currentPostGroup}</span>
                         </td>
                         <td className="table-cell text-center">
-                          <Button variant="outline" size="sm" onClick={() => navigate(`/employee/${emp.id}`)} className="gap-1.5 text-primary border-primary/30 hover:bg-primary/10">
+                          <Button variant="outline" size="sm" onClick={() => navigate(`/employee-view/${emp.id}`)} className="gap-1.5 text-primary border-primary/30 hover:bg-primary/10">
                             <Eye className="w-4 h-4" /> View
                           </Button>
                         </td>
