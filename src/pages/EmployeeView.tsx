@@ -48,6 +48,7 @@ const EmployeeView: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const isAdmin = user?.role === "ADMIN";
+  const canEdit = user?.role === "ADMIN" || user?.role === "DATA_OFFICER";
   const [emp, setEmp] = useState<NewEmployee | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
