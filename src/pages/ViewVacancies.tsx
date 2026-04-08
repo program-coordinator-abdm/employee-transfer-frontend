@@ -321,9 +321,16 @@ const ViewVacancies: React.FC = () => {
             {sortedSubmissions.map((sub, idx) => (
               <AccordionItem key={sub.id || idx} value={sub.id || String(idx)} className="border rounded-lg overflow-hidden">
                 <AccordionTrigger className="px-4 hover:no-underline">
-                  <span className="text-sm font-medium">
-                    Submitted on {new Date(sub.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
-                  </span>
+                  <div className="flex items-center justify-between w-full pr-2">
+                    <span className="text-sm font-medium">
+                      Submitted on {new Date(sub.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                    </span>
+                    {canEdit && (
+                      <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); navigate(`/add-vacancies`); }} className="gap-2 ml-4">
+                        <Pencil className="w-4 h-4" /> Edit
+                      </Button>
+                    )}
+                  </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
                   {sub.lines.length > 0 ? renderTable(sub.lines) : <p className="text-muted-foreground text-sm">No vacancy lines found.</p>}
