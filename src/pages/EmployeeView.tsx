@@ -380,33 +380,33 @@ const EmployeeView: React.FC = () => {
               <Button variant="outline" size="sm" onClick={handlePrint} className="flex items-center gap-2">
                 <Printer className="w-4 h-4" /> Print
               </Button>
+              {canEdit && (
+                <Button variant="outline" size="sm" onClick={() => navigate(`/employee-create/${emp.id}`)} className="flex items-center gap-2">
+                  <Pencil className="w-4 h-4" /> Edit
+                </Button>
+              )}
               {isAdmin && (
-                <>
-                  <Button variant="outline" size="sm" onClick={() => navigate(`/employee-create/${emp.id}`)} className="flex items-center gap-2">
-                    <Pencil className="w-4 h-4" /> Edit
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="destructive" size="sm" className="flex items-center gap-2" disabled={deleting}>
-                        <Trash2 className="w-4 h-4" /> {deleting ? "Deleting..." : "Delete"}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Employee Record</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to permanently delete the record for <strong>{emp.name}</strong> (KGID: {emp.kgid})? This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                          Delete Permanently
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm" className="flex items-center gap-2" disabled={deleting}>
+                      <Trash2 className="w-4 h-4" /> {deleting ? "Deleting..." : "Delete"}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Employee Record</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to permanently delete the record for <strong>{emp.name}</strong> (KGID: {emp.kgid})? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Delete Permanently
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
               <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">{emp.designationGroup}</Badge>
             </div>
