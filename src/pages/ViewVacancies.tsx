@@ -15,6 +15,8 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const ViewVacancies: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const canEdit = user?.role === "ADMIN" || user?.role === "DATA_OFFICER";
   const [institutions, setInstitutions] = useState<VacancyInstitution[]>([]);
   const [loadingInst, setLoadingInst] = useState(true);
   const [selectedKey, setSelectedKey] = useState("");
