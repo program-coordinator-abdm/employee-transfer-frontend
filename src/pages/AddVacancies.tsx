@@ -56,6 +56,36 @@ const AddVacancies: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
 
+  // Load existing vacancy data in edit mode
+  useEffect(() => {
+    if (!editId) return;
+    console.log("[AddVacancies] Edit fetch URL: /vacancies/" + editId);
+    setEditLoading(true);
+    getVacancySubmission(editId)
+      .then((res) => {
+        const data = res.submission;
+        console.log("[AddVacancies] Edit data fetched successfully");
+        setInstitutionType(data.institutionTypeName || "");
+        setInstitutionName(data.institutionName || "");
+        setDistrict(data.district || "");
+        setTaluk(data.taluk || "");
+        setCityTownVillage(data.cityOrTownOrVillage || "");
+        if (data.lines && data.lines.length > 0) {
+          setRows(data.lines.map((l) => ({
+            designation: l.designationName,
+            customDesignation: "",
+            sanctioned: String(l.sanctionedPositions),
+            working: String(l.filled),
+          })));
+        }
+      })
+      .catch((err) => {
+        console.error("[AddVacancies] Edit fetch failed:", err);
+        showToast("Failed to load vacancy data for editing.", "error");
+      })
+      .finally(() => setEditLoading(false));
+  }, [editId]);
+
   const [rows, setRows] = useState<VacancyRowLocal[]>([emptyRow()]);
 
   const taluks = district ? getTaluks(district) : [];
