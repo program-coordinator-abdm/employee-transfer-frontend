@@ -270,10 +270,12 @@ const EmployeeCreate: React.FC = () => {
       if (existing.currentHfrId) setCurrentHfrId(existing.currentHfrId);
       setCurrentDistrict(existing.currentDistrict); setCurrentTaluk(existing.currentTaluk);
       setCurrentCityTownVillage(existing.currentCityTownVillage);
-      setCurrentWorkingSince(parseLocalDate(existing.currentWorkingSince));
-      if (existing.cltCompletionDate) setCltCompletionDate(parseLocalDate(existing.cltCompletionDate));
-      setPastServices(existing.pastServices);
-      setPastOtherStateFlags(existing.pastServices.map(s => !!(s.otherStateLocation || "").trim()));
+       setCurrentWorkingSince(parseLocalDate(existing.currentWorkingSince));
+       if (existing.currentZone) setCurrentZone(existing.currentZone);
+       if (existing.cltCompletionDate) setCltCompletionDate(parseLocalDate(existing.cltCompletionDate));
+       setPastServices(existing.pastServices);
+       setPastOtherStateFlags(existing.pastServices.map(s => !!(s.otherStateLocation || "").trim()));
+       if (existing.pastZones && existing.pastZones.length > 0) setPastZones(existing.pastZones);
       setPastFromDates(existing.pastServices.map(s => s.fromDate ? parseLocalDate(s.fromDate) : undefined));
       setPastToDates(existing.pastServices.map(s => s.toDate ? parseLocalDate(s.toDate) : undefined));
       setTerminallyIll(existing.terminallyIll); setTerminallyIllDoc(existing.terminallyIllDoc);
