@@ -63,19 +63,26 @@ const AddVacancies: React.FC = () => {
     setEditLoading(true);
     getVacancySubmission(editId)
       .then((res) => {
-        const data = res.submission;
-        console.log("[AddVacancies] Edit data fetched successfully");
-        setInstitutionType(data.institutionTypeName || "");
-        setInstitutionName(data.institutionName || "");
-        setDistrict(data.district || "");
-        setTaluk(data.taluk || "");
-        setCityTownVillage(data.cityOrTownOrVillage || "");
-        if (data.lines && data.lines.length > 0) {
-          setRows(data.lines.map((l) => ({
-            designation: l.designationName,
+        // Backend may return { submission: {...} } or the vacancy object directly
+        const data = res?.submission ?? res;
+        console.log("[AddVacancies] Edit data fetched:", JSON.stringify(data, null, 2));
+        if (!data) {
+          showToast("No vacancy data found for this ID.", "error");
+          return;
+        }
+        setInstitutionType(data.institutionTypeName ?? data.institutionType ?? "");
+        setInstitutionName(data.institutionName ?? data.name ?? "");
+        setDistrict(data.district ?? "");
+        setTaluk(data.taluk ?? "");
+        setCityTownVillage(data.cityOrTownOrVillage ?? data.city ?? "");
+        // Lines may be under .lines or .vacancyLines
+        const lines = data.lines ?? data.vacancyLines ?? [];
+        if (lines.length > 0) {
+          setRows(lines.map((l: any) => ({
+            designation: l.designationName ?? l.designation ?? "",
             customDesignation: "",
-            sanctioned: String(l.sanctionedPositions),
-            working: String(l.filled),
+            sanctioned: String(l.sanctionedPositions ?? l.sanctioned ?? 0),
+            working: String(l.filled ?? l.working ?? 0),
           })));
         }
       })
