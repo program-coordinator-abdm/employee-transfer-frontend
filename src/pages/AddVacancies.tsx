@@ -284,7 +284,7 @@ const AddVacancies: React.FC = () => {
               </Button>
               <Button onClick={handleSubmit} disabled={submitting} className="gap-2">
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                {submitting ? "Submitting..." : "Submit Vacancies"}
+                {submitting ? "Submitting..." : isEditMode ? "Update Vacancies" : "Submit Vacancies"}
               </Button>
             </div>
           </Card>
