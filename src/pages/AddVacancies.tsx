@@ -64,7 +64,7 @@ const AddVacancies: React.FC = () => {
     getVacancySubmission(editId)
       .then((res) => {
         // Backend may return { submission: {...} } or the vacancy object directly
-        const data = res?.submission ?? res;
+        const data: any = (res as any)?.submission ?? res;
         console.log("[AddVacancies] Edit data fetched:", JSON.stringify(data, null, 2));
         if (!data) {
           showToast("No vacancy data found for this ID.", "error");
