@@ -772,6 +772,7 @@ const EmployeeCreate: React.FC = () => {
       currentInstitution, currentInstitutionType, currentHfrId,
       currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: formatLocalDate(currentWorkingSince!),
+      currentZone,
       currentAreaType, currentOtherStateLocation: currentIsOtherState ? (currentOtherStateLocation.trim() || undefined) : undefined,
       pastServices: pastServices.map((s, i) => ({
         postHeld: s.postHeld,
@@ -834,6 +835,7 @@ const EmployeeCreate: React.FC = () => {
       contractRegularisedDate: formatLocalDate(contractRegularisedDate),
       contractJoiningDate: formatLocalDate(contractJoiningDate),
       pastServiceDocs,
+      pastZones,
       terminallyIll, terminallyIllDoc,
       pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
       retiringWithinTwoYears, retiringWithinTwoYearsDoc,
