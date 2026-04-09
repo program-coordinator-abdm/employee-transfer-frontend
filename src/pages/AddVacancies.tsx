@@ -124,23 +124,31 @@ const AddVacancies: React.FC = () => {
     }
 
     setSubmitting(true);
+    const payload = {
+      institutionTypeName: institutionType.trim(),
+      institutionName: institutionName.trim(),
+      district: district.trim(),
+      taluk: taluk.trim(),
+      cityOrTownOrVillage: resolvedCity.trim(),
+      lines: validRows.map((r) => ({
+        designationName: (r.designation === "__other__" ? r.customDesignation.trim() : r.designation).trim(),
+        sanctionedPositions: parseInt(r.sanctioned) || 0,
+        filled: parseInt(r.working) || 0,
+        vacant: calcVacant(r.sanctioned, r.working),
+      })),
+    };
     try {
-      await submitVacancies({
-        institutionTypeName: institutionType.trim(),
-        institutionName: institutionName.trim(),
-        district: district.trim(),
-        taluk: taluk.trim(),
-        cityOrTownOrVillage: resolvedCity.trim(),
-        lines: validRows.map((r) => ({
-          designationName: (r.designation === "__other__" ? r.customDesignation.trim() : r.designation).trim(),
-          sanctionedPositions: parseInt(r.sanctioned) || 0,
-          filled: parseInt(r.working) || 0,
-          vacant: calcVacant(r.sanctioned, r.working),
-        })),
-      });
-      showToast("Vacancies submitted successfully!", "success");
-      // Reset form
-      setRows([emptyRow()]);
+      if (isEditMode) {
+        console.log("[AddVacancies] Submit path: UPDATE (editId:", editId, ")");
+        await updateVacancySubmission(editId!, payload);
+        showToast("Vacancies updated successfully!", "success");
+        setTimeout(() => navigate("/view-vacancies"), 1200);
+      } else {
+        console.log("[AddVacancies] Submit path: CREATE");
+        await submitVacancies(payload);
+        showToast("Vacancies submitted successfully!", "success");
+        setRows([emptyRow()]);
+      }
     } catch (err: any) {
       showToast(err?.message || "Failed to submit vacancies", "error");
     } finally {
