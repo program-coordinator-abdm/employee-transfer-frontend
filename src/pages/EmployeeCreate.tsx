@@ -865,7 +865,9 @@ const EmployeeCreate: React.FC = () => {
       return;
     }
 
-    console.log("[Probation Debug] probationaryPeriod:", payload.probationaryPeriod, "| probationaryPeriodDoc:", payload.probationaryPeriodDoc, "| probationDeclarationDate:", payload.probationDeclarationDate);
+     console.log("[Probation Debug] probationaryPeriod:", payload.probationaryPeriod, "| probationaryPeriodDoc:", payload.probationaryPeriodDoc, "| probationDeclarationDate:", payload.probationDeclarationDate);
+     console.log("[EmployeeCreate] Full payload keys:", Object.keys(payload));
+     console.log("[EmployeeCreate] currentZone:", payload.currentZone, "| pastZones:", (payload as any).pastZones, "| uploadedDocuments:", (payload as any).uploadedDocuments ? "present" : "none");
 
     setSubmitting(true);
     setSubmitError("");
