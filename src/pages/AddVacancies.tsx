@@ -165,7 +165,7 @@ const AddVacancies: React.FC = () => {
           <Button variant="outline" size="icon" onClick={() => navigate("/categories")}>
             <ArrowLeft className="w-4 h-4" />
           </Button>
-          <h1 className="text-2xl font-bold text-foreground">Add Vacancies</h1>
+          <h1 className="text-2xl font-bold text-foreground">{isEditMode ? "Edit Vacancies" : "Add Vacancies"}</h1>
         </div>
 
         <Card className="p-6 mb-6">
