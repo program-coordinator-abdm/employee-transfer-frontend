@@ -540,8 +540,9 @@ export interface NewEmployee {
   currentInstitutionType: string;
   currentHfrId: string;
   currentWorkingSince: string;
-  currentAreaType: string;
-  currentOtherStateLocation?: string;
+   currentAreaType: string;
+   currentZone: string;
+   currentOtherStateLocation?: string;
   cltCompletionDate: string;
   pastServices: PastServiceEntry[];
   educationDetails: EducationFormEntry[];
@@ -603,8 +604,9 @@ export interface NewEmployee {
   contractRegularisedDoc: string;
   contractRegularisedDate: string;
   contractJoiningDate: string;
-  pastServiceDocs: string[];
-  remarks: string;
+   pastServiceDocs: string[];
+   pastZones: string[];
+   remarks: string;
   cgPost: string;
   cgDesignation: string;
   empDeclAgreed: boolean;
