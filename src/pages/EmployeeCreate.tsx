@@ -237,7 +237,12 @@ const EmployeeCreate: React.FC = () => {
 
   useEffect(() => {
     if (!editId) return;
+    console.log("[EmployeeCreate] Edit mode detected, editId:", editId);
+    console.log("[EmployeeCreate] Route path:", window.location.pathname);
+    console.log("[EmployeeCreate] Detected mode: edit");
+    console.log("[EmployeeCreate] Edit fetch URL: /employees/" + editId);
     getNewEmployeeById(editId).then((existing) => {
+      console.log("[EmployeeCreate] Edit data fetched successfully for:", existing.name);
       setKgid(existing.kgid); setName(existing.name);
       setDesignation(existing.designation); setDesignationGroup(existing.designationGroup); setDesignationSubGroup(existing.designationSubGroup);
       setFirstPostHeld(existing.firstPostHeld || "");
@@ -869,10 +874,12 @@ const EmployeeCreate: React.FC = () => {
       sessionStorage.removeItem("employeeDraft");
 
       if (isEditMode) {
+        console.log("[EmployeeCreate] Submit path: UPDATE (editId:", editId, ")");
         await updateEmployeeById(editId, payload);
         showToast("Employee updated successfully!", "success");
         setTimeout(() => navigate("/employee-list"), 1200);
       } else {
+        console.log("[EmployeeCreate] Submit path: CREATE");
         const saved = await createEmployee(payload);
         setCurrentDraftId(undefined);
         setSubmittedEmp({ ...payload, id: saved.id, createdAt: saved.createdAt });
