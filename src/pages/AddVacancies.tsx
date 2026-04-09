@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@
 import { ArrowLeft, Plus, Trash2, Save, Loader2 } from "lucide-react";
 import { KARNATAKA_DISTRICTS } from "@/lib/positions";
 import { getTaluks, getCities } from "@/lib/karnatakaGeo";
-import { submitVacancies } from "@/lib/api";
+import { submitVacancies, getVacancySubmission, updateVacancySubmission } from "@/lib/api";
 import Toast, { useToastState } from "@/components/Toast";
 import PositionDropdown from "@/components/PositionDropdown";
 import type { PositionInfo } from "@/lib/positions";
@@ -38,7 +38,13 @@ const calcVacant = (sanctioned: string, working: string): number => {
 
 const AddVacancies: React.FC = () => {
   const navigate = useNavigate();
+  const { id: editId } = useParams<{ id: string }>();
+  const isEditMode = !!editId;
   const { toast, showToast, hideToast } = useToastState();
+
+  console.log("[AddVacancies] Route path:", window.location.pathname);
+  console.log("[AddVacancies] Route param id:", editId);
+  console.log("[AddVacancies] Detected mode:", isEditMode ? "edit" : "add");
 
   const [institutionType, setInstitutionType] = useState("");
   const [institutionName, setInstitutionName] = useState("");
@@ -48,6 +54,7 @@ const AddVacancies: React.FC = () => {
   const [villageOtherMode, setVillageOtherMode] = useState(false);
   const [villageOtherText, setVillageOtherText] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
 
   const [rows, setRows] = useState<VacancyRowLocal[]>([emptyRow()]);
 
