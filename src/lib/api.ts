@@ -1253,6 +1253,17 @@ export const submitVacancies = async (payload: VacancyPayload): Promise<any> => 
   });
 };
 
+export const getVacancySubmission = async (id: string): Promise<{ submission: VacancySubmission & { institutionTypeName: string; institutionName: string; district: string; taluk: string; cityOrTownOrVillage: string } }> => {
+  return apiClient<any>(`/vacancies/${id}`);
+};
+
+export const updateVacancySubmission = async (id: string, payload: VacancyPayload): Promise<any> => {
+  return apiClient<any>(`/vacancies/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+};
+
 // --- View Vacancies ---
 export interface VacancyInstitution {
   institutionKey: string;

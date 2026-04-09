@@ -49,6 +49,7 @@ const App = () => {
               <Route path="/data-officer-dashboard" element={<ProtectedRoute><DataOfficerDashboard /></ProtectedRoute>} />
               <Route path="/maintenance" element={<ProtectedRoute><Maintenance /></ProtectedRoute>} />
               <Route path="/add-vacancies" element={<ProtectedRoute><AddVacancies /></ProtectedRoute>} />
+              <Route path="/add-vacancies/:id" element={<ProtectedRoute><AddVacancies /></ProtectedRoute>} />
               <Route path="/view-vacancies" element={<ProtectedRoute><ViewVacancies /></ProtectedRoute>} />
               <Route path="/district-entry-tracker" element={<ProtectedRoute><DistrictEntryTracker /></ProtectedRoute>} />
               <Route path="/transfers" element={<ProtectedRoute><TransfersList /></ProtectedRoute>} />

@@ -305,7 +305,7 @@ const ViewVacancies: React.FC = () => {
                 Submitted on {new Date(sortedSubmissions[0].createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
               </CardTitle>
               {canEdit && (
-                <Button variant="outline" size="sm" onClick={() => navigate(`/add-vacancies`)} className="gap-2">
+                <Button variant="outline" size="sm" onClick={() => { console.log("[VacancyEdit] clicked edit id:", sortedSubmissions[0].id); navigate(`/add-vacancies/${sortedSubmissions[0].id}`); }} className="gap-2">
                   <Pencil className="w-4 h-4" /> Edit
                 </Button>
               )}
@@ -326,7 +326,7 @@ const ViewVacancies: React.FC = () => {
                       Submitted on {new Date(sub.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
                     </span>
                     {canEdit && (
-                      <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); navigate(`/add-vacancies`); }} className="gap-2 ml-4">
+                      <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); console.log("[VacancyEdit] clicked edit id:", sub.id); navigate(`/add-vacancies/${sub.id}`); }} className="gap-2 ml-4">
                         <Pencil className="w-4 h-4" /> Edit
                       </Button>
                     )}
