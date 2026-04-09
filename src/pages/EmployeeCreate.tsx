@@ -270,10 +270,12 @@ const EmployeeCreate: React.FC = () => {
       if (existing.currentHfrId) setCurrentHfrId(existing.currentHfrId);
       setCurrentDistrict(existing.currentDistrict); setCurrentTaluk(existing.currentTaluk);
       setCurrentCityTownVillage(existing.currentCityTownVillage);
-      setCurrentWorkingSince(parseLocalDate(existing.currentWorkingSince));
-      if (existing.cltCompletionDate) setCltCompletionDate(parseLocalDate(existing.cltCompletionDate));
-      setPastServices(existing.pastServices);
-      setPastOtherStateFlags(existing.pastServices.map(s => !!(s.otherStateLocation || "").trim()));
+       setCurrentWorkingSince(parseLocalDate(existing.currentWorkingSince));
+       if (existing.currentZone) setCurrentZone(existing.currentZone);
+       if (existing.cltCompletionDate) setCltCompletionDate(parseLocalDate(existing.cltCompletionDate));
+       setPastServices(existing.pastServices);
+       setPastOtherStateFlags(existing.pastServices.map(s => !!(s.otherStateLocation || "").trim()));
+       if (existing.pastZones && existing.pastZones.length > 0) setPastZones(existing.pastZones);
       setPastFromDates(existing.pastServices.map(s => s.fromDate ? parseLocalDate(s.fromDate) : undefined));
       setPastToDates(existing.pastServices.map(s => s.toDate ? parseLocalDate(s.toDate) : undefined));
       setTerminallyIll(existing.terminallyIll); setTerminallyIllDoc(existing.terminallyIllDoc);
@@ -772,6 +774,7 @@ const EmployeeCreate: React.FC = () => {
       currentInstitution, currentInstitutionType, currentHfrId,
       currentDistrict, currentTaluk, currentCityTownVillage,
       currentWorkingSince: formatLocalDate(currentWorkingSince!),
+      currentZone,
       currentAreaType, currentOtherStateLocation: currentIsOtherState ? (currentOtherStateLocation.trim() || undefined) : undefined,
       pastServices: pastServices.map((s, i) => ({
         postHeld: s.postHeld,
@@ -834,6 +837,7 @@ const EmployeeCreate: React.FC = () => {
       contractRegularisedDate: formatLocalDate(contractRegularisedDate),
       contractJoiningDate: formatLocalDate(contractJoiningDate),
       pastServiceDocs,
+      pastZones,
       terminallyIll, terminallyIllDoc,
       pregnantOrChildUnderOne, pregnantOrChildUnderOneDoc,
       retiringWithinTwoYears, retiringWithinTwoYearsDoc,
@@ -861,7 +865,9 @@ const EmployeeCreate: React.FC = () => {
       return;
     }
 
-    console.log("[Probation Debug] probationaryPeriod:", payload.probationaryPeriod, "| probationaryPeriodDoc:", payload.probationaryPeriodDoc, "| probationDeclarationDate:", payload.probationDeclarationDate);
+     console.log("[Probation Debug] probationaryPeriod:", payload.probationaryPeriod, "| probationaryPeriodDoc:", payload.probationaryPeriodDoc, "| probationDeclarationDate:", payload.probationDeclarationDate);
+     console.log("[EmployeeCreate] Full payload keys:", Object.keys(payload));
+     console.log("[EmployeeCreate] currentZone:", payload.currentZone, "| pastZones:", (payload as any).pastZones, "| uploadedDocuments:", (payload as any).uploadedDocuments ? "present" : "none");
 
     setSubmitting(true);
     setSubmitError("");

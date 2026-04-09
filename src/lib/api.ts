@@ -540,8 +540,9 @@ export interface NewEmployee {
   currentInstitutionType: string;
   currentHfrId: string;
   currentWorkingSince: string;
-  currentAreaType: string;
-  currentOtherStateLocation?: string;
+   currentAreaType: string;
+   currentZone: string;
+   currentOtherStateLocation?: string;
   cltCompletionDate: string;
   pastServices: PastServiceEntry[];
   educationDetails: EducationFormEntry[];
@@ -603,8 +604,9 @@ export interface NewEmployee {
   contractRegularisedDoc: string;
   contractRegularisedDate: string;
   contractJoiningDate: string;
-  pastServiceDocs: string[];
-  remarks: string;
+   pastServiceDocs: string[];
+   pastZones: string[];
+   remarks: string;
   cgPost: string;
   cgDesignation: string;
   empDeclAgreed: boolean;
@@ -774,8 +776,10 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     currentTaluk: payload.currentTaluk,
     currentCityTownVillage: payload.currentCityTownVillage,
     currentWorkingSince: payload.currentWorkingSince,
-    currentAreaType: payload.currentAreaType,
-    cltCompletionDate: payload.cltCompletionDate,
+     currentAreaType: payload.currentAreaType,
+     currentZone: payload.currentZone,
+     currentOtherStateLocation: payload.currentOtherStateLocation,
+     cltCompletionDate: payload.cltCompletionDate,
     deptExamCompleted: payload.deptExamCompleted,
     deptExamName: payload.deptExamName,
     deptExamDoc: payload.deptExamDoc,
@@ -840,15 +844,20 @@ export const createEmployee = async (payload: Omit<NewEmployee, "id" | "createdA
     timebound30YearsDoc: payload.timebound30YearsDoc,
     timebound30YearsDate: payload.timebound30YearsDate,
     currentServiceDoc: payload.currentServiceDoc,
-    pastServiceDocs: payload.pastServiceDocs,
-    empDeclAgreed: payload.empDeclAgreed,
-    empDeclName: payload.empDeclName,
-    empDeclDate: payload.empDeclDate,
-    officerDeclAgreed: payload.officerDeclAgreed,
-    officerDeclName: payload.officerDeclName,
-    officerDeclDate: payload.officerDeclDate,
-    pastServices: payload.pastServices,
-    educationDetails: payload.educationDetails,
+     pastServiceDocs: payload.pastServiceDocs,
+     pastZones: payload.pastZones,
+     remarks: payload.remarks,
+     cgPost: payload.cgPost,
+     cgDesignation: payload.cgDesignation,
+     uploadedDocuments: (payload as any).uploadedDocuments,
+     empDeclAgreed: payload.empDeclAgreed,
+     empDeclName: payload.empDeclName,
+     empDeclDate: payload.empDeclDate,
+     officerDeclAgreed: payload.officerDeclAgreed,
+     officerDeclName: payload.officerDeclName,
+     officerDeclDate: payload.officerDeclDate,
+     pastServices: payload.pastServices,
+     educationDetails: payload.educationDetails,
   });
   const finalBody = sanitizeEmployeePayload(body);
   // Ensure final submission is never treated as a draft
@@ -899,8 +908,10 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     currentTaluk: payload.currentTaluk,
     currentCityTownVillage: payload.currentCityTownVillage,
     currentWorkingSince: payload.currentWorkingSince,
-    currentAreaType: payload.currentAreaType,
-    cltCompletionDate: payload.cltCompletionDate,
+     currentAreaType: payload.currentAreaType,
+     currentZone: payload.currentZone,
+     currentOtherStateLocation: payload.currentOtherStateLocation,
+     cltCompletionDate: payload.cltCompletionDate,
     deptExamCompleted: payload.deptExamCompleted,
     deptExamName: payload.deptExamName,
     deptExamDoc: payload.deptExamDoc,
@@ -965,15 +976,20 @@ export const updateEmployeeById = async (id: string, payload: Omit<NewEmployee, 
     timebound30YearsDoc: payload.timebound30YearsDoc,
     timebound30YearsDate: payload.timebound30YearsDate,
     currentServiceDoc: payload.currentServiceDoc,
-    pastServiceDocs: payload.pastServiceDocs,
-    empDeclAgreed: payload.empDeclAgreed,
-    empDeclName: payload.empDeclName,
-    empDeclDate: payload.empDeclDate,
-    officerDeclAgreed: payload.officerDeclAgreed,
-    officerDeclName: payload.officerDeclName,
-    officerDeclDate: payload.officerDeclDate,
-    pastServices: payload.pastServices,
-    educationDetails: payload.educationDetails,
+     pastServiceDocs: payload.pastServiceDocs,
+     pastZones: payload.pastZones,
+     remarks: payload.remarks,
+     cgPost: payload.cgPost,
+     cgDesignation: payload.cgDesignation,
+     uploadedDocuments: (payload as any).uploadedDocuments,
+     empDeclAgreed: payload.empDeclAgreed,
+     empDeclName: payload.empDeclName,
+     empDeclDate: payload.empDeclDate,
+     officerDeclAgreed: payload.officerDeclAgreed,
+     officerDeclName: payload.officerDeclName,
+     officerDeclDate: payload.officerDeclDate,
+     pastServices: payload.pastServices,
+     educationDetails: payload.educationDetails,
   });
   const finalBody = sanitizeEmployeePayload(body);
   (finalBody as any).isDraft = false;
@@ -1028,8 +1044,10 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     currentTaluk: raw.currentTaluk ?? "",
     currentCityTownVillage: raw.currentCityTownVillage ?? "",
     currentWorkingSince: raw.currentWorkingSince ?? "",
-    currentAreaType: raw.currentAreaType ?? "",
-    cltCompletionDate: raw.cltCompletionDate ?? "",
+     currentAreaType: raw.currentAreaType ?? "",
+     currentZone: raw.currentZone ?? "",
+     currentOtherStateLocation: raw.currentOtherStateLocation ?? "",
+     cltCompletionDate: raw.cltCompletionDate ?? "",
     pastServices: raw.pastServices ?? [],
     educationDetails: raw.educationDetails ?? [],
     terminallyIll: raw.terminallyIll ?? false,
@@ -1090,7 +1108,8 @@ function mapBackendToNewEmployee(raw: any): NewEmployee {
     currentServiceDoc: raw.currentServiceDoc ?? "",
     directRecruitmentMode: raw.directRecruitmentMode ?? "",
     directRecruitmentOther: raw.directRecruitmentOther ?? "",
-    pastServiceDocs: raw.pastServiceDocs ?? [],
+     pastServiceDocs: raw.pastServiceDocs ?? [],
+     pastZones: raw.pastZones ?? [],
     remarks: raw.remarks ?? "",
     cgPost: raw.cgPost ?? "",
     cgDesignation: raw.cgDesignation ?? "",
