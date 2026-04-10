@@ -26,7 +26,7 @@ const LRO_POSITIONS = [
   "Chief Transport Officer",
   "Administrative Officer (AO) (General) / (Transport) / (Family Welfare)",
   "Administrative Officer (AO) (Medical) (DME)",
-   "Chief Food Analyst/Chemist",
+   "Chief Food Analyst/ Chief Chemist",
    "Senior Food Analyst/Senior Chemist",
    "Food Analyst/Assistant Chemical Examiner",
    "Food Analyst/Assistant Chemist Examiner / Chemist",
