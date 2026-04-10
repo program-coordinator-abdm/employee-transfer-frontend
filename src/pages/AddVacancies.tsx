@@ -30,10 +30,56 @@ interface VacancyRowLocal {
 
 const emptyRow = (): VacancyRowLocal => ({ designation: "", customDesignation: "", sanctioned: "", working: "" });
 
+interface NormalizedVacancyEditData {
+  institutionType: string;
+  institutionName: string;
+  district: string;
+  taluk: string;
+  cityTownVillage: string;
+  rows: VacancyRowLocal[];
+}
+
 const calcVacant = (sanctioned: string, working: string): number => {
   const s = parseInt(sanctioned) || 0;
   const w = parseInt(working) || 0;
   return Math.max(0, s - w);
+};
+
+const firstArray = (...values: unknown[]): any[] => {
+  for (const value of values) {
+    if (Array.isArray(value)) return value;
+  }
+  return [];
+};
+
+const normalizeVacancyResponse = (response: any): NormalizedVacancyEditData => {
+  const root = response ?? {};
+  const payload = root?.submission ?? root?.vacancy ?? root?.data ?? root;
+  const header = payload?.Vacancy ?? root?.Vacancy ?? payload ?? {};
+  const rawLines = firstArray(
+    root?.vacancyLines,
+    payload?.vacancyLines,
+    root?.VacancyLine,
+    payload?.VacancyLine,
+    root?.lines,
+    payload?.lines,
+  );
+
+  return {
+    institutionType: header?.institutionTypeName ?? header?.institutionType ?? "",
+    institutionName: header?.institutionName ?? header?.name ?? "",
+    district: header?.district ?? "",
+    taluk: header?.taluk ?? "",
+    cityTownVillage: header?.cityOrTownOrVillage ?? header?.cityTownVillage ?? header?.city ?? "",
+    rows: rawLines
+      .map((line: any) => ({
+        designation: line?.designationName ?? line?.designation ?? "",
+        customDesignation: "",
+        sanctioned: String(line?.sanctionedPositions ?? line?.sanctioned ?? 0),
+        working: String(line?.filled ?? line?.working ?? 0),
+      }))
+      .filter((line: VacancyRowLocal) => line.designation || line.sanctioned !== "0" || line.working !== "0"),
+  };
 };
 
 const AddVacancies: React.FC = () => {
@@ -41,10 +87,6 @@ const AddVacancies: React.FC = () => {
   const { id: editId } = useParams<{ id: string }>();
   const isEditMode = !!editId;
   const { toast, showToast, hideToast } = useToastState();
-
-  console.log("[AddVacancies] Route path:", window.location.pathname);
-  console.log("[AddVacancies] Route param id:", editId);
-  console.log("[AddVacancies] Detected mode:", isEditMode ? "edit" : "add");
 
   const [institutionType, setInstitutionType] = useState("");
   const [institutionName, setInstitutionName] = useState("");
@@ -59,38 +101,60 @@ const AddVacancies: React.FC = () => {
   // Load existing vacancy data in edit mode
   useEffect(() => {
     if (!editId) return;
-    console.log("[AddVacancies] Edit fetch URL: /vacancies/" + editId);
+
+    let isMounted = true;
     setEditLoading(true);
+
     getVacancySubmission(editId)
       .then((res) => {
-        // Backend may return { submission: {...} } or the vacancy object directly
-        const data: any = (res as any)?.submission ?? res;
-        console.log("[AddVacancies] Edit data fetched:", JSON.stringify(data, null, 2));
-        if (!data) {
-          showToast("No vacancy data found for this ID.", "error");
+        if (!isMounted) return;
+
+        console.log("[AddVacancies] Raw API response:", res);
+
+        const normalized = normalizeVacancyResponse(res);
+        const cityOptions = normalized.district && normalized.taluk
+          ? getCities(normalized.district, normalized.taluk)
+          : [];
+        const useCustomCity = !!normalized.cityTownVillage && !cityOptions.includes(normalized.cityTownVillage);
+        const finalFormState = {
+          institutionType: normalized.institutionType,
+          institutionName: normalized.institutionName,
+          district: normalized.district,
+          taluk: normalized.taluk,
+          cityTownVillage: useCustomCity ? "" : normalized.cityTownVillage,
+          villageOtherMode: useCustomCity,
+          villageOtherText: useCustomCity ? normalized.cityTownVillage : "",
+          rows: normalized.rows.length > 0 ? normalized.rows : [emptyRow()],
+        };
+
+        console.log("[AddVacancies] Normalized vacancy data:", normalized);
+        console.log("[AddVacancies] Final form state:", finalFormState);
+
+        if (!normalized.institutionName && !normalized.district && normalized.rows.length === 0) {
           return;
         }
-        setInstitutionType(data.institutionTypeName ?? data.institutionType ?? "");
-        setInstitutionName(data.institutionName ?? data.name ?? "");
-        setDistrict(data.district ?? "");
-        setTaluk(data.taluk ?? "");
-        setCityTownVillage(data.cityOrTownOrVillage ?? data.city ?? "");
-        // Lines may be under .lines or .vacancyLines
-        const lines = data.lines ?? data.vacancyLines ?? [];
-        if (lines.length > 0) {
-          setRows(lines.map((l: any) => ({
-            designation: l.designationName ?? l.designation ?? "",
-            customDesignation: "",
-            sanctioned: String(l.sanctionedPositions ?? l.sanctioned ?? 0),
-            working: String(l.filled ?? l.working ?? 0),
-          })));
-        }
+
+        setInstitutionType(finalFormState.institutionType);
+        setInstitutionName(finalFormState.institutionName);
+        setDistrict(finalFormState.district);
+        setTaluk(finalFormState.taluk);
+        setCityTownVillage(finalFormState.cityTownVillage);
+        setVillageOtherMode(finalFormState.villageOtherMode);
+        setVillageOtherText(finalFormState.villageOtherText);
+        setRows(finalFormState.rows);
       })
       .catch((err) => {
+        if (!isMounted) return;
         console.error("[AddVacancies] Edit fetch failed:", err);
         showToast("Failed to load vacancy data for editing.", "error");
       })
-      .finally(() => setEditLoading(false));
+      .finally(() => {
+        if (isMounted) setEditLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [editId]);
 
   const [rows, setRows] = useState<VacancyRowLocal[]>([emptyRow()]);
@@ -146,12 +210,10 @@ const AddVacancies: React.FC = () => {
     };
     try {
       if (isEditMode) {
-        console.log("[AddVacancies] Submit path: UPDATE (editId:", editId, ")");
         await updateVacancySubmission(editId!, payload);
         showToast("Vacancies updated successfully!", "success");
         setTimeout(() => navigate("/view-vacancies"), 1200);
       } else {
-        console.log("[AddVacancies] Submit path: CREATE");
         await submitVacancies(payload);
         showToast("Vacancies submitted successfully!", "success");
         setRows([emptyRow()]);
