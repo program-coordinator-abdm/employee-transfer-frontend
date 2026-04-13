@@ -371,6 +371,16 @@ const Categories: React.FC = () => {
     setSubSelections({});
   };
 
+  // Map dropdown option labels to backend designationGroup + designationSubGroup
+  const GROUP_LABEL_TO_BACKEND: Record<string, { group: string; subGroup: string }> = {
+    "Group A Officers (LRO)": { group: "Group A", subGroup: "Officers (LRO)" },
+    "Group A Doctors (JRO & LRO)": { group: "Group A", subGroup: "Doctors (JRO & LRO)" },
+    "Group B Officers": { group: "Group B", subGroup: "Officers" },
+    "Group C Employees": { group: "Group C", subGroup: "Employees" },
+    "Group D Grade 1": { group: "Group D", subGroup: "Grade 1" },
+    "Group D Grade 2": { group: "Group D", subGroup: "Grade 2" },
+  };
+
   const activeFilter = useMemo(() => {
     for (const group of GROUP_CONFIGS) {
       const sub = subSelections[group.key];
@@ -383,15 +393,30 @@ const Categories: React.FC = () => {
 
   const filteredEmployees = useMemo(() => {
     if (!activeFilter) return [];
+
     if (activeFilter.filterType === "position") {
+      // Position-level: match designation or currentPostHeld (case-insensitive)
+      const target = activeFilter.position.toLowerCase();
       return allEmployees.filter((emp) => {
-        return emp.designation === activeFilter.position || emp.currentPostHeld === activeFilter.position;
+        return (emp.designation || "").toLowerCase() === target ||
+               (emp.currentPostHeld || "").toLowerCase() === target;
       });
     }
-    // Group-level filter: match any position in the selected group's list
-    const positionsInGroup = SUB_OPTIONS[activeFilter.position] || [];
+
+    // Group-level filter: prefer backend group/subGroup fields, fallback to position list
+    const backendMapping = GROUP_LABEL_TO_BACKEND[activeFilter.position];
+    const positionsInGroup = (SUB_OPTIONS[activeFilter.position] || []).map(p => p.toLowerCase());
+
     return allEmployees.filter((emp) => {
-      return positionsInGroup.includes(emp.designation) || positionsInGroup.includes(emp.currentPostHeld);
+      // Match by backend designationGroup + designationSubGroup
+      if (backendMapping) {
+        const empGroup = (emp.designationGroup || "").trim();
+        const empSubGroup = (emp.designationSubGroup || emp.currentPostSubGroup || "").trim();
+        if (empGroup === backendMapping.group && empSubGroup === backendMapping.subGroup) return true;
+      }
+      // Fallback: match designation or currentPostHeld against the position list
+      return positionsInGroup.includes((emp.designation || "").toLowerCase()) ||
+             positionsInGroup.includes((emp.currentPostHeld || "").toLowerCase());
     });
   }, [allEmployees, activeFilter]);
 
