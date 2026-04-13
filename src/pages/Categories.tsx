@@ -321,7 +321,9 @@ const Categories: React.FC = () => {
   const [selections, setSelections] = useState<Record<string, string>>({});
   const [subSelections, setSubSelections] = useState<Record<string, string>>({});
   const [allEmployees, setAllEmployees] = useState<NewEmployee[]>([]);
+  const [filteredResults, setFilteredResults] = useState<NewEmployee[]>([]);
   const [employeesLoading, setEmployeesLoading] = useState(false);
+  const [filteredLoading, setFilteredLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const [drafts, setDrafts] = useState<EmployeeDraft[]>([]);
   const [showDrafts, setShowDrafts] = useState(false);
