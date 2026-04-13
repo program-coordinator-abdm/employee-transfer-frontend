@@ -344,19 +344,17 @@ const Categories: React.FC = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  // Fetch employees from backend — single page fetch, not exhaust-all-pages
+  // Fetch all employees for the "View All Employees" count — single page, lightweight
   const fetchAbortRef = React.useRef<AbortController | null>(null);
 
-  const fetchCategoryEmployees = React.useCallback(async () => {
+  const fetchAllEmployeesCount = React.useCallback(async () => {
     if (!isAuthenticated) return;
 
-    // Abort any in-flight request
     if (fetchAbortRef.current) fetchAbortRef.current.abort();
     const controller = new AbortController();
     fetchAbortRef.current = controller;
 
     setEmployeesLoading(true);
-    setFetchError(false);
     try {
       const { employees } = await fetchEmployeesPaginated(
         { page: 1, pageSize: 500 },
@@ -367,18 +365,16 @@ const Categories: React.FC = () => {
       }
     } catch (err: any) {
       if (err.name === "AbortError") return;
-      console.error("Failed to fetch employees:", err);
-      setAllEmployees([]);
-      setFetchError(true);
+      console.error("Failed to fetch employees count:", err);
     } finally {
       if (!controller.signal.aborted) setEmployeesLoading(false);
     }
   }, [isAuthenticated]);
 
   React.useEffect(() => {
-    fetchCategoryEmployees();
+    fetchAllEmployeesCount();
     return () => { fetchAbortRef.current?.abort(); };
-  }, [fetchCategoryEmployees]);
+  }, [fetchAllEmployeesCount]);
 
   const handleSelectionChange = (groupKey: string, value: string) => {
     setSelections((prev) => ({ ...prev, [groupKey]: value }));
@@ -392,6 +388,7 @@ const Categories: React.FC = () => {
   const handleClearFilters = () => {
     setSelections({});
     setSubSelections({});
+    setFilteredResults([]);
   };
 
   // Map dropdown option labels to backend designationGroup + designationSubGroup
@@ -414,34 +411,53 @@ const Categories: React.FC = () => {
     return null;
   }, [selections, subSelections]);
 
-  const filteredEmployees = useMemo(() => {
-    if (!activeFilter) return [];
+  // Fetch filtered employees from backend when filter changes
+  const filterAbortRef = React.useRef<AbortController | null>(null);
 
-    if (activeFilter.filterType === "position") {
-      // Position-level: match designation or currentPostHeld (case-insensitive)
-      const target = activeFilter.position.toLowerCase();
-      return allEmployees.filter((emp) => {
-        return (emp.designation || "").toLowerCase() === target ||
-               (emp.currentPostHeld || "").toLowerCase() === target;
-      });
+  React.useEffect(() => {
+    if (!activeFilter || !isAuthenticated) {
+      setFilteredResults([]);
+      return;
     }
 
-    // Group-level filter: prefer backend group/subGroup fields, fallback to position list
-    const backendMapping = GROUP_LABEL_TO_BACKEND[activeFilter.position];
-    const positionsInGroup = (SUB_OPTIONS[activeFilter.position] || []).map(p => p.toLowerCase());
+    if (filterAbortRef.current) filterAbortRef.current.abort();
+    const controller = new AbortController();
+    filterAbortRef.current = controller;
 
-    return allEmployees.filter((emp) => {
-      // Match by backend designationGroup + designationSubGroup
-      if (backendMapping) {
-        const empGroup = (emp.designationGroup || "").trim();
-        const empSubGroup = (emp.designationSubGroup || emp.currentPostSubGroup || "").trim();
-        if (empGroup === backendMapping.group && empSubGroup === backendMapping.subGroup) return true;
+    const fetchFiltered = async () => {
+      setFilteredLoading(true);
+      setFetchError(false);
+      try {
+        const backendMapping = GROUP_LABEL_TO_BACKEND[activeFilter.category] || GROUP_LABEL_TO_BACKEND[activeFilter.position];
+        const params: any = { page: 1, pageSize: 500 };
+
+        if (backendMapping) {
+          params.designationGroup = backendMapping.group;
+          params.designationSubGroup = backendMapping.subGroup;
+        }
+        if (activeFilter.filterType === "position") {
+          params.designation = activeFilter.position;
+        }
+
+        const { employees } = await fetchEmployeesPaginated(params, controller.signal);
+        if (!controller.signal.aborted) {
+          setFilteredResults(employees);
+        }
+      } catch (err: any) {
+        if (err.name === "AbortError") return;
+        console.error("Failed to fetch filtered employees:", err);
+        setFilteredResults([]);
+        setFetchError(true);
+      } finally {
+        if (!controller.signal.aborted) setFilteredLoading(false);
       }
-      // Fallback: match designation or currentPostHeld against the position list
-      return positionsInGroup.includes((emp.designation || "").toLowerCase()) ||
-             positionsInGroup.includes((emp.currentPostHeld || "").toLowerCase());
-    });
-  }, [allEmployees, activeFilter]);
+    };
+
+    fetchFiltered();
+    return () => { controller.abort(); };
+  }, [activeFilter, isAuthenticated]);
+
+  const filteredEmployees = filteredResults;
 
   if (isLoading) {
     return (
