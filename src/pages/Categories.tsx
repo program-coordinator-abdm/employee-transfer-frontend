@@ -342,20 +342,41 @@ const Categories: React.FC = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  // Fetch employees from backend
-  React.useEffect(() => {
+  // Fetch employees from backend — single page fetch, not exhaust-all-pages
+  const fetchAbortRef = React.useRef<AbortController | null>(null);
+
+  const fetchCategoryEmployees = React.useCallback(async () => {
     if (!isAuthenticated) return;
+
+    // Abort any in-flight request
+    if (fetchAbortRef.current) fetchAbortRef.current.abort();
+    const controller = new AbortController();
+    fetchAbortRef.current = controller;
+
     setEmployeesLoading(true);
     setFetchError(false);
-    getNewEmployees()
-      .then(setAllEmployees)
-      .catch((err) => {
-        console.error("Failed to fetch employees:", err);
-        setAllEmployees([]);
-        setFetchError(true);
-      })
-      .finally(() => setEmployeesLoading(false));
+    try {
+      const { employees } = await fetchEmployeesPaginated(
+        { page: 1, pageSize: 500 },
+        controller.signal
+      );
+      if (!controller.signal.aborted) {
+        setAllEmployees(employees);
+      }
+    } catch (err: any) {
+      if (err.name === "AbortError") return;
+      console.error("Failed to fetch employees:", err);
+      setAllEmployees([]);
+      setFetchError(true);
+    } finally {
+      if (!controller.signal.aborted) setEmployeesLoading(false);
+    }
   }, [isAuthenticated]);
+
+  React.useEffect(() => {
+    fetchCategoryEmployees();
+    return () => { fetchAbortRef.current?.abort(); };
+  }, [fetchCategoryEmployees]);
 
   const handleSelectionChange = (groupKey: string, value: string) => {
     setSelections((prev) => ({ ...prev, [groupKey]: value }));
