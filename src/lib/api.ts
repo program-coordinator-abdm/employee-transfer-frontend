@@ -1218,7 +1218,7 @@ export const fetchEmployeesPaginated = async (
   const total = Number(data?.total ?? mapped.length);
   const totalPagesResult = Number(data?.totalPages ?? Math.max(1, Math.ceil(total / pageSize)));
 
-  console.log(`[fetchEmployeesPaginated] END got ${mapped.length} employees, total=${total}, totalPages=${totalPagesResult}`);
+  
 
   return {
     employees: mapped,
