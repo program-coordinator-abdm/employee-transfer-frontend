@@ -11,7 +11,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet, XCircle, ClipboardList, Search as SearchIcon, MapPin, FileText, Trash2, Clock } from "lucide-react";
 import KGIDSearch from "@/components/KGIDSearch";
 import { cn } from "@/lib/utils";
-import { getNewEmployees, type NewEmployee } from "@/lib/api";
+import { fetchEmployeesPaginated, type NewEmployee } from "@/lib/api";
 import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
 
 interface DropdownGroupConfig {
