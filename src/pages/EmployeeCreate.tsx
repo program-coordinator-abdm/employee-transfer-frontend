@@ -21,7 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { KARNATAKA_DISTRICTS, type PositionInfo } from "@/lib/positions";
 import { getTaluks, getCities } from "@/lib/karnatakaGeo";
-import { createEmployee, updateEmployeeById, getNewEmployeeById, getNewEmployees, type NewEmployee, type PastServiceEntry, type EducationFormEntry } from "@/lib/api";
+import { createEmployee, updateEmployeeById, getNewEmployeeById, fetchEmployeesPaginated, type NewEmployee, type PastServiceEntry, type EducationFormEntry } from "@/lib/api";
 import Toast, { useToastState } from "@/components/Toast";
 import { FIRST_POST_HELD_OPTIONS } from "@/lib/firstPostHeld";
 
@@ -482,8 +482,9 @@ const EmployeeCreate: React.FC = () => {
   const [kgidDuplicate, setKgidDuplicate] = useState(false);
 
   useEffect(() => {
-    getNewEmployees().then((emps) => {
-      const kgidSet = new Set(emps.map((e) => e.kgid.toLowerCase()));
+    // Use single-page fetch (not exhaust-all-pages) to get KGIDs for duplicate check
+    fetchEmployeesPaginated({ page: 1, pageSize: 500 }).then(({ employees: emps }) => {
+      const kgidSet = new Set<string>(emps.map((e) => e.kgid.toLowerCase()));
       // In edit mode, remove the current employee's KGID so it doesn't flag itself
       if (editId) {
         getNewEmployeeById(editId).then((current) => {
