@@ -1181,11 +1181,10 @@ export interface PaginatedEmployeesResult {
 }
 
 export const fetchEmployeesPaginated = async (
-  params: { page?: number; pageSize?: number; search?: string },
+  params: { page?: number; pageSize?: number; search?: string; designationGroup?: string; designationSubGroup?: string; designation?: string },
   signal?: AbortSignal
 ): Promise<PaginatedEmployeesResult> => {
-  const { page = 1, pageSize = 20, search = "" } = params;
-  console.log(`[fetchEmployeesPaginated] START page=${page} pageSize=${pageSize} search="${search}"`);
+  const { page = 1, pageSize = 20, search = "", designationGroup, designationSubGroup, designation } = params;
 
   const trimmedSearch = search.trim();
 
@@ -1197,9 +1196,11 @@ export const fetchEmployeesPaginated = async (
 
   if (trimmedSearch) {
     queryParams.set("query", trimmedSearch);
-    // Include searchMode only when query is present
     queryParams.set("searchMode", "name");
   }
+  if (designationGroup) queryParams.set("designationGroup", designationGroup);
+  if (designationSubGroup) queryParams.set("designationSubGroup", designationSubGroup);
+  if (designation) queryParams.set("designation", designation);
 
   const data = await apiClient<any>(`/employees?${queryParams.toString()}`, { signal });
   const arr = data?.data || (Array.isArray(data) ? data : []);
@@ -1217,7 +1218,7 @@ export const fetchEmployeesPaginated = async (
   const total = Number(data?.total ?? mapped.length);
   const totalPagesResult = Number(data?.totalPages ?? Math.max(1, Math.ceil(total / pageSize)));
 
-  console.log(`[fetchEmployeesPaginated] END got ${mapped.length} employees, total=${total}, totalPages=${totalPagesResult}`);
+  
 
   return {
     employees: mapped,
