@@ -687,7 +687,7 @@ const Categories: React.FC = () => {
                   Employees — {activeFilter.position}
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  {employeesLoading ? "Loading..." : `${filteredEmployees.length} employee${filteredEmployees.length !== 1 ? "s" : ""} found`}
+                  {filteredLoading ? "Loading..." : `${filteredEmployees.length} employee${filteredEmployees.length !== 1 ? "s" : ""} found`}
                 </p>
               </div>
               {filteredEmployees.length > 0 && (
@@ -712,7 +712,7 @@ const Categories: React.FC = () => {
               </div>
             )}
 
-            {employeesLoading ? (
+            {filteredLoading ? (
               <Card className="p-8 text-center">
                 <div className="flex flex-col items-center gap-4">
                   <div className="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin" />
