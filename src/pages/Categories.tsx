@@ -193,7 +193,7 @@ const Categories: React.FC = () => {
         {/* View Employees link + KGID Search */}
         <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <Button variant="outline" onClick={() => navigate("/employee-list")} className="gap-2 border-primary/30 text-primary hover:bg-primary/10">
-            <Users className="w-4 h-4" /> View All Employees {allEmployees.length > 0 ? `(${allEmployees.length})` : ""}
+            <Users className="w-4 h-4" /> View All Employees {totalEmployeeCount > 0 ? `(${totalEmployeeCount})` : ""}
           </Button>
           {allEmployees.length > 0 && (
             <div className="w-full sm:w-72">
