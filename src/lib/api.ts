@@ -1181,7 +1181,7 @@ export interface PaginatedEmployeesResult {
 }
 
 export const fetchEmployeesPaginated = async (
-  params: { page?: number; pageSize?: number; search?: string; designationGroup?: string; designationSubGroup?: string; designation?: string },
+  params: { page?: number; pageSize?: number; search?: string; designationGroup?: string; designationSubGroup?: string; designation?: string; currentDistrict?: string; currentTaluk?: string },
   signal?: AbortSignal
 ): Promise<PaginatedEmployeesResult> => {
   const { page = 1, pageSize = 20, search = "", designationGroup, designationSubGroup, designation } = params;
