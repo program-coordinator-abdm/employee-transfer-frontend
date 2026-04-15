@@ -14,6 +14,7 @@ const Categories: React.FC = () => {
   const { isAuthenticated, isLoading, user } = useAuth();
   const navigate = useNavigate();
   const [allEmployees, setAllEmployees] = useState<NewEmployee[]>([]);
+  const [totalEmployeeCount, setTotalEmployeeCount] = useState(0);
   const [employeesLoading, setEmployeesLoading] = useState(false);
   const [drafts, setDrafts] = useState<EmployeeDraft[]>([]);
   const [showDrafts, setShowDrafts] = useState(false);
