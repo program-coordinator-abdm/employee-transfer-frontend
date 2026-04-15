@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { getDraftsForUser, deleteDraft, type EmployeeDraft } from "@/lib/draftStorage";
 import { ArrowRightLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -6,325 +6,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { BarChart3, TrendingUp, ChevronsUpDown, Check, UserPlus, Users, Eye, UserCircle, FileDown, FileSpreadsheet, XCircle, ClipboardList, Search as SearchIcon, MapPin, FileText, Trash2, Clock } from "lucide-react";
+import { BarChart3, TrendingUp, UserPlus, Users, ClipboardList, Search as SearchIcon, MapPin, FileText, Trash2, Clock } from "lucide-react";
 import KGIDSearch from "@/components/KGIDSearch";
-import { cn } from "@/lib/utils";
 import { fetchEmployeesPaginated, type NewEmployee } from "@/lib/api";
-import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
-
-interface DropdownGroupConfig {
-  key: string;
-  label: string;
-  options: string[];
-}
-
-const LRO_POSITIONS: string[] = [
-  "Chief Transport Officer",
-  "Administrative Officer (AO) (General) / (Transport) / (Family Welfare)",
-  "Administrative Officer (AO) (Medical) (DME)",
-   "Chief Food Analyst/ Chief Chemist",
-   "Senior Food Analyst/Senior Chemist",
-   "Food Analyst/Assistant Chemical Examiner",
-   "Food Analyst/Assistant Chemist Examiner / Chemist",
-  "Assistant Director of Pharmacy (Chief Pharmacist)",
-  "Health Education Officer",
-];
-
-const JRO_LRO_POSITIONS: string[] = [
-  "Nephrologist / Urologist",
-  "Forensic Medicine",
-  "Pathologist / Blood Bank",
-  "Micro Biologist",
-  "Bio Chemist",
-  "Psychiatrist",
-  "Tuberculosis/Chest Medicine",
-  "General Medicine",
-  "General Surgeon + Burns Ward (5)",
-  "Obstetrics and Gynaecologist (OBG)",
-  "Pediatrician",
-  "Anesthesiologist + (Medical Intensivist-3)",
-  "Ophthalmologist",
-  "Orthopedician",
-  "Ear, Nose and Throat Specialist / Otorhinolaryngology",
-  "Skin Specialist / Dermatologist + LEP-2",
-  "Radiologist",
-  "Other (Public Health Manager, Epidemiologist-2 MLCD-4)",
-  "Cardiologist",
-  "Neurosurgeon",
-  "Plastic Surgeon",
-  "General Duty Medical Officer",
-  "SMO",
-  "DCMO",
-  "CMO",
-  "Dental Health Officer",
-  "Psychiatry",
-];
-
-const GROUP_B_POSITIONS: string[] = [
-  "Health Equipment Officer",
-  "Store Officer (Stores) & (IEC)",
-  "Cold Chain Officer",
-  "Clinical Instructor",
-  "Senior Entomologist",
-  "Entomologist",
-  "Assistant Entomologist",
-  "Microbiologist",
-  "Clinical Psychologist",
-  "Psychologist (Psychiatric Social Worker)",
-  "Service Engineers",
-  "Junior Chemical Engineer / Regional Assistant Chemical Analysts",
-   "Junior Food Analyst / Junior Chemist",
-  "Transport Officer",
-  "Transport Manager",
-  "Technical Officer (Goiter Cell / IDD) & (CMD)",
-  "Graduate Pharmacist (Deputy Chief Pharmacy Officer)",
-  "Assistant Administrative Officer",
-  "Scientific Officer",
-  "Medical Records Officer",
-  "Assistant Leprosy Officer",
-  "Assistant Malaria Officer",
-  "Principal (Training Centre) ANMTC & GNM",
-  "District Health Education Officer (Social Science Instructors)",
-  "Superintendent of Nursing Grade-1",
-  "District Nursing Officer",
-  "Deputy District Health Education Officer",
-];
-
-const GROUP_C_POSITIONS: string[] = [
-  "Office Superintendents",
-  "First Division Assistant",
-  "Second Division Assistant",
-  "Vehicle Driver",
-  "Nursing Superintendents Grade-2 (Group-C)",
-  "Primary Health Care Officer (PHCO)",
-  "Health Inspecting Officer (Jr HIO)",
-  "Senior Health Inspecting Officer (Sr HIO)",
-  "Health Supervisor",
-  "Senior Primary Health Care Officer (Sr PHCO / LHV)",
-  "Block Health Education Officer",
-  "Junior Lab Technical Officer",
-  "Senior Lab Technical Officer",
-  "Junior Radiology Imaging Officer (X-ray Technician)",
-  "Senior Radiology Imaging Officer (Radiographer)",
-  "Ophthalmic Officer",
-  "Senior Ophthalmic Officer",
-  "Chief Ophthalmic Officer",
-  "Assistant Documentation Technician (Assistant Medical Record Technician)",
-  "Physiotherapist (General)",
-  "Electrical Technician",
-  "Social Worker",
-  "Dietitian",
-  "Dental Technician",
-  "Dental Hygienist",
-  "ECG Technician",
-  "Dialysis Technician",
-  "ECHO Technician",
-  "Audiometrician",
-  "Refrigerator Mechanic",
-  "Librarian",
-  "CT Scanning Technician",
-  "T A T Technician",
-  "Ultrasound Technician",
-  "Equipment Technician",
-  "Autoclave Mechanic",
-  "Occupational Therapist",
-  "OT Technicians",
-  "Pharmacy Officers",
-  "Senior Pharmacy Officers",
-  "Junior Pharmacists",
-  "Senior Pharmacists",
-];
-
-const GROUP_D_GRADE1_POSITIONS: string[] = [
-  "Cook",
-  "Daffedar",
-  "Dark Room Assistant",
-  "Dhobi",
-  "Female Nursing Orderly",
-  "Group D (With Recruitment in the scale of 10400–16400)",
-  "Hospital Attendent Grade I",
-  "Jamedar",
-  "Lab Assistant",
-  "Laboratory Assistant",
-  "Literate Attender",
-];
-
-const GROUP_D_GRADE2_POSITIONS: string[] = [
-  "Aaya",
-  "Animal Attender",
-  "Animal Care Taker",
-  "Assistant Cook",
-  "Attender",
-  "Attender Cum Cleaner",
-  "Attender Cum Sweeper",
-  "Barber",
-  "Beesti",
-  "Boiler Attender",
-  "Carpenter",
-  "Chokra",
-  "Cleaner",
-  "Cleaner Cum Peon",
-  "Cleaner Cum Stretcher Barrier",
-  "Cleaner / Stretcher Barer",
-  "Cook",
-  "Cook Cum Care Taker",
-  "Cook Cum Helper",
-  "Cook Maty",
-  "Cycle Orderly",
-  "Dalayat",
-  "Dhobi",
-  "Diet Distributor",
-  "Dispensary Attender",
-  "Dissection Cooly",
-  "Domestic Worker",
-  "Dresser",
-  "Electrician Grade II",
-  "Electrician Grade III",
-  "Female Nursing Orderly",
-  "Female Sweeper",
-  "Female Ward Servant",
-  "Fireman",
-  "Gardener",
-  "Group D",
-  "Group D Aysuh",
-  "Helper",
-  "Hospital Attendent Grade II",
-  "Hudrocol Attender",
-  "Hydro Extract Operator",
-  "Insect Collector",
-  "Lady Sanitary Workers",
-  "Lasker",
-  "Laundry",
-  "Leather Worker",
-  "Library Attender",
-  "Lift Attender",
-  "Maali",
-  "Male Sweeper",
-  "Male Ward Servant",
-  "Mali",
-  "Meti",
-  "MNA/FNA",
-  "Mortuary Worker",
-  "Multi Purpose Worker",
-  "Nursing Orderly",
-  "Office Assistant",
-  "Office Peon",
-  "OPD Attender",
-  "OPD Servant",
-  "OT Attender",
-  "Packers",
-  "Peon",
-  "Pharmacy Attender",
-  "Plumber",
-  "Psychiatric OPD Attender",
-  "Record Attender",
-  "Sanitary Worker",
-  "Sanitary Workers",
-  "Sargent",
-  "Security Staff",
-  "Servant",
-  "Steriliser Operator",
-  "Stretcher Carrier",
-  "Struch Barriers",
-  "Surgery Cooli (Peon)",
-  "Sweeper",
-  "Table Boy",
-  "Table Mate",
-  "Table Women",
-  "Tailor",
-  "Telephone Attender",
-  "Tick Collector",
-  "Ward Attendent",
-  "Ward Attender",
-  "Ward Ayaa",
-  "Ward Boy",
-  "Wardner",
-  "Watch Man",
-  "Watchman",
-  "Watchman/Sanitary Workers",
-  "Water Carrier",
-  "Wireman",
-  "Women Servant",
-  "Work Aaya",
-];
-
-const SUB_OPTIONS: Record<string, string[]> = {
-  "Group A Officers (LRO)": LRO_POSITIONS,
-  "Group A Doctors (JRO & LRO)": JRO_LRO_POSITIONS,
-  "Group B Officers": GROUP_B_POSITIONS,
-  "Group C Employees": GROUP_C_POSITIONS,
-  "Group D Grade 1": GROUP_D_GRADE1_POSITIONS,
-  "Group D Grade 2": GROUP_D_GRADE2_POSITIONS,
-};
-
-const GROUP_CONFIGS: DropdownGroupConfig[] = [
-  { key: "groupA", label: "Group A", options: ["Group A Officers (LRO)", "Group A Doctors (JRO & LRO)"] },
-  { key: "groupB", label: "Group B", options: ["Group B Officers"] },
-  { key: "groupC", label: "Group C", options: ["Group C Employees"] },
-  { key: "groupD", label: "Group D", options: ["Group D Grade 1", "Group D Grade 2"] },
-];
-
-const SearchableDropdown: React.FC<{
-  config: DropdownGroupConfig;
-  value: string;
-  onChange: (val: string) => void;
-}> = ({ config, value, onChange }) => {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className="w-full justify-between h-12 text-sm bg-card border-border rounded-lg shadow-sm hover:shadow-md hover:border-primary hover:bg-primary/5 hover:text-foreground transition-all outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary focus:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0"
-        >
-          <span className={cn("truncate", !value && "text-muted-foreground")}>
-            {value || `Select ${config.label}...`}
-          </span>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-50 bg-popover border border-border shadow-lg rounded-lg">
-        <Command>
-          <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup>
-              {config.options.map((option) => (
-                <CommandItem
-                  key={option}
-                  value={option}
-                  onSelect={() => {
-                    onChange(option === value ? "" : option);
-                    setOpen(false);
-                  }}
-                  className="py-2.5 px-3 cursor-pointer font-medium tracking-wide data-[selected='true']:bg-teal-50 data-[selected='true']:text-teal-700"
-                >
-                  <Check className={cn("mr-2 h-4 w-4", value === option ? "opacity-100" : "opacity-0")} />
-                  {option}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
-  );
-};
 
 const Categories: React.FC = () => {
   const { isAuthenticated, isLoading, user } = useAuth();
   const navigate = useNavigate();
-  const [selections, setSelections] = useState<Record<string, string>>({});
-  const [subSelections, setSubSelections] = useState<Record<string, string>>({});
   const [allEmployees, setAllEmployees] = useState<NewEmployee[]>([]);
-  const [filteredResults, setFilteredResults] = useState<NewEmployee[]>([]);
   const [employeesLoading, setEmployeesLoading] = useState(false);
-  const [filteredLoading, setFilteredLoading] = useState(false);
-  const [fetchError, setFetchError] = useState(false);
   const [drafts, setDrafts] = useState<EmployeeDraft[]>([]);
   const [showDrafts, setShowDrafts] = useState(false);
 
@@ -344,7 +34,7 @@ const Categories: React.FC = () => {
     }
   }, [isLoading, isAuthenticated, navigate]);
 
-  // Fetch all employees for the "View All Employees" count — single page, lightweight
+  // Fetch employees for the "View All Employees" count
   const fetchAbortRef = React.useRef<AbortController | null>(null);
 
   const fetchAllEmployeesCount = React.useCallback(async () => {
@@ -375,89 +65,6 @@ const Categories: React.FC = () => {
     fetchAllEmployeesCount();
     return () => { fetchAbortRef.current?.abort(); };
   }, [fetchAllEmployeesCount]);
-
-  const handleSelectionChange = (groupKey: string, value: string) => {
-    setSelections((prev) => ({ ...prev, [groupKey]: value }));
-    setSubSelections((prev) => ({ ...prev, [groupKey]: "" }));
-  };
-
-  const handleSubSelectionChange = (groupKey: string, value: string) => {
-    setSubSelections((prev) => ({ ...prev, [groupKey]: value }));
-  };
-
-  const handleClearFilters = () => {
-    setSelections({});
-    setSubSelections({});
-    setFilteredResults([]);
-  };
-
-  // Map dropdown option labels to backend designationGroup + designationSubGroup
-  const GROUP_LABEL_TO_BACKEND: Record<string, { group: string; subGroup: string }> = {
-    "Group A Officers (LRO)": { group: "Group A", subGroup: "Officers (LRO)" },
-    "Group A Doctors (JRO & LRO)": { group: "Group A", subGroup: "Doctors (JRO & LRO)" },
-    "Group B Officers": { group: "Group B", subGroup: "Officers" },
-    "Group C Employees": { group: "Group C", subGroup: "Employees" },
-    "Group D Grade 1": { group: "Group D", subGroup: "Grade 1" },
-    "Group D Grade 2": { group: "Group D", subGroup: "Grade 2" },
-  };
-
-  const activeFilter = useMemo(() => {
-    for (const group of GROUP_CONFIGS) {
-      const sub = subSelections[group.key];
-      if (sub) return { groupKey: group.key, position: sub, category: selections[group.key] || "", filterType: "position" as const };
-      const sel = selections[group.key];
-      if (sel) return { groupKey: group.key, position: sel, category: sel, filterType: "group" as const };
-    }
-    return null;
-  }, [selections, subSelections]);
-
-  // Fetch filtered employees from backend when filter changes
-  const filterAbortRef = React.useRef<AbortController | null>(null);
-
-  React.useEffect(() => {
-    if (!activeFilter || !isAuthenticated) {
-      setFilteredResults([]);
-      return;
-    }
-
-    if (filterAbortRef.current) filterAbortRef.current.abort();
-    const controller = new AbortController();
-    filterAbortRef.current = controller;
-
-    const fetchFiltered = async () => {
-      setFilteredLoading(true);
-      setFetchError(false);
-      try {
-        const backendMapping = GROUP_LABEL_TO_BACKEND[activeFilter.category] || GROUP_LABEL_TO_BACKEND[activeFilter.position];
-        const params: any = { page: 1, pageSize: 500 };
-
-        if (backendMapping) {
-          params.designationGroup = backendMapping.group;
-          params.designationSubGroup = backendMapping.subGroup;
-        }
-        if (activeFilter.filterType === "position") {
-          params.designation = activeFilter.position;
-        }
-
-        const { employees } = await fetchEmployeesPaginated(params, controller.signal);
-        if (!controller.signal.aborted) {
-          setFilteredResults(employees);
-        }
-      } catch (err: any) {
-        if (err.name === "AbortError") return;
-        console.error("Failed to fetch filtered employees:", err);
-        setFilteredResults([]);
-        setFetchError(true);
-      } finally {
-        if (!controller.signal.aborted) setFilteredLoading(false);
-      }
-    };
-
-    fetchFiltered();
-    return () => { controller.abort(); };
-  }, [activeFilter, isAuthenticated]);
-
-  const filteredEmployees = filteredResults;
 
   if (isLoading) {
     return (
@@ -534,6 +141,7 @@ const Categories: React.FC = () => {
             </div>
           </Card>
         )}
+
         <Card
           className="mb-8 cursor-pointer group border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-all duration-200 hover:shadow-lg"
           onClick={() => navigate("/add-vacancies")}
@@ -581,7 +189,7 @@ const Categories: React.FC = () => {
         )}
 
         {/* View Employees link + KGID Search */}
-        <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <Button variant="outline" onClick={() => navigate("/employee-list")} className="gap-2 border-primary/30 text-primary hover:bg-primary/10">
             <Users className="w-4 h-4" /> View All Employees {allEmployees.length > 0 ? `(${allEmployees.length})` : ""}
           </Button>
@@ -592,191 +200,8 @@ const Categories: React.FC = () => {
           )}
         </div>
 
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground mb-1">Staff Categories</h1>
-          <p className="text-muted-foreground">Select a category to view and manage employee transfers</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-4">
-          {GROUP_CONFIGS.map((group) => (
-            <div key={group.key} className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-foreground">{group.label}</label>
-              <SearchableDropdown
-                config={group}
-                value={selections[group.key] || ""}
-                onChange={(val) => handleSelectionChange(group.key, val)}
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="mb-4 flex items-center gap-2">
-          <Button
-            size="sm"
-            onClick={() => {/* Search is automatic via activeFilter */}}
-            className="gap-1.5"
-            disabled={!activeFilter}
-          >
-            <SearchIcon className="w-4 h-4" /> Search
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleClearFilters}
-            className="gap-1.5 text-destructive border-destructive/30 hover:bg-destructive/10"
-          >
-            <XCircle className="w-4 h-4" /> Clear Filters
-          </Button>
-        </div>
-
-        {/* Sub-options dropdown for any group with sub-options */}
-        {GROUP_CONFIGS.map((group) => {
-          const selectedVal = selections[group.key];
-          if (!selectedVal || !SUB_OPTIONS[selectedVal]) return null;
-          return (
-            <div key={`sub-${group.key}`} className="mb-10 max-w-md">
-              <label className="text-sm font-semibold text-foreground mb-2 block">
-                Select Position — {selectedVal}
-              </label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    className="w-full justify-between h-12 text-sm bg-card border-border rounded-lg shadow-sm hover:shadow-md hover:border-primary hover:bg-primary/5 hover:text-foreground transition-all outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary focus:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-0"
-                  >
-                    <span className={cn("truncate", !subSelections[group.key] && "text-muted-foreground")}>
-                      {subSelections[group.key] || "Search and select a position..."}
-                    </span>
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-50 bg-popover border border-border shadow-lg rounded-lg">
-                  <Command>
-                    <CommandInput placeholder="Search positions..." />
-                    <CommandList>
-                      <CommandEmpty>No positions found.</CommandEmpty>
-                      <CommandGroup>
-                        {SUB_OPTIONS[selectedVal].map((pos) => (
-                          <CommandItem
-                            key={pos}
-                            value={pos}
-                            onSelect={() => handleSubSelectionChange(group.key, pos === subSelections[group.key] ? "" : pos)}
-                            className="py-2.5 px-3 cursor-pointer font-medium tracking-wide data-[selected='true']:bg-primary/10 data-[selected='true']:text-primary"
-                          >
-                            <Check className={cn("mr-2 h-4 w-4 shrink-0", subSelections[group.key] === pos ? "opacity-100" : "opacity-0")} />
-                            <span className="text-sm">{pos}</span>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </div>
-          );
-        })}
-
-        {/* Filtered Employee Results */}
-        {activeFilter && (
-          <div className="mb-10">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-                  <Users className="w-5 h-5 text-primary" />
-                  Employees — {activeFilter.position}
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  {filteredLoading ? "Loading..." : `${filteredEmployees.length} employee${filteredEmployees.length !== 1 ? "s" : ""} found`}
-                </p>
-              </div>
-              {filteredEmployees.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => exportEmployeesToPDF(filteredEmployees, activeFilter.position)} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
-                    <FileDown className="w-4 h-4" /> PDF
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => exportEmployeesToExcel(filteredEmployees, activeFilter.position)} className="gap-1.5 border-primary/30 text-primary hover:bg-primary/10">
-                    <FileSpreadsheet className="w-4 h-4" /> Excel
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            {filteredEmployees.length > 0 && (
-              <div className="mb-4 max-w-sm">
-                <KGIDSearch
-                  onSelect={(emp) => navigate(`/employee-view/${emp.id}`)}
-                  employees={filteredEmployees}
-                  placeholder="Search within results by KGID..."
-                />
-              </div>
-            )}
-
-            {filteredLoading ? (
-              <Card className="p-8 text-center">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-10 h-10 border-3 border-primary border-t-transparent rounded-full animate-spin" />
-                  <p className="text-muted-foreground">Loading...</p>
-                </div>
-              </Card>
-            ) : fetchError ? (
-              <Card className="p-8 text-center border-dashed border-2 border-destructive/30">
-                <p className="text-destructive font-medium">Failed to load employees</p>
-              </Card>
-            ) : filteredEmployees.length === 0 ? (
-              <Card className="p-8 text-center border-dashed border-2 border-border">
-                <UserCircle className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
-                <p className="text-muted-foreground font-medium">No employees found for selected filters</p>
-                <Button variant="outline" className="mt-4 gap-2 text-primary border-primary/30 hover:bg-primary/10" onClick={() => navigate("/employee-create")}>
-                  <UserPlus className="w-4 h-4" /> Add Employee
-                </Button>
-              </Card>
-            ) : (
-              <div className="bg-card rounded-xl border border-border overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border bg-muted/50">
-                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Employee Name</th>
-                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">KGID</th>
-                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Designation</th>
-                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Designation Group</th>
-                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">Institution</th>
-                        <th className="px-4 py-3 text-left font-semibold text-muted-foreground">District</th>
-                        <th className="px-4 py-3 text-center font-semibold text-muted-foreground">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredEmployees.map((emp) => (
-                        <tr key={emp.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
-                          <td className="px-4 py-3 font-medium text-foreground">{emp.name}</td>
-                          <td className="px-4 py-3 font-mono text-foreground">{emp.kgid}</td>
-                          <td className="px-4 py-3 text-foreground">{emp.currentPostHeld || emp.designation || "—"}</td>
-                          <td className="px-4 py-3 text-foreground">{emp.designationGroup || "—"}</td>
-                          <td className="px-4 py-3 text-foreground">{emp.currentInstitution || "—"}</td>
-                          <td className="px-4 py-3 text-foreground">{emp.currentDistrict || "—"}</td>
-                          <td className="px-4 py-3 text-center">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => navigate(`/employee-view/${emp.id}`)}
-                              className="gap-1.5 text-primary border-primary/30 hover:bg-primary/10"
-                            >
-                              <Eye className="w-4 h-4" /> View
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Reports & Promotions Section */}
-        <div className="mt-10 mb-2">
+        {/* Reports & Analytics Section */}
+        <div className="mb-2">
           <h2 className="text-xl font-bold text-foreground mb-1">Reports & Analytics</h2>
           <p className="text-muted-foreground text-sm">Generate reports and track promotions</p>
         </div>
@@ -819,16 +244,12 @@ const Categories: React.FC = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-base font-semibold text-foreground mb-0.5">District Entry Tracker</h3>
-                <p className="text-sm text-muted-foreground">Track employee and vacancy entries per district with live updates</p>
+                <p className="text-sm text-muted-foreground">Monitor and track district-wise employee data entry progress</p>
               </div>
             </div>
           </Card>
         </div>
       </main>
-
-      <footer className="py-4 text-center text-sm text-muted-foreground border-t border-border">
-        © 2026 Government of Karnataka. All rights reserved.
-      </footer>
     </div>
   );
 };
