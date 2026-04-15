@@ -1230,6 +1230,21 @@ export const fetchEmployeesPaginated = async (
   };
 };
 
+// Fetch filter options for dropdowns
+export const fetchFilterOptions = async (): Promise<{ designations: string[]; districts: string[]; taluks: string[] }> => {
+  try {
+    const data = await apiClient<any>("/employees/filter-options");
+    return {
+      designations: Array.isArray(data?.designations) ? data.designations : [],
+      districts: Array.isArray(data?.districts) ? data.districts : [],
+      taluks: Array.isArray(data?.taluks) ? data.taluks : [],
+    };
+  } catch (err) {
+    console.error("[fetchFilterOptions] Failed:", err);
+    return { designations: [], districts: [], taluks: [] };
+  }
+};
+
 // Download CSV export
 export const downloadEmployeesCSVExport = async (): Promise<void> => {
   return downloadFile("/employees/export", "employees.csv");

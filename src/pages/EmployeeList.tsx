@@ -4,19 +4,10 @@ import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet, Loader2, ChevronLe
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { fetchEmployeesPaginated, downloadEmployeesCSVExport, type NewEmployee } from "@/lib/api";
+import { fetchEmployeesPaginated, fetchFilterOptions, downloadEmployeesCSVExport, type NewEmployee } from "@/lib/api";
 import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
-import { KARNATAKA_GEO } from "@/lib/karnatakaGeo";
 
 const PAGE_SIZE = 20;
-
-const ALL_DISTRICTS = Object.keys(KARNATAKA_GEO).sort();
-
-const ALL_TALUKS: string[] = (() => {
-  const set = new Set<string>();
-  Object.values(KARNATAKA_GEO).forEach(d => d.taluks.forEach(t => set.add(t.name)));
-  return Array.from(set).sort();
-})();
 
 const EmployeeList: React.FC = () => {
   const navigate = useNavigate();
@@ -39,21 +30,21 @@ const EmployeeList: React.FC = () => {
   const [debouncedDistrict, setDebouncedDistrict] = useState("");
   const [debouncedTaluk, setDebouncedTaluk] = useState("");
 
+  // Filter options from backend
+  const [designationOptions, setDesignationOptions] = useState<string[]>([]);
+  const [districtOptions, setDistrictOptions] = useState<string[]>([]);
+  const [talukOptions, setTalukOptions] = useState<string[]>([]);
+
   const hasActiveFilters = filterDesignation || filterDistrict || filterTaluk;
 
-  // Derive taluks for selected district
-  const talukOptions = useMemo(() => {
-    if (!filterDistrict) return ALL_TALUKS;
-    const districtData = KARNATAKA_GEO[filterDistrict];
-    return districtData ? districtData.taluks.map(t => t.name).sort() : ALL_TALUKS;
-  }, [filterDistrict]);
-
-  // Collect unique designations from current employees for suggestions
-  const designationOptions = useMemo(() => {
-    const set = new Set<string>();
-    employees.forEach(e => { if (e.currentPostHeld) set.add(e.currentPostHeld); });
-    return Array.from(set).sort();
-  }, [employees]);
+  // Fetch filter options on mount
+  useEffect(() => {
+    fetchFilterOptions().then(opts => {
+      setDesignationOptions(opts.designations);
+      setDistrictOptions(opts.districts);
+      setTalukOptions(opts.taluks);
+    });
+  }, []);
 
   // Debounce search input
   useEffect(() => {
