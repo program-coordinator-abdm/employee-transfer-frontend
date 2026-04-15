@@ -1181,10 +1181,10 @@ export interface PaginatedEmployeesResult {
 }
 
 export const fetchEmployeesPaginated = async (
-  params: { page?: number; pageSize?: number; search?: string; designationGroup?: string; designationSubGroup?: string; designation?: string },
+  params: { page?: number; pageSize?: number; search?: string; designationGroup?: string; designationSubGroup?: string; designation?: string; currentDistrict?: string; currentTaluk?: string },
   signal?: AbortSignal
 ): Promise<PaginatedEmployeesResult> => {
-  const { page = 1, pageSize = 20, search = "", designationGroup, designationSubGroup, designation } = params;
+  const { page = 1, pageSize = 20, search = "", designationGroup, designationSubGroup, designation, currentDistrict, currentTaluk } = params;
 
   const trimmedSearch = search.trim();
 
@@ -1201,6 +1201,8 @@ export const fetchEmployeesPaginated = async (
   if (designationGroup) queryParams.set("designationGroup", designationGroup);
   if (designationSubGroup) queryParams.set("designationSubGroup", designationSubGroup);
   if (designation) queryParams.set("designation", designation);
+  if (currentDistrict) queryParams.set("currentDistrict", currentDistrict);
+  if (currentTaluk) queryParams.set("currentTaluk", currentTaluk);
 
   const data = await apiClient<any>(`/employees?${queryParams.toString()}`, { signal });
   const arr = data?.data || (Array.isArray(data) ? data : []);

@@ -1,13 +1,22 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet, Loader2, ChevronLeft, ChevronRight, Search, X, AlertCircle, Download } from "lucide-react";
+import { ArrowLeft, Eye, UserPlus, FileDown, FileSpreadsheet, Loader2, ChevronLeft, ChevronRight, Search, X, AlertCircle, Download, Filter, RotateCcw } from "lucide-react";
 import Header from "@/components/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchEmployeesPaginated, downloadEmployeesCSVExport, type NewEmployee } from "@/lib/api";
 import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
+import { KARNATAKA_GEO } from "@/lib/karnatakaGeo";
 
 const PAGE_SIZE = 20;
+
+const ALL_DISTRICTS = Object.keys(KARNATAKA_GEO).sort();
+
+const ALL_TALUKS: string[] = (() => {
+  const set = new Set<string>();
+  Object.values(KARNATAKA_GEO).forEach(d => d.taluks.forEach(t => set.add(t.name)));
+  return Array.from(set).sort();
+})();
 
 const EmployeeList: React.FC = () => {
   const navigate = useNavigate();
@@ -22,6 +31,30 @@ const EmployeeList: React.FC = () => {
   const [csvDownloading, setCsvDownloading] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
 
+  // Filter state
+  const [filterDesignation, setFilterDesignation] = useState("");
+  const [filterDistrict, setFilterDistrict] = useState("");
+  const [filterTaluk, setFilterTaluk] = useState("");
+  const [debouncedDesignation, setDebouncedDesignation] = useState("");
+  const [debouncedDistrict, setDebouncedDistrict] = useState("");
+  const [debouncedTaluk, setDebouncedTaluk] = useState("");
+
+  const hasActiveFilters = filterDesignation || filterDistrict || filterTaluk;
+
+  // Derive taluks for selected district
+  const talukOptions = useMemo(() => {
+    if (!filterDistrict) return ALL_TALUKS;
+    const districtData = KARNATAKA_GEO[filterDistrict];
+    return districtData ? districtData.taluks.map(t => t.name).sort() : ALL_TALUKS;
+  }, [filterDistrict]);
+
+  // Collect unique designations from current employees for suggestions
+  const designationOptions = useMemo(() => {
+    const set = new Set<string>();
+    employees.forEach(e => { if (e.currentPostHeld) set.add(e.currentPostHeld); });
+    return Array.from(set).sort();
+  }, [employees]);
+
   // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -31,7 +64,18 @@ const EmployeeList: React.FC = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Single fetch with AbortController — only depends on page + search
+  // Debounce filters
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedDesignation(filterDesignation);
+      setDebouncedDistrict(filterDistrict);
+      setDebouncedTaluk(filterTaluk);
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filterDesignation, filterDistrict, filterTaluk]);
+
+  // Single fetch with AbortController — depends on page + search + filters
   useEffect(() => {
     const controller = new AbortController();
     let cancelled = false;
@@ -41,7 +85,14 @@ const EmployeeList: React.FC = () => {
       setError(null);
       try {
         const result = await fetchEmployeesPaginated(
-          { page: currentPage, pageSize: PAGE_SIZE, search: debouncedSearch },
+          {
+            page: currentPage,
+            pageSize: PAGE_SIZE,
+            search: debouncedSearch,
+            ...(debouncedDesignation ? { designation: debouncedDesignation } : {}),
+            ...(debouncedDistrict ? { currentDistrict: debouncedDistrict } : {}),
+            ...(debouncedTaluk ? { currentTaluk: debouncedTaluk } : {}),
+          },
           controller.signal
         );
         if (!cancelled) {
@@ -55,7 +106,6 @@ const EmployeeList: React.FC = () => {
         if (!cancelled) {
           console.error("[EmployeeList] Fetch failed:", err);
           setError(err.message || "Failed to load employees");
-          // Keep previous employees data visible on transient failures
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -68,7 +118,7 @@ const EmployeeList: React.FC = () => {
       cancelled = true;
       controller.abort();
     };
-  }, [currentPage, debouncedSearch, retryKey]);
+  }, [currentPage, debouncedSearch, debouncedDesignation, debouncedDistrict, debouncedTaluk, retryKey]);
 
   const handleCSVDownload = useCallback(async () => {
     setCsvDownloading(true);
@@ -80,6 +130,12 @@ const EmployeeList: React.FC = () => {
       setCsvDownloading(false);
     }
   }, []);
+
+  const clearFilters = () => {
+    setFilterDesignation("");
+    setFilterDistrict("");
+    setFilterTaluk("");
+  };
 
   const getPageNumbers = (): (number | "...")[] => {
     const pages: (number | "...")[] = [];
@@ -143,7 +199,7 @@ const EmployeeList: React.FC = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="relative mb-6">
+        <div className="relative mb-4">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <input
             type="text"
@@ -163,6 +219,67 @@ const EmployeeList: React.FC = () => {
             </button>
           )}
         </div>
+
+        {/* Filter Section */}
+        <Card className="p-4 mb-6 border-border/50">
+          <div className="flex items-center gap-2 mb-3">
+            <Filter className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-foreground">Filters</span>
+            {hasActiveFilters && (
+              <Button variant="ghost" size="sm" onClick={clearFilters} className="ml-auto h-7 px-2 text-xs text-muted-foreground hover:text-foreground gap-1">
+                <RotateCcw className="w-3 h-3" /> Clear Filters
+              </Button>
+            )}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {/* Designation Filter */}
+            <div>
+              <label className="block text-xs font-medium text-muted-foreground mb-1">Current Designation</label>
+              <select
+                value={filterDesignation}
+                onChange={(e) => setFilterDesignation(e.target.value)}
+                className="input-field w-full h-10 text-sm"
+              >
+                <option value="">All Designations</option>
+                {designationOptions.map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
+            {/* District Filter */}
+            <div>
+              <label className="block text-xs font-medium text-muted-foreground mb-1">Current District</label>
+              <select
+                value={filterDistrict}
+                onChange={(e) => {
+                  setFilterDistrict(e.target.value);
+                  // Reset taluk if district changes
+                  setFilterTaluk("");
+                }}
+                className="input-field w-full h-10 text-sm"
+              >
+                <option value="">All Districts</option>
+                {ALL_DISTRICTS.map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+            </div>
+            {/* Taluk Filter */}
+            <div>
+              <label className="block text-xs font-medium text-muted-foreground mb-1">Current Taluk</label>
+              <select
+                value={filterTaluk}
+                onChange={(e) => setFilterTaluk(e.target.value)}
+                className="input-field w-full h-10 text-sm"
+              >
+                <option value="">All Taluks</option>
+                {talukOptions.map(t => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </Card>
 
         {/* Error State */}
         {error && (
@@ -190,9 +307,13 @@ const EmployeeList: React.FC = () => {
               <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
                 <UserPlus className="w-8 h-8 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">{debouncedSearch ? "No matching employees" : "No employees yet"}</h3>
-              <p className="text-muted-foreground text-sm max-w-md">{debouncedSearch ? `No employees found matching "${debouncedSearch}". Try a different search.` : "Start by adding a new employee to the system."}</p>
-              {!debouncedSearch && (
+              <h3 className="text-lg font-semibold text-foreground">{debouncedSearch || hasActiveFilters ? "No matching employees" : "No employees yet"}</h3>
+              <p className="text-muted-foreground text-sm max-w-md">
+                {debouncedSearch || hasActiveFilters
+                  ? "No employees found matching your criteria. Try adjusting your search or filters."
+                  : "Start by adding a new employee to the system."}
+              </p>
+              {!debouncedSearch && !hasActiveFilters && (
                 <Button onClick={() => navigate("/employee-create")} className="btn-primary mt-2">
                   <UserPlus className="w-4 h-4 mr-2" /> Add New Employee
                 </Button>
@@ -201,6 +322,13 @@ const EmployeeList: React.FC = () => {
           </Card>
         ) : (
           <>
+            {/* Filtered count indicator */}
+            {hasActiveFilters && (
+              <p className="text-sm text-muted-foreground mb-2">
+                <span className="font-medium text-foreground">{totalItems}</span> employee{totalItems !== 1 ? "s" : ""} returned
+              </p>
+            )}
+
             <Card className="overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
