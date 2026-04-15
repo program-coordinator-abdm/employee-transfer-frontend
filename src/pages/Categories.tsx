@@ -47,12 +47,13 @@ const Categories: React.FC = () => {
 
     setEmployeesLoading(true);
     try {
-      const { employees } = await fetchEmployeesPaginated(
+      const { employees, total } = await fetchEmployeesPaginated(
         { page: 1, pageSize: 500 },
         controller.signal
       );
       if (!controller.signal.aborted) {
         setAllEmployees(employees);
+        setTotalEmployeeCount(total);
       }
     } catch (err: any) {
       if (err.name === "AbortError") return;
