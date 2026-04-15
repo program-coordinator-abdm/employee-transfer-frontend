@@ -250,7 +250,7 @@ const EmployeeList: React.FC = () => {
                 className="input-field w-full h-10 text-sm"
               >
                 <option value="">All Districts</option>
-                {ALL_DISTRICTS.map(d => (
+                {districtOptions.map(d => (
                   <option key={d} value={d}>{d}</option>
                 ))}
               </select>
