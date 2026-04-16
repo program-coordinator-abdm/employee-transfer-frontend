@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { fetchEmployeesPaginated, fetchFilterOptions, downloadEmployeesCSVExport, type NewEmployee } from "@/lib/api";
 import { exportEmployeesToPDF, exportEmployeesToExcel } from "@/lib/employeeExport";
+import SearchableSelect from "@/components/SearchableSelect";
 
 const PAGE_SIZE = 20;
 
@@ -223,52 +224,27 @@ const EmployeeList: React.FC = () => {
             )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {/* Designation Filter */}
-            <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1">Current Designation</label>
-              <select
-                value={filterDesignation}
-                onChange={(e) => setFilterDesignation(e.target.value)}
-                className="input-field w-full h-10 text-sm"
-              >
-                <option value="">All Designations</option>
-                {designationOptions.map(d => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
-              </select>
-            </div>
-            {/* District Filter */}
-            <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1">Current District</label>
-              <select
-                value={filterDistrict}
-                onChange={(e) => {
-                  setFilterDistrict(e.target.value);
-                  // Reset taluk if district changes
-                  setFilterTaluk("");
-                }}
-                className="input-field w-full h-10 text-sm"
-              >
-                <option value="">All Districts</option>
-                {districtOptions.map(d => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
-              </select>
-            </div>
-            {/* Taluk Filter */}
-            <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1">Current Taluk</label>
-              <select
-                value={filterTaluk}
-                onChange={(e) => setFilterTaluk(e.target.value)}
-                className="input-field w-full h-10 text-sm"
-              >
-                <option value="">All Taluks</option>
-                {talukOptions.map(t => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
+            <SearchableSelect
+              label="Current Designation"
+              options={designationOptions}
+              value={filterDesignation}
+              onChange={setFilterDesignation}
+              placeholder="All Designations"
+            />
+            <SearchableSelect
+              label="Current District"
+              options={districtOptions}
+              value={filterDistrict}
+              onChange={(v) => { setFilterDistrict(v); setFilterTaluk(""); }}
+              placeholder="All Districts"
+            />
+            <SearchableSelect
+              label="Current Taluk"
+              options={talukOptions}
+              value={filterTaluk}
+              onChange={setFilterTaluk}
+              placeholder="All Taluks"
+            />
           </div>
         </Card>
 
