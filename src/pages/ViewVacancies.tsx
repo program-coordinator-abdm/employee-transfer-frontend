@@ -8,8 +8,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, Building2, MapPin, Loader2, ChevronsUpDown, Check, FilterX, Pencil } from "lucide-react";
-import { fetchVacancyInstitutions, fetchVacanciesByInstitution, type VacancyInstitution, type VacancySubmission } from "@/lib/api";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { ArrowLeft, Building2, MapPin, Loader2, ChevronsUpDown, Check, FilterX, Pencil, Trash2 } from "lucide-react";
+import { fetchVacancyInstitutions, fetchVacanciesByInstitution, deleteVacancyInstitution, deleteVacancyLine, type VacancyInstitution, type VacancySubmission } from "@/lib/api";
+import Toast, { useToastState } from "@/components/Toast";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 
