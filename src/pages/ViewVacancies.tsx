@@ -103,6 +103,51 @@ const ViewVacancies: React.FC = () => {
 
   const sortedSubmissions = [...submissions].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
+  const mapDeleteError = (err: any): string => {
+    const status = err?.status ?? err?.response?.status;
+    const msg = String(err?.message || "");
+    if (status === 403 || /403/.test(msg)) return "You are not allowed to delete this vacancy.";
+    if (status === 404 || /404/.test(msg)) return "Vacancy record not found.";
+    return "Failed to delete vacancy. Please try again.";
+  };
+
+  const handleDeleteInstitution = async () => {
+    if (!selectedKey) return;
+    setDeleting(true);
+    try {
+      await deleteVacancyInstitution(selectedKey);
+      showToast("Institution vacancy deleted successfully", "success");
+      setInstitution(null);
+      setSubmissions([]);
+    } catch (err) {
+      showToast(mapDeleteError(err), "error");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleDeleteLine = async (lineId?: string) => {
+    if (!lineId) {
+      showToast("Cannot delete: missing line identifier.", "error");
+      return;
+    }
+    setDeleting(true);
+    try {
+      await deleteVacancyLine(lineId);
+      showToast("Vacancy line deleted successfully", "success");
+      // Refresh data for selected institution
+      if (selectedKey) {
+        const res = await fetchVacanciesByInstitution(selectedKey);
+        setInstitution(res.institution || null);
+        setSubmissions(Array.isArray(res.submissions) ? res.submissions : []);
+      }
+    } catch (err) {
+      showToast(mapDeleteError(err), "error");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const renderTable = (lines: VacancySubmission["lines"]) => (
     <Table>
       <TableHeader>
@@ -111,19 +156,86 @@ const ViewVacancies: React.FC = () => {
           <TableHead className="text-center">Sanctioned Positions</TableHead>
           <TableHead className="text-center">Working</TableHead>
           <TableHead className="text-center">Vacant</TableHead>
+          {isDataOfficer && <TableHead className="text-center w-20">Action</TableHead>}
         </TableRow>
       </TableHeader>
       <TableBody>
         {lines.map((l, i) => (
-          <TableRow key={i}>
+          <TableRow key={l.id || i}>
             <TableCell className="font-medium">{l.designationName}</TableCell>
             <TableCell className="text-center">{l.sanctionedPositions}</TableCell>
             <TableCell className="text-center">{l.filled}</TableCell>
             <TableCell className="text-center">{l.vacant}</TableCell>
+            {isDataOfficer && (
+              <TableCell className="text-center">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      disabled={deleting || !l.id}
+                      title={l.id ? "Delete vacancy line" : "Line ID unavailable"}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Vacancy Line</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this vacancy line?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDeleteLine(l.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </TableCell>
+            )}
           </TableRow>
         ))}
       </TableBody>
     </Table>
+  );
+
+  const renderDeleteInstitutionButton = () => (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={deleting}
+          className="gap-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+        >
+          <Trash2 className="w-4 h-4" /> Delete Institution Vacancy
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Institution Vacancy</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete all vacancy entries for this institution?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleDeleteInstitution}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 
   return (
