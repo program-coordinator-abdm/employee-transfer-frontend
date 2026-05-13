@@ -19,6 +19,10 @@ const ViewVacancies: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const canEdit = user?.role === "ADMIN" || user?.role === "DATA_OFFICER";
+  const isAdmin = user?.role === "ADMIN";
+  const isDataOfficer = user?.role === "DATA_OFFICER";
+  const { toast, showToast, hideToast } = useToastState();
+  const [deleting, setDeleting] = useState(false);
   const [institutions, setInstitutions] = useState<VacancyInstitution[]>([]);
   const [loadingInst, setLoadingInst] = useState(true);
   const [selectedKey, setSelectedKey] = useState("");
