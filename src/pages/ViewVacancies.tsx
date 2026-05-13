@@ -8,8 +8,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, Building2, MapPin, Loader2, ChevronsUpDown, Check, FilterX, Pencil } from "lucide-react";
-import { fetchVacancyInstitutions, fetchVacanciesByInstitution, type VacancyInstitution, type VacancySubmission } from "@/lib/api";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { ArrowLeft, Building2, MapPin, Loader2, ChevronsUpDown, Check, FilterX, Pencil, Trash2 } from "lucide-react";
+import { fetchVacancyInstitutions, fetchVacanciesByInstitution, deleteVacancyInstitution, deleteVacancyLine, type VacancyInstitution, type VacancySubmission } from "@/lib/api";
+import Toast, { useToastState } from "@/components/Toast";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -17,6 +19,10 @@ const ViewVacancies: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const canEdit = user?.role === "ADMIN" || user?.role === "DATA_OFFICER";
+  const isAdmin = user?.role === "ADMIN";
+  const isDataOfficer = user?.role === "DATA_OFFICER";
+  const { toast, showToast, hideToast } = useToastState();
+  const [deleting, setDeleting] = useState(false);
   const [institutions, setInstitutions] = useState<VacancyInstitution[]>([]);
   const [loadingInst, setLoadingInst] = useState(true);
   const [selectedKey, setSelectedKey] = useState("");
@@ -97,6 +103,51 @@ const ViewVacancies: React.FC = () => {
 
   const sortedSubmissions = [...submissions].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
+  const mapDeleteError = (err: any): string => {
+    const status = err?.status ?? err?.response?.status;
+    const msg = String(err?.message || "");
+    if (status === 403 || /403/.test(msg)) return "You are not allowed to delete this vacancy.";
+    if (status === 404 || /404/.test(msg)) return "Vacancy record not found.";
+    return "Failed to delete vacancy. Please try again.";
+  };
+
+  const handleDeleteInstitution = async () => {
+    if (!selectedKey) return;
+    setDeleting(true);
+    try {
+      await deleteVacancyInstitution(selectedKey);
+      showToast("Institution vacancy deleted successfully", "success");
+      setInstitution(null);
+      setSubmissions([]);
+    } catch (err) {
+      showToast(mapDeleteError(err), "error");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleDeleteLine = async (lineId?: string) => {
+    if (!lineId) {
+      showToast("Cannot delete: missing line identifier.", "error");
+      return;
+    }
+    setDeleting(true);
+    try {
+      await deleteVacancyLine(lineId);
+      showToast("Vacancy line deleted successfully", "success");
+      // Refresh data for selected institution
+      if (selectedKey) {
+        const res = await fetchVacanciesByInstitution(selectedKey);
+        setInstitution(res.institution || null);
+        setSubmissions(Array.isArray(res.submissions) ? res.submissions : []);
+      }
+    } catch (err) {
+      showToast(mapDeleteError(err), "error");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const renderTable = (lines: VacancySubmission["lines"]) => (
     <Table>
       <TableHeader>
@@ -105,19 +156,86 @@ const ViewVacancies: React.FC = () => {
           <TableHead className="text-center">Sanctioned Positions</TableHead>
           <TableHead className="text-center">Working</TableHead>
           <TableHead className="text-center">Vacant</TableHead>
+          {isDataOfficer && <TableHead className="text-center w-20">Action</TableHead>}
         </TableRow>
       </TableHeader>
       <TableBody>
         {lines.map((l, i) => (
-          <TableRow key={i}>
+          <TableRow key={l.id || i}>
             <TableCell className="font-medium">{l.designationName}</TableCell>
             <TableCell className="text-center">{l.sanctionedPositions}</TableCell>
             <TableCell className="text-center">{l.filled}</TableCell>
             <TableCell className="text-center">{l.vacant}</TableCell>
+            {isDataOfficer && (
+              <TableCell className="text-center">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      disabled={deleting || !l.id}
+                      title={l.id ? "Delete vacancy line" : "Line ID unavailable"}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Vacancy Line</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this vacancy line?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => handleDeleteLine(l.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </TableCell>
+            )}
           </TableRow>
         ))}
       </TableBody>
     </Table>
+  );
+
+  const renderDeleteInstitutionButton = () => (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={deleting}
+          className="gap-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+        >
+          <Trash2 className="w-4 h-4" /> Delete Institution Vacancy
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Institution Vacancy</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete all vacancy entries for this institution?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={handleDeleteInstitution}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 
   return (
@@ -304,11 +422,14 @@ const ViewVacancies: React.FC = () => {
               <CardTitle className="text-base">
                 Submitted on {new Date(sortedSubmissions[0].createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
               </CardTitle>
-              {canEdit && (
-                <Button variant="outline" size="sm" onClick={() => { console.log("[VacancyEdit] clicked edit id:", sortedSubmissions[0].id); navigate(`/add-vacancies/${sortedSubmissions[0].id}`); }} className="gap-2">
-                  <Pencil className="w-4 h-4" /> Edit
-                </Button>
-              )}
+              <div className="flex items-center gap-2">
+                {canEdit && (
+                  <Button variant="outline" size="sm" onClick={() => { console.log("[VacancyEdit] clicked edit id:", sortedSubmissions[0].id); navigate(`/add-vacancies/${sortedSubmissions[0].id}`); }} className="gap-2">
+                    <Pencil className="w-4 h-4" /> Edit
+                  </Button>
+                )}
+                {isAdmin && renderDeleteInstitutionButton()}
+              </div>
             </CardHeader>
             <CardContent>
               {sortedSubmissions[0].lines.length > 0 ? renderTable(sortedSubmissions[0].lines) : <p className="text-muted-foreground text-sm">No vacancy lines found.</p>}
@@ -325,11 +446,14 @@ const ViewVacancies: React.FC = () => {
                     <span className="text-sm font-medium">
                       Submitted on {new Date(sub.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
                     </span>
-                    {canEdit && (
-                      <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); console.log("[VacancyEdit] clicked edit id:", sub.id); navigate(`/add-vacancies/${sub.id}`); }} className="gap-2 ml-4">
-                        <Pencil className="w-4 h-4" /> Edit
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2 ml-4" onClick={(e) => e.stopPropagation()}>
+                      {canEdit && (
+                        <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); console.log("[VacancyEdit] clicked edit id:", sub.id); navigate(`/add-vacancies/${sub.id}`); }} className="gap-2">
+                          <Pencil className="w-4 h-4" /> Edit
+                        </Button>
+                      )}
+                      {isAdmin && idx === 0 && renderDeleteInstitutionButton()}
+                    </div>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4">
@@ -340,6 +464,7 @@ const ViewVacancies: React.FC = () => {
           </Accordion>
         )}
       </main>
+      <Toast message={toast.message} type={toast.type} isVisible={toast.isVisible} onClose={hideToast} />
     </div>
   );
 };

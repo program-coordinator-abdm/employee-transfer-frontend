@@ -1268,6 +1268,7 @@ export const getSearchSuggestions = async (
 
 // ===== Vacancy Management =====
 export interface VacancyLine {
+  id?: string;
   designationName: string;
   sanctionedPositions: number;
   filled: number;
@@ -1328,4 +1329,16 @@ export interface VacancyByInstitutionResponse {
 
 export const fetchVacanciesByInstitution = async (institutionKey: string): Promise<VacancyByInstitutionResponse> => {
   return apiClient<VacancyByInstitutionResponse>(`/vacancies/by-institution?institutionKey=${encodeURIComponent(institutionKey)}`);
+};
+
+export const deleteVacancyInstitution = async (institutionId: string): Promise<any> => {
+  return apiClient<any>(`/vacancies/institution/${encodeURIComponent(institutionId)}`, { method: "DELETE" });
+};
+
+export const deleteVacancySubmission = async (vacancyId: string): Promise<any> => {
+  return apiClient<any>(`/vacancies/${encodeURIComponent(vacancyId)}`, { method: "DELETE" });
+};
+
+export const deleteVacancyLine = async (lineId: string): Promise<any> => {
+  return apiClient<any>(`/vacancies/lines/${encodeURIComponent(lineId)}`, { method: "DELETE" });
 };
