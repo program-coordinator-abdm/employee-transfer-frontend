@@ -1268,6 +1268,7 @@ export const getSearchSuggestions = async (
 
 // ===== Vacancy Management =====
 export interface VacancyLine {
+  id?: string;
   designationName: string;
   sanctionedPositions: number;
   filled: number;
