@@ -106,9 +106,15 @@ const ViewVacancies: React.FC = () => {
   const mapDeleteError = (err: any): string => {
     const status = err?.status ?? err?.response?.status;
     const msg = String(err?.message || "");
+    if (import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
+      console.error("[ViewVacancies] delete failed:", { status, message: msg, err });
+    }
     if (status === 403 || /403/.test(msg)) return "You are not allowed to delete this vacancy.";
     if (status === 404 || /404/.test(msg)) return "Vacancy record not found.";
-    return "Failed to delete vacancy. Please try again.";
+    if (!status && /network|cors|failed to fetch/i.test(msg))
+      return "Network/CORS error: unable to reach the server. Please try again or contact support.";
+    return msg || "Failed to delete vacancy. Please try again.";
   };
 
   const handleDeleteInstitution = async () => {

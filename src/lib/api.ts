@@ -208,49 +208,90 @@ export const removeUser = (): void => {
 };
 
 // API Client with token injection
+const isDev = import.meta.env.DEV;
+
+class ApiError extends Error {
+  status?: number;
+  body?: unknown;
+  constructor(message: string, status?: number, body?: unknown) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.body = body;
+  }
+}
+
 const apiClient = async <T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> => {
   const token = getToken();
+  const method = (options.method || "GET").toUpperCase();
+  const hasBody = options.body != null;
+
+  // Only send Content-Type when there is a JSON body — avoids unnecessary
+  // preflight headers on simple DELETE/GET requests.
   const headers: HeadersInit = {
-    "Content-Type": "application/json",
+    ...(hasBody && { "Content-Type": "application/json" }),
     ...(token && { Authorization: `Bearer ${token}` }),
     ...options.headers,
   };
 
+  const url = `${API_BASE_URL}${endpoint}`;
+  let response: Response;
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    response = await fetch(url, {
       ...options,
       headers,
+      // Do NOT set credentials: 'include' — backend uses Bearer tokens, and
+      // 'include' would force CORS to require Allow-Credentials on the server.
     });
-
-    if (response.status === 401 || response.status === 403) {
-      removeToken();
-      removeUser();
-      window.location.href = "/login";
-      throw new Error("Session expired");
+  } catch (networkErr) {
+    // Likely CORS preflight failure or network error (TypeError: Failed to fetch).
+    if (isDev) {
+      // eslint-disable-next-line no-console
+      console.error(`[api] Network/CORS failure on ${method} ${url}:`, networkErr);
     }
+    throw new ApiError(
+      "Network error: unable to reach the server. This may be a CORS or connectivity issue.",
+    );
+  }
 
-    if (!response.ok) {
-      let message = `API Error: ${response.status}`;
-      try {
-        const errBody = await response.json();
-        // Handle { error: "Validation error", issues: [...] } format
-        if (Array.isArray(errBody?.issues) && errBody.issues.length > 0) {
-          const uniqueMsgs = [...new Set(errBody.issues.map((i: any) => i?.message || String(i)).filter(Boolean))];
-          message = uniqueMsgs.slice(0, 3).join("; ");
-        } else if (errBody?.message) message = errBody.message;
-        else if (errBody?.error) message = errBody.error;
-        else if (Array.isArray(errBody?.errors) && errBody.errors.length > 0)
-          message = errBody.errors[0]?.message || errBody.errors[0] || message;
-      } catch {}
-      throw new Error(message);
+  if (response.status === 401 || response.status === 403) {
+    removeToken();
+    removeUser();
+    window.location.href = "/login";
+    throw new ApiError("Session expired", response.status);
+  }
+
+  if (!response.ok) {
+    let message = `API Error: ${response.status}`;
+    let errBody: any = undefined;
+    try {
+      errBody = await response.json();
+      if (Array.isArray(errBody?.issues) && errBody.issues.length > 0) {
+        const uniqueMsgs = [...new Set(errBody.issues.map((i: any) => i?.message || String(i)).filter(Boolean))];
+        message = uniqueMsgs.slice(0, 3).join("; ");
+      } else if (errBody?.message) message = errBody.message;
+      else if (errBody?.error) message = errBody.error;
+      else if (Array.isArray(errBody?.errors) && errBody.errors.length > 0)
+        message = errBody.errors[0]?.message || errBody.errors[0] || message;
+    } catch {}
+    if (isDev) {
+      // eslint-disable-next-line no-console
+      console.error(`[api] ${method} ${url} → ${response.status}`, errBody);
     }
+    throw new ApiError(message, response.status, errBody);
+  }
 
-    return response.json();
-  } catch (error) {
-    throw error;
+  // Some DELETE endpoints return 204/empty body — guard json parsing.
+  if (response.status === 204) return undefined as T;
+  const text = await response.text();
+  if (!text) return undefined as T;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return text as unknown as T;
   }
 };
 
