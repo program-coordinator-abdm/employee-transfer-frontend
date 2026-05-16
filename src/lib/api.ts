@@ -1345,6 +1345,9 @@ export const updateVacancySubmission = async (id: string, payload: VacancyPayloa
 
 // --- View Vacancies ---
 export interface VacancyInstitution {
+  /** Stable database identifier; preferred for DELETE operations. */
+  id?: string;
+  institutionId?: string;
   institutionKey: string;
   institutionName: string;
   institutionTypeName?: string;
