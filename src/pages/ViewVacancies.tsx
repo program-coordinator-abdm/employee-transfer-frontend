@@ -118,10 +118,33 @@ const ViewVacancies: React.FC = () => {
   };
 
   const handleDeleteInstitution = async () => {
-    if (!selectedKey) return;
+    // Prefer a stable database id over the composite institutionKey
+    // (which contains '||' separators and breaks the DELETE URL path / CORS preflight).
+    const stableId =
+      institution?.id ||
+      institution?.institutionId ||
+      // Some backends expose the institution id on submissions
+      (sortedSubmissions[0] as any)?.institutionId;
+
+    if (!stableId) {
+      // eslint-disable-next-line no-console
+      console.error(
+        "[ViewVacancies] Cannot DELETE institution: no stable id on payload.",
+        "Backend endpoint support needed: DELETE /vacancies/institution/:institutionId must accept a real DB id.",
+        { institution, firstSubmission: sortedSubmissions[0] }
+      );
+      showToast(
+        "Delete unavailable: backend did not return an institution id. Please contact support.",
+        "error"
+      );
+      return;
+    }
+
     setDeleting(true);
+    // eslint-disable-next-line no-console
+    console.info("[ViewVacancies] Deleting institution by id:", stableId);
     try {
-      await deleteVacancyInstitution(selectedKey);
+      await deleteVacancyInstitution(stableId);
       showToast("Institution vacancy deleted successfully", "success");
       setInstitution(null);
       setSubmissions([]);
