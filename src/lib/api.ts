@@ -1375,14 +1375,57 @@ export const fetchVacanciesByInstitution = async (institutionKey: string): Promi
   return apiClient<VacancyByInstitutionResponse>(`/vacancies/by-institution?institutionKey=${encodeURIComponent(institutionKey)}`);
 };
 
+/**
+ * Delete all vacancy data for an institution.
+ * IMPORTANT: `institutionId` MUST be a stable DB id (e.g. UUID/numeric),
+ * NOT the composite `institutionKey` (name||type||district||taluk||city)
+ * which breaks API Gateway path matching and CORS preflight.
+ * Backend endpoint required: DELETE /vacancies/institution/:institutionId
+ */
 export const deleteVacancyInstitution = async (institutionId: string): Promise<any> => {
-  return apiClient<any>(`/vacancies/institution/${encodeURIComponent(institutionId)}`, { method: "DELETE" });
+  const url = `/vacancies/institution/${encodeURIComponent(institutionId)}`;
+  // eslint-disable-next-line no-console
+  console.info("[api] DELETE", url, "institutionId:", institutionId);
+  try {
+    const res = await apiClient<any>(url, { method: "DELETE" });
+    // eslint-disable-next-line no-console
+    console.info("[api] DELETE", url, "→ success");
+    return res;
+  } catch (err: any) {
+    // eslint-disable-next-line no-console
+    console.error("[api] DELETE", url, "→ failed", { status: err?.status, message: err?.message });
+    throw err;
+  }
 };
 
 export const deleteVacancySubmission = async (vacancyId: string): Promise<any> => {
-  return apiClient<any>(`/vacancies/${encodeURIComponent(vacancyId)}`, { method: "DELETE" });
+  const url = `/vacancies/${encodeURIComponent(vacancyId)}`;
+  // eslint-disable-next-line no-console
+  console.info("[api] DELETE", url);
+  try {
+    const res = await apiClient<any>(url, { method: "DELETE" });
+    // eslint-disable-next-line no-console
+    console.info("[api] DELETE", url, "→ success");
+    return res;
+  } catch (err: any) {
+    // eslint-disable-next-line no-console
+    console.error("[api] DELETE", url, "→ failed", { status: err?.status, message: err?.message });
+    throw err;
+  }
 };
 
 export const deleteVacancyLine = async (lineId: string): Promise<any> => {
-  return apiClient<any>(`/vacancies/lines/${encodeURIComponent(lineId)}`, { method: "DELETE" });
+  const url = `/vacancies/lines/${encodeURIComponent(lineId)}`;
+  // eslint-disable-next-line no-console
+  console.info("[api] DELETE", url, "lineId:", lineId);
+  try {
+    const res = await apiClient<any>(url, { method: "DELETE" });
+    // eslint-disable-next-line no-console
+    console.info("[api] DELETE", url, "→ success");
+    return res;
+  } catch (err: any) {
+    // eslint-disable-next-line no-console
+    console.error("[api] DELETE", url, "→ failed", { status: err?.status, message: err?.message });
+    throw err;
+  }
 };
