@@ -27,6 +27,8 @@ export const KARNATAKA_GEO: Record<string, DistrictData> = {
       { name: "Kudligi", cities: ["Kudligi", "Hagari"] },
       { name: "Sandur", cities: ["Sandur", "Toranagallu", "Swamyhalli"] },
       { name: "Siruguppa", cities: ["Siruguppa", "Siraguppa"] },
+      { name: "Kampli", cities: ["Kampli"] },
+      { name: "Kurgod", cities: ["Kurgod"] },
     ],
   },
   "Belagavi (Belgaum)": {
