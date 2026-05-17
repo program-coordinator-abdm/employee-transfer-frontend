@@ -118,21 +118,20 @@ const ViewVacancies: React.FC = () => {
   };
 
   const handleDeleteInstitution = async () => {
-    // Prefer a stable database id over the composite institutionKey
-    // (which contains '||' separators and breaks the DELETE URL path / CORS preflight).
+    const selectedFacility = institution || selectedInst;
     const stableId =
-      institution?.id ||
-      institution?.institutionId ||
-      // Some backends expose the institution id on submissions
+      selectedFacility?.institutionId ||
+      selectedFacility?.id ||
+      selectedInst?.institutionId ||
+      selectedInst?.id ||
       (sortedSubmissions[0] as any)?.institutionId;
 
     if (!stableId) {
       // eslint-disable-next-line no-console
-      console.error(
-        "[ViewVacancies] Cannot DELETE institution: no stable id on payload.",
-        "Backend endpoint support needed: DELETE /vacancies/institution/:institutionId must accept a real DB id.",
-        { institution, firstSubmission: sortedSubmissions[0] }
-      );
+      console.error("[ViewVacancies] Missing institutionId", selectedFacility, {
+        selectedInst,
+        firstSubmission: sortedSubmissions[0],
+      });
       showToast(
         "Delete unavailable: backend did not return an institution id. Please contact support.",
         "error"
@@ -142,12 +141,28 @@ const ViewVacancies: React.FC = () => {
 
     setDeleting(true);
     // eslint-disable-next-line no-console
-    console.info("[ViewVacancies] Deleting institution by id:", stableId);
+    console.info("[ViewVacancies] DELETE /vacancies/by-institution-id/", stableId);
     try {
       await deleteVacancyInstitution(stableId);
       showToast("Institution vacancy deleted successfully", "success");
+      // Remove from local UI state
       setInstitution(null);
       setSubmissions([]);
+      setInstitutions((prev) =>
+        prev.filter(
+          (i) =>
+            (i.institutionId || i.id) !== stableId &&
+            i.institutionKey !== selectedKey
+        )
+      );
+      setSelectedKey("");
+      // Refresh list from backend to stay in sync
+      try {
+        const fresh = await fetchVacancyInstitutions();
+        setInstitutions(fresh);
+      } catch {
+        /* non-fatal */
+      }
     } catch (err) {
       showToast(mapDeleteError(err), "error");
     } finally {
