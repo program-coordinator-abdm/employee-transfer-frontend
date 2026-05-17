@@ -1383,7 +1383,7 @@ export const fetchVacanciesByInstitution = async (institutionKey: string): Promi
  * Backend endpoint required: DELETE /vacancies/institution/:institutionId
  */
 export const deleteVacancyInstitution = async (institutionId: string): Promise<any> => {
-  const url = `/vacancies/institution/${encodeURIComponent(institutionId)}`;
+  const url = `/vacancies/by-institution-id/${encodeURIComponent(institutionId)}`;
   // eslint-disable-next-line no-console
   console.info("[api] DELETE", url, "institutionId:", institutionId);
   try {
